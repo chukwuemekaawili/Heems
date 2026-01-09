@@ -88,8 +88,8 @@ const CarerDashboard = () => {
 
   return (
     <DashboardLayout
+      role="carer"
       navItems={navItems}
-      userRole="carer"
       userName="Sarah Johnson"
       userEmail="sarah.johnson@example.com"
     >

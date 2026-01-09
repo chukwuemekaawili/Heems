@@ -97,8 +97,8 @@ const recentDisputes = [
 const AdminDashboard = () => {
   return (
     <DashboardLayout
+      role="admin"
       navItems={navItems}
-      userRole="admin"
       userName="Super Admin"
       userEmail="admin@heemscare.com"
     >

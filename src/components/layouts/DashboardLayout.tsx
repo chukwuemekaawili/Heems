@@ -21,6 +21,21 @@ import {
   LogOut,
   User,
   HelpCircle,
+  LayoutDashboard,
+  Calendar,
+  Users,
+  FileText,
+  PoundSterling,
+  MessageSquare,
+  Shield,
+  Briefcase,
+  BarChart3,
+  Clock,
+  MapPin,
+  ClipboardList,
+  Building2,
+  UserCheck,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,17 +48,66 @@ interface NavItem {
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  navItems: NavItem[];
-  userRole: "client" | "carer" | "organisation" | "admin";
+  role: "client" | "carer" | "organisation" | "admin";
+  navItems?: NavItem[];
   userName?: string;
   userEmail?: string;
   userAvatar?: string;
 }
 
+// Default navigation items for each role
+const getDefaultNavItems = (role: string): NavItem[] => {
+  switch (role) {
+    case "client":
+      return [
+        { name: "Dashboard", href: "/client/dashboard", icon: LayoutDashboard },
+        { name: "Find Carers", href: "/client/search", icon: Search },
+        { name: "Bookings", href: "/client/bookings", icon: Calendar, badge: 2 },
+        { name: "Care Plans", href: "/client/care-plans", icon: ClipboardList },
+        { name: "Messages", href: "/client/messages", icon: MessageSquare, badge: 3 },
+        { name: "Payments", href: "/client/payments", icon: CreditCard },
+        { name: "Settings", href: "/client/settings", icon: Settings },
+      ];
+    case "carer":
+      return [
+        { name: "Dashboard", href: "/carer/dashboard", icon: LayoutDashboard },
+        { name: "Availability", href: "/carer/availability", icon: Calendar },
+        { name: "Bookings", href: "/carer/bookings", icon: Clock, badge: 3 },
+        { name: "Earnings", href: "/carer/earnings", icon: PoundSterling },
+        { name: "Documents", href: "/carer/documents", icon: FileText },
+        { name: "Messages", href: "/carer/messages", icon: MessageSquare, badge: 2 },
+        { name: "Profile", href: "/carer/profile", icon: User },
+      ];
+    case "organisation":
+      return [
+        { name: "Dashboard", href: "/organisation/dashboard", icon: LayoutDashboard },
+        { name: "Staff", href: "/organisation/staff", icon: Users },
+        { name: "Job Postings", href: "/organisation/jobs", icon: Briefcase },
+        { name: "Bookings", href: "/organisation/bookings", icon: Calendar, badge: 5 },
+        { name: "Compliance", href: "/organisation/compliance", icon: Shield },
+        { name: "Analytics", href: "/organisation/analytics", icon: BarChart3 },
+        { name: "Settings", href: "/organisation/settings", icon: Settings },
+      ];
+    case "admin":
+      return [
+        { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+        { name: "Users", href: "/admin/users", icon: Users },
+        { name: "Carers", href: "/admin/carers", icon: UserCheck },
+        { name: "Organisations", href: "/admin/organisations", icon: Building2 },
+        { name: "Bookings", href: "/admin/bookings", icon: Calendar },
+        { name: "Verifications", href: "/admin/verifications", icon: Shield, badge: 12 },
+        { name: "Reports", href: "/admin/reports", icon: BarChart3 },
+        { name: "Settings", href: "/admin/settings", icon: Settings },
+      ];
+    default:
+      return [];
+  }
+};
+
 const DashboardLayout = ({
   children,
+  role,
   navItems,
-  userRole,
   userName = "User",
   userEmail = "user@example.com",
   userAvatar,
@@ -52,11 +116,21 @@ const DashboardLayout = ({
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Use provided navItems or get defaults based on role
+  const navigationItems = navItems || getDefaultNavItems(role);
+
   const roleColors = {
     client: "from-primary to-primary-dark",
     carer: "from-secondary to-secondary",
     organisation: "from-accent to-accent",
     admin: "from-destructive to-destructive",
+  };
+
+  const roleLabels = {
+    client: "Client",
+    carer: "Carer",
+    organisation: "Organisation",
+    admin: "Admin",
   };
 
   return (
@@ -72,7 +146,7 @@ const DashboardLayout = ({
           </button>
 
           <Link to="/" className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${roleColors[userRole]} flex items-center justify-center`}>
+            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${roleColors[role]} flex items-center justify-center`}>
               <Heart className="w-4 h-4 text-primary-foreground fill-primary-foreground" />
             </div>
             <span className="text-lg font-bold text-foreground">Heems</span>
@@ -106,7 +180,7 @@ const DashboardLayout = ({
           {/* Sidebar Header */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-sidebar-border">
             <Link to="/" className="flex items-center gap-2">
-              <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${roleColors[userRole]} flex items-center justify-center`}>
+              <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${roleColors[role]} flex items-center justify-center`}>
                 <Heart className="w-4 h-4 text-primary-foreground fill-primary-foreground" />
               </div>
               <span className="text-xl font-bold text-sidebar-foreground">Heems</span>
@@ -122,7 +196,7 @@ const DashboardLayout = ({
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto py-4 px-3">
             <ul className="space-y-1">
-              {navItems.map((item) => {
+              {navigationItems.map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
                   <li key={item.name}>
@@ -170,7 +244,7 @@ const DashboardLayout = ({
                       {userName}
                     </p>
                     <p className="text-xs text-sidebar-foreground/60 truncate">
-                      {userEmail}
+                      {roleLabels[role]}
                     </p>
                   </div>
                   <ChevronDown className="w-4 h-4 text-sidebar-foreground/60" />
@@ -180,13 +254,13 @@ const DashboardLayout = ({
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to={`/${userRole}/profile`}>
+                  <Link to={`/${role}/profile`}>
                     <User className="w-4 h-4 mr-2" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to={`/${userRole}/settings`}>
+                  <Link to={`/${role}/settings`}>
                     <Settings className="w-4 h-4 mr-2" />
                     Settings
                   </Link>

@@ -101,8 +101,8 @@ const openShifts = [
 const OrganisationDashboard = () => {
   return (
     <DashboardLayout
+      role="organisation"
       navItems={navItems}
-      userRole="organisation"
       userName="ABC Care Services"
       userEmail="admin@abccare.co.uk"
     >
