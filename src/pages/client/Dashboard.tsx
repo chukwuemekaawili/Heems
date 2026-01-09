@@ -70,8 +70,8 @@ const recentCarers = [
 const ClientDashboard = () => {
   return (
     <DashboardLayout
+      role="client"
       navItems={navItems}
-      userRole="client"
       userName="John Doe"
       userEmail="john.doe@example.com"
     >
