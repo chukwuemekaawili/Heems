@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,15 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { 
-  Search, 
-  Plus, 
-  Filter,
+import {
+  Search,
   MoreVertical,
   Mail,
   Phone,
@@ -24,112 +19,145 @@ import {
   CheckCircle2,
   AlertCircle,
   Download,
-  UserPlus,
-  Users
+  Users,
+  Briefcase
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
-const staffMembers = [
-  {
-    id: 1,
-    name: "Sarah Khan",
-    email: "sarah.khan@email.com",
-    phone: "+44 7700 900123",
-    avatar: "/placeholder.svg",
-    role: "Senior Carer",
-    status: "active",
-    verified: true,
-    rating: 4.9,
-    completedJobs: 127,
-    specialisms: ["Personal Care", "Dementia Care"],
-    dbsExpiry: "2028-08-20",
-    joinedDate: "2024-03-15"
-  },
-  {
-    id: 2,
-    name: "James O'Brien",
-    email: "james.obrien@email.com",
-    phone: "+44 7700 900456",
-    avatar: "/placeholder.svg",
-    role: "Carer",
-    status: "active",
-    verified: true,
-    rating: 4.8,
-    completedJobs: 89,
-    specialisms: ["Companionship", "Mobility"],
-    dbsExpiry: "2027-05-15",
-    joinedDate: "2024-06-20"
-  },
-  {
-    id: 3,
-    name: "Priya Patel",
-    email: "priya.patel@email.com",
-    phone: "+44 7700 900789",
-    avatar: "/placeholder.svg",
-    role: "Senior Carer",
-    status: "active",
-    verified: true,
-    rating: 5.0,
-    completedJobs: 156,
-    specialisms: ["Palliative Care", "Mental Health"],
-    dbsExpiry: "2027-11-30",
-    joinedDate: "2023-11-10"
-  },
-  {
-    id: 4,
-    name: "Michael Johnson",
-    email: "michael.j@email.com",
-    phone: "+44 7700 900321",
-    avatar: "/placeholder.svg",
-    role: "Carer",
-    status: "pending",
-    verified: false,
-    rating: 0,
-    completedJobs: 0,
-    specialisms: ["Physical Disabilities"],
-    dbsExpiry: "2028-01-15",
-    joinedDate: "2026-01-05"
-  },
-  {
-    id: 5,
-    name: "Emma Williams",
-    email: "emma.w@email.com",
-    phone: "+44 7700 900654",
-    avatar: "/placeholder.svg",
-    role: "Carer",
-    status: "inactive",
-    verified: true,
-    rating: 4.7,
-    completedJobs: 64,
-    specialisms: ["Elderly Care"],
-    dbsExpiry: "2026-03-20",
-    joinedDate: "2024-08-01"
-  },
-];
-
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case "active":
-      return <Badge className="bg-emerald-500">Active</Badge>;
-    case "pending":
-      return <Badge variant="secondary">Pending</Badge>;
-    case "inactive":
-      return <Badge variant="outline">Inactive</Badge>;
-    default:
-      return <Badge variant="outline">Unknown</Badge>;
-  }
-};
+interface Carer {
+  id: string;
+  full_name: string;
+  email: string;
+  avatar_url: string | null;
+  verified: boolean;
+  carer_details?: {
+    specializations: string[];
+    experience_years: string;
+  };
+  carer_verification?: {
+    dbs_status: string;
+  };
+  bookings_count?: number;
+}
 
 export default function OrganisationStaff() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [isInviting, setIsInviting] = useState(false);
+  const [carers, setCarers] = useState<Carer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const filteredStaff = staffMembers.filter(staff => {
-    const matchesSearch = staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         staff.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || staff.status === statusFilter;
+  useEffect(() => {
+    fetchStaff();
+  }, []);
+
+  const fetchStaff = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+
+      // Fetch carers who have completed bookings for this organisation
+      const { data: bookingsData } = await supabase
+        .from('bookings')
+        .select('carer_id')
+        .eq('client_id', user.id);
+
+      const carerIds = [...new Set(bookingsData?.map(b => b.carer_id) || [])];
+
+      if (carerIds.length === 0) {
+        setCarers([]);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch carer profiles
+      const { data: carersData } = await supabase
+        .from('profiles')
+        .select(`
+          id,
+          full_name,
+          email,
+          avatar_url,
+          verified,
+          carer_details(specializations, experience_years),
+          carer_verification(dbs_status)
+        `)
+        .in('id', carerIds)
+        .eq('role', 'carer');
+
+      // Count bookings per carer
+      const carersWithBookings = (carersData || []).map(carer => {
+        const count = bookingsData?.filter(b => b.carer_id === carer.id).length || 0;
+        return {
+          ...carer,
+          bookings_count: count
+        };
+      });
+
+      setCarers(carersWithBookings);
+
+    } catch (error: any) {
+      toast({
+        title: "Error loading staff",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredCarers = carers.filter(carer => {
+    const matchesSearch = (carer.full_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (carer.email || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" ||
+      (statusFilter === "verified" && carer.verified) ||
+      (statusFilter === "pending" && !carer.verified);
     return matchesSearch && matchesStatus;
   });
+
+  const handleExport = () => {
+    const csv = [
+      ['Name', 'Email', 'Verified', 'Bookings'].join(','),
+      ...carers.map(c => [
+        c.full_name || 'N/A',
+        c.email || 'N/A',
+        c.verified ? 'Yes' : 'No',
+        c.bookings_count || 0
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `staff-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.click();
+
+    toast({
+      title: "Export successful",
+      description: `Exported ${carers.length} staff members.`,
+    });
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout role="organisation">
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout role="organisation">
@@ -137,50 +165,9 @@ export default function OrganisationStaff() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Staff Management</h1>
-            <p className="text-muted-foreground">Manage your care team and their compliance</p>
+            <h1 className="text-2xl font-bold text-foreground">Staff & Carers</h1>
+            <p className="text-muted-foreground">Carers who have worked with your organisation</p>
           </div>
-          <Dialog open={isInviting} onOpenChange={setIsInviting}>
-            <DialogTrigger asChild>
-              <Button>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Invite Staff
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Invite Staff Member</DialogTitle>
-                <DialogDescription>Send an invitation to join your organisation</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label>Email Address</Label>
-                  <Input type="email" placeholder="carer@email.com" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Role</Label>
-                  <Select defaultValue="carer">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="carer">Carer</SelectItem>
-                      <SelectItem value="senior-carer">Senior Carer</SelectItem>
-                      <SelectItem value="supervisor">Supervisor</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Personal Message (Optional)</Label>
-                  <Input placeholder="Join our care team..." />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsInviting(false)}>Cancel</Button>
-                <Button onClick={() => setIsInviting(false)}>Send Invitation</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </div>
 
         {/* Stats Cards */}
@@ -192,8 +179,8 @@ export default function OrganisationStaff() {
                   <Users className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{staffMembers.length}</p>
-                  <p className="text-sm text-muted-foreground">Total Staff</p>
+                  <p className="text-2xl font-bold">{carers.length}</p>
+                  <p className="text-sm text-muted-foreground">Total Carers</p>
                 </div>
               </div>
             </CardContent>
@@ -205,8 +192,8 @@ export default function OrganisationStaff() {
                   <CheckCircle2 className="h-6 w-6 text-emerald-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{staffMembers.filter(s => s.status === 'active').length}</p>
-                  <p className="text-sm text-muted-foreground">Active</p>
+                  <p className="text-2xl font-bold">{carers.filter(c => c.verified).length}</p>
+                  <p className="text-sm text-muted-foreground">Verified</p>
                 </div>
               </div>
             </CardContent>
@@ -218,8 +205,8 @@ export default function OrganisationStaff() {
                   <Clock className="h-6 w-6 text-amber-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{staffMembers.filter(s => s.status === 'pending').length}</p>
-                  <p className="text-sm text-muted-foreground">Pending</p>
+                  <p className="text-2xl font-bold">{carers.filter(c => !c.verified).length}</p>
+                  <p className="text-sm text-muted-foreground">Pending Verification</p>
                 </div>
               </div>
             </CardContent>
@@ -227,12 +214,12 @@ export default function OrganisationStaff() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-red-500" />
+                <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-blue-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">1</p>
-                  <p className="text-sm text-muted-foreground">Expiring DBS</p>
+                  <p className="text-2xl font-bold">{carers.reduce((sum, c) => sum + (c.bookings_count || 0), 0)}</p>
+                  <p className="text-sm text-muted-foreground">Total Bookings</p>
                 </div>
               </div>
             </CardContent>
@@ -245,8 +232,8 @@ export default function OrganisationStaff() {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search staff by name or email..."
+                <Input
+                  placeholder="Search by name or email..."
                   className="pl-10"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -257,17 +244,12 @@ export default function OrganisationStaff() {
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="verified">Verified</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline">
-                <Filter className="h-4 w-4 mr-2" />
-                More Filters
-              </Button>
-              <Button variant="outline">
+              <Button variant="outline" onClick={handleExport}>
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
@@ -278,90 +260,90 @@ export default function OrganisationStaff() {
         {/* Staff Table */}
         <Card>
           <CardContent className="pt-6">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Staff Member</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Rating</TableHead>
-                  <TableHead>Completed Jobs</TableHead>
-                  <TableHead>DBS Expiry</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStaff.map((staff) => (
-                  <TableRow key={staff.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <Avatar>
-                            <AvatarImage src={staff.avatar} />
-                            <AvatarFallback>{staff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                          </Avatar>
-                          {staff.verified && (
-                            <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center">
-                              <Shield className="h-2.5 w-2.5 text-white" />
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium">{staff.name}</p>
-                          <p className="text-sm text-muted-foreground">{staff.email}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{staff.role}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(staff.status)}
-                    </TableCell>
-                    <TableCell>
-                      {staff.rating > 0 ? (
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                          <span>{staff.rating}</span>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">N/A</span>
-                      )}
-                    </TableCell>
-                    <TableCell>{staff.completedJobs}</TableCell>
-                    <TableCell>
-                      <span className={new Date(staff.dbsExpiry) < new Date('2026-06-01') ? 'text-amber-500' : ''}>
-                        {new Date(staff.dbsExpiry).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button size="icon" variant="ghost">
-                          <Mail className="h-4 w-4" />
-                        </Button>
-                        <Button size="icon" variant="ghost">
-                          <Phone className="h-4 w-4" />
-                        </Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="ghost">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>View Profile</DropdownMenuItem>
-                            <DropdownMenuItem>View Documents</DropdownMenuItem>
-                            <DropdownMenuItem>Assign to Job</DropdownMenuItem>
-                            <DropdownMenuItem>Edit Role</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">Remove from Team</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </TableCell>
+            {filteredCarers.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No carers found</p>
+                <p className="text-sm">Carers will appear here after they complete bookings with your organisation</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Carer</TableHead>
+                    <TableHead>Verification</TableHead>
+                    <TableHead>DBS Status</TableHead>
+                    <TableHead>Bookings</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredCarers.map((carer) => (
+                    <TableRow key={carer.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            <Avatar>
+                              <AvatarImage src={carer.avatar_url || undefined} />
+                              <AvatarFallback>
+                                {(carer.full_name || 'C').split(' ').map(n => n[0]).join('')}
+                              </AvatarFallback>
+                            </Avatar>
+                            {carer.verified && (
+                              <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center">
+                                <Shield className="h-2.5 w-2.5 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium">{carer.full_name || 'Carer'}</p>
+                            <p className="text-sm text-muted-foreground">{carer.email || 'N/A'}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {carer.verified ? (
+                          <Badge className="bg-emerald-500">Verified</Badge>
+                        ) : (
+                          <Badge variant="secondary">Pending</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {carer.carer_verification?.dbs_status || 'Not submitted'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{carer.bookings_count || 0}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => navigate(`/organisation/messages?userId=${carer.id}`)}
+                          >
+                            <Mail className="h-4 w-4" />
+                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="icon" variant="ghost">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>View Profile</DropdownMenuItem>
+                              <DropdownMenuItem>Create Booking</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => navigate(`/organisation/messages?userId=${carer.id}`)}>
+                                Send Message
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </div>

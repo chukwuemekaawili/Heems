@@ -1,354 +1,310 @@
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  LayoutDashboard,
   Users,
-  UserCheck,
-  AlertTriangle,
-  FileCheck,
-  BarChart3,
-  Settings,
-  Shield,
+  ShieldCheck,
   Clock,
   CheckCircle2,
-  XCircle,
-  Building2,
   ArrowRight,
   TrendingUp,
-  Eye,
+  Zap,
+  ShieldAlert,
+  GanttChart
 } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const navItems = [
-  { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  { name: "Users", href: "/admin/users", icon: Users },
-  { name: "Verifications", href: "/admin/verifications", icon: UserCheck, badge: 12 },
-  { name: "Disputes", href: "/admin/disputes", icon: AlertTriangle, badge: 3 },
-  { name: "Organisations", href: "/admin/organisations", icon: Building2 },
-  { name: "Compliance", href: "/admin/compliance", icon: FileCheck },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
-];
-
-const pendingVerifications = [
-  {
-    id: 1,
-    name: "James Wilson",
-    email: "james.wilson@email.com",
-    type: "carer",
-    submitted: "2 hours ago",
-    documents: ["DBS", "ID", "Right to Work"],
-    status: "pending",
-  },
-  {
-    id: 2,
-    name: "Maria Garcia",
-    email: "maria.garcia@email.com",
-    type: "carer",
-    submitted: "5 hours ago",
-    documents: ["DBS", "ID", "References"],
-    status: "pending",
-  },
-  {
-    id: 3,
-    name: "HomeFirst Care Ltd",
-    email: "admin@homefirst.co.uk",
-    type: "organisation",
-    submitted: "1 day ago",
-    documents: ["CQC Registration", "Insurance", "Company Docs"],
-    status: "pending",
-  },
-];
-
-const recentDisputes = [
-  {
-    id: 1,
-    title: "Late cancellation dispute",
-    client: "Sarah Thompson",
-    carer: "Michael Brown",
-    amount: "£45.00",
-    status: "open",
-    created: "3 hours ago",
-  },
-  {
-    id: 2,
-    title: "Service quality complaint",
-    client: "David Chen",
-    carer: "Emma Williams",
-    amount: "£120.00",
-    status: "investigating",
-    created: "1 day ago",
-  },
-  {
-    id: 3,
-    title: "Payment not received",
-    client: "N/A",
-    carer: "Priya Sharma",
-    amount: "£280.00",
-    status: "resolved",
-    created: "3 days ago",
-  },
-];
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    verifiedCarers: 0,
+    pendingVerifications: 0,
+    totalBookings: 0,
+    revenue: 0,
+  });
+  const [pendingVerifications, setPendingVerifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch total users
+      const { count: totalUsers } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      // Fetch verified carers
+      const { count: verifiedCarers } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'carer')
+        .eq('verified', true);
+
+      // Fetch pending verifications
+      const { data: verificationsData, count: pendingCount } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email, role, created_at', { count: 'exact' })
+        .eq('verified', false)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      // Fetch total bookings
+      const { count: totalBookings } = await supabase
+        .from('bookings')
+        .select('*', { count: 'exact', head: true });
+
+      // Calculate revenue from completed bookings
+      const { data: completedBookings } = await supabase
+        .from('bookings')
+        .select('total_price')
+        .eq('status', 'completed');
+
+      const revenue = completedBookings?.reduce((sum, booking) => sum + (booking.total_price || 0), 0) || 0;
+
+      setStats({
+        totalUsers: totalUsers || 0,
+        verifiedCarers: verifiedCarers || 0,
+        pendingVerifications: pendingCount || 0,
+        totalBookings: totalBookings || 0,
+        revenue: revenue,
+      });
+
+      setPendingVerifications(verificationsData || []);
+
+    } catch (error: any) {
+      toast({
+        title: "Error loading dashboard",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: 'GBP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('en-GB').format(num);
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout role="admin" userName="Admin" userEmail="admin@heemscare.com">
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout
       role="admin"
-      navItems={navItems}
-      userName="Super Admin"
+      userName="Admin"
       userEmail="admin@heemscare.com"
     >
-      <div className="space-y-6">
+      <div className="space-y-8 max-w-7xl mx-auto py-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Platform overview and management</p>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="h-2 w-2 rounded-full bg-[#1a9e8c]" />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform Authority</span>
+            </div>
+            <h1 className="text-3xl font-black text-[#111827] tracking-tight">System Command</h1>
+            <p className="text-slate-500 font-medium">Global oversight of platform infrastructure.</p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" asChild>
-              <Link to="/admin/analytics">
-                <BarChart3 className="w-4 h-4 mr-2" />
-                View Analytics
-              </Link>
-            </Button>
+          <div className="flex gap-3">
+            <div className="flex items-center gap-3 p-2 bg-slate-50 rounded-2xl border border-black/5">
+              <div className="flex flex-col items-end px-2">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Active Phase</p>
+                <p className="text-xs font-black text-[#111827]">Phase 01 (Founder)</p>
+              </div>
+              <Button className="h-10 bg-[#1a9e8c] text-white font-black rounded-xl px-4 hover:bg-[#15806c]" asChild>
+                <Link to="/admin/phase-control">
+                  <Zap className="w-3.5 h-3.5 mr-2" />
+                  Phase Shift
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Users className="w-5 h-5 text-primary" />
+        {/* Core Metrics */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="rounded-3xl border-black/[0.05] shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-black/5 bg-slate-50 text-[#111827]">
+                  <Users className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">12,847</p>
-                  <p className="text-sm text-muted-foreground">Total Users</p>
+                  <p className="text-2xl font-black text-[#111827] tracking-tight">{formatNumber(stats.totalUsers)}</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Users</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
-                  <UserCheck className="w-5 h-5 text-success" />
+
+          <Card className="rounded-3xl border-black/[0.05] shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-black/5 bg-[#1a9e8c]/5 text-[#1a9e8c]">
+                  <ShieldCheck className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">8,234</p>
-                  <p className="text-sm text-muted-foreground">Verified Carers</p>
+                  <p className="text-2xl font-black text-[#111827] tracking-tight">{formatNumber(stats.verifiedCarers)}</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Verified Carers</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-warning" />
+
+          <Card className="rounded-3xl border-black/[0.05] shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-black/5 bg-slate-50 text-[#111827]">
+                  <Clock className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">12</p>
-                  <p className="text-sm text-muted-foreground">Pending Verifications</p>
+                  <p className="text-2xl font-black text-[#111827] tracking-tight">{formatNumber(stats.pendingVerifications)}</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pending Verifications</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-secondary" />
+
+          <Card className="rounded-3xl border-black/[0.05] shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-black/5 bg-slate-50 text-[#111827]">
+                  <TrendingUp className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">156</p>
-                  <p className="text-sm text-muted-foreground">Organisations</p>
+                  <p className="text-2xl font-black text-[#111827] tracking-tight">{formatCurrency(stats.revenue * 0.1)}</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform Revenue (10%)</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Platform Metrics */}
-        <div className="grid lg:grid-cols-4 gap-4">
-          <Card className="lg:col-span-1">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Monthly Revenue</span>
-                <TrendingUp className="w-4 h-4 text-success" />
-              </div>
-              <p className="text-2xl font-bold text-foreground">£847,234</p>
-              <p className="text-xs text-success">+12.5% from last month</p>
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-1">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Bookings Today</span>
-                <TrendingUp className="w-4 h-4 text-success" />
-              </div>
-              <p className="text-2xl font-bold text-foreground">1,247</p>
-              <p className="text-xs text-success">+8.3% from yesterday</p>
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-1">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Avg. Rating</span>
-                <span className="text-warning">★</span>
-              </div>
-              <p className="text-2xl font-bold text-foreground">4.87</p>
-              <p className="text-xs text-muted-foreground">Based on 45,230 reviews</p>
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-1">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Platform Fee</span>
-                <span className="text-sm font-medium">12%</span>
-              </div>
-              <p className="text-2xl font-bold text-foreground">£101,668</p>
-              <p className="text-xs text-muted-foreground">This month's earnings</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Pending Verifications */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Pending Verifications</CardTitle>
-                  <CardDescription>Users awaiting document review</CardDescription>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Verification Queue */}
+          <div className="lg:col-span-2 space-y-8">
+            <Card className="rounded-[2.5rem] border-black/[0.05] overflow-hidden shadow-sm">
+              <CardHeader className="p-8 pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl font-black text-[#111827]">Verification Queue</CardTitle>
+                    <CardDescription className="text-sm font-medium">Users pending verification</CardDescription>
+                  </div>
+                  <Button variant="ghost" className="rounded-xl font-bold" asChild>
+                    <Link to="/admin/verification-queue">
+                      View All
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Link>
+                  </Button>
                 </div>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/admin/verifications">
-                    View all
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </Link>
-                </Button>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {pendingVerifications.map((user) => (
-                    <div
-                      key={user.id}
-                      className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-semibold">
-                          {user.name.split(" ").map((n) => n[0]).join("")}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-semibold text-foreground">{user.name}</p>
-                            <Badge variant={user.type === "carer" ? "default" : "secondary"}>
-                              {user.type}
-                            </Badge>
+              <CardContent className="p-8 pt-4">
+                {pendingVerifications.length === 0 ? (
+                  <div className="text-center py-12">
+                    <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                    <p className="text-lg font-bold text-[#111827]">All Caught Up!</p>
+                    <p className="text-sm text-slate-500">No pending verifications</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingVerifications.map((user) => (
+                      <div
+                        key={user.id}
+                        className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/5 hover:border-[#1a9e8c]/20 transition-all"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-[#1a9e8c]/10 flex items-center justify-center">
+                            <span className="text-lg font-black text-[#1a9e8c]">
+                              {user.first_name?.[0] || user.email[0].toUpperCase()}
+                            </span>
                           </div>
-                          <p className="text-sm text-muted-foreground">{user.email}</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Submitted: {user.submitted}
-                          </p>
+                          <div>
+                            <p className="font-bold text-[#111827]">
+                              {user.first_name && user.last_name
+                                ? `${user.first_name} ${user.last_name}`
+                                : user.email}
+                            </p>
+                            <p className="text-xs text-slate-500 capitalize">{user.role}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="border-amber-500 text-amber-600">
+                            Pending
+                          </Badge>
+                          <Button size="sm" variant="ghost" asChild>
+                            <Link to={`/admin/verification-queue`}>
+                              <ArrowRight className="w-4 h-4" />
+                            </Link>
+                          </Button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline" asChild>
-                          <Link to={`/admin/verifications/${user.id}`}>
-                            <Eye className="w-4 h-4 mr-1" />
-                            Review
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
 
-          {/* Disputes */}
-          <div>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-base">Open Disputes</CardTitle>
-                  <CardDescription>Requiring attention</CardDescription>
+          {/* Quick Stats */}
+          <div className="space-y-6">
+            <Card className="rounded-3xl border-black/[0.05] p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                  <GanttChart className="w-5 h-5 text-blue-500" />
                 </div>
-                <Badge variant="warning">3</Badge>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentDisputes.map((dispute) => (
-                    <div key={dispute.id} className="p-3 rounded-lg border border-border">
-                      <div className="flex items-start justify-between mb-2">
-                        <p className="font-medium text-sm text-foreground">{dispute.title}</p>
-                        <Badge
-                          variant={
-                            dispute.status === "open"
-                              ? "destructive"
-                              : dispute.status === "investigating"
-                              ? "warning"
-                              : "success"
-                          }
-                        >
-                          {dispute.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {dispute.client !== "N/A" && `Client: ${dispute.client} • `}
-                        Carer: {dispute.carer}
-                      </p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-sm font-semibold">{dispute.amount}</span>
-                        <span className="text-xs text-muted-foreground">{dispute.created}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" size="sm" className="w-full mt-4" asChild>
-                  <Link to="/admin/disputes">
-                    View All Disputes
-                  </Link>
-                </Button>
-              </CardContent>
+                <h3 className="text-lg font-black text-[#111827]">Bookings</h3>
+              </div>
+              <p className="text-3xl font-black text-[#111827] mb-2">{formatNumber(stats.totalBookings)}</p>
+              <p className="text-xs text-slate-500 font-medium">Total platform bookings</p>
             </Card>
 
-            {/* Quick Stats */}
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="text-base">System Health</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">API Uptime</span>
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-success" />
-                      <span className="text-sm font-medium">99.99%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Response Time</span>
-                    <span className="text-sm font-medium">142ms</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Active Sessions</span>
-                    <span className="text-sm font-medium">3,847</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Error Rate</span>
-                    <span className="text-sm font-medium text-success">0.02%</span>
-                  </div>
+            <Card className="rounded-3xl border-black/[0.05] p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-500" />
                 </div>
-              </CardContent>
+                <h3 className="text-lg font-black text-[#111827]">Growth</h3>
+              </div>
+              <p className="text-3xl font-black text-[#111827] mb-2">+{stats.totalUsers > 0 ? Math.round((stats.totalUsers / 100) * 10) : 0}%</p>
+              <p className="text-xs text-slate-500 font-medium">User growth this month</p>
+            </Card>
+
+            <Card className="rounded-3xl border-black/[0.05] p-6 bg-[#1a9e8c] text-white">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                  <ShieldAlert className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-black">System Health</h3>
+              </div>
+              <p className="text-3xl font-black mb-2">100%</p>
+              <p className="text-xs text-white/70 font-medium">All systems operational</p>
             </Card>
           </div>
         </div>

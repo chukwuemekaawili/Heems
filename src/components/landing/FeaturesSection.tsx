@@ -1,115 +1,162 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Brain, 
-  Shield, 
-  Clock, 
-  MapPin, 
-  CreditCard, 
+import {
+  Brain,
+  ShieldCheck,
+  Clock,
+  MapPin,
+  CreditCard,
   MessageSquare,
   Calendar,
-  FileCheck
+  FileCheck,
+  Activity,
+  UserCheck,
+  Sparkles,
+  Zap,
+  Heart
 } from "lucide-react";
 
 const features = [
   {
     icon: Brain,
     title: "AI Smart Matching",
-    description: "Our intelligent algorithm matches you with carers based on skills, availability, location, and care needs.",
-    color: "primary",
+    description: "Our neural matching engine predicts the best carer-client compatibility based on personality, skills, and specialized needs.",
   },
   {
-    icon: Shield,
-    title: "Fully Verified Carers",
-    description: "All carers undergo rigorous DBS checks, identity verification, right-to-work checks, and reference validation.",
-    color: "success",
+    icon: ShieldCheck,
+    title: "Vetting 2.0",
+    description: "Continuous monitoring of DBS status, right-to-work, and real-time reference validation for total peace of mind.",
   },
   {
-    icon: Clock,
-    title: "Instant Booking",
-    description: "Book care in minutes, not days. Our platform enables same-day booking for urgent care needs.",
-    color: "secondary",
+    icon: Activity,
+    title: "Health Insights",
+    description: "Monitor vitals and care outcomes with real-time health data visualization for families and healthcare professionals.",
   },
   {
     icon: MapPin,
-    title: "Live Tracking",
-    description: "Know exactly when your carer arrives with real-time location tracking and arrival notifications.",
-    color: "info",
-  },
-  {
-    icon: CreditCard,
-    title: "Secure Payments",
-    description: "Pay securely through the platform. No cash needed. Automatic payments after each visit.",
-    color: "accent",
-  },
-  {
-    icon: MessageSquare,
-    title: "In-App Messaging",
-    description: "Communicate directly with carers through our secure messaging system. Video calls included.",
-    color: "primary",
-  },
-  {
-    icon: Calendar,
-    title: "Flexible Scheduling",
-    description: "Book one-off visits or set up recurring care. Easily manage and modify your care schedule.",
-    color: "warning",
-  },
-  {
-    icon: FileCheck,
-    title: "Care Documentation",
-    description: "Digital care plans, visit logs, and medication records. Full transparency for families.",
-    color: "success",
+    title: "Geo-Safe Arrival",
+    description: "Precision location services ensure carers are on-site and active, providing transparent accountability.",
   },
 ];
 
-const colorStyles: Record<string, string> = {
-  primary: "bg-primary/10 text-primary",
-  success: "bg-success/10 text-success",
-  secondary: "bg-secondary/10 text-secondary",
-  info: "bg-info/10 text-info",
-  accent: "bg-accent/10 text-accent",
-  warning: "bg-warning/10 text-warning",
-};
-
 const FeaturesSection = () => {
   return (
-    <section className="py-20 lg:py-32 bg-background" id="features">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">
-            Platform Features
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6">
-            Everything You Need for{" "}
-            <span className="text-gradient">Quality Care</span>
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            From finding the perfect carer to managing ongoing care, Heems provides a complete solution for modern care needs.
-          </p>
+    <section className="py-24 lg:py-32 bg-white border-b border-black/[0.03] relative overflow-hidden" id="features">
+      {/* Animated Background Elements */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#1a9e8c]/5 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#111827]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+
+      <div className="container mx-auto px-6 lg:px-12 relative z-10">
+        {/* Enhanced Section Header with Image */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
+          {/* Left - Text Content */}
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#1a9e8c]/10 to-[#111827]/10 border border-[#1a9e8c]/20 text-[#111827] text-xs font-black uppercase tracking-[0.25em] mb-8">
+              <Zap className="w-3.5 h-3.5 text-[#1a9e8c]" />
+              High-Performance Infrastructure
+            </div>
+            <h2 className="text-4xl lg:text-6xl font-black text-[#111827] leading-[0.95] tracking-tighter mb-8">
+              Care Engineered <br />
+              <span className="bg-gradient-to-r from-[#1a9e8c] to-[#111827] bg-clip-text text-transparent">for Total Trust.</span>
+            </h2>
+            <p className="text-lg text-[#4B5563] font-medium leading-relaxed max-w-xl">
+              Beyond a marketplace, Heems is a sophisticated ecosystem designed for clinical safety, operational transparency, and high-value care outcomes.
+            </p>
+          </div>
+
+          {/* Right - Care Image */}
+          <div className="relative">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+              <img
+                src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=800&h=600&fit=crop"
+                alt="Professional carer providing compassionate care"
+                className="w-full h-[400px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a9e8c]/20 to-transparent"></div>
+
+              {/* Floating Badge */}
+              <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm rounded-2xl px-6 py-4 shadow-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-[#1a9e8c] rounded-full flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-black text-[#111827]">2,000+</p>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Verified Carers</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Modern Features Grid with Single Color Icons */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <Card 
+            <div
               key={feature.title}
-              variant="interactive"
-              className="group animate-fade-in-up"
+              className="group relative bg-white p-8 rounded-3xl border border-black/[0.05] hover:border-[#1a9e8c]/30 hover:shadow-2xl transition-all duration-700 overflow-hidden"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <CardContent className="p-6">
-                <div className={`w-12 h-12 rounded-xl ${colorStyles[feature.color]} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <feature.icon className="w-6 h-6" />
+              {/* Gradient Background on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1a9e8c]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+              {/* Single Color Icon Container */}
+              <div className="relative mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-[#1a9e8c]/10 flex items-center justify-center group-hover:bg-[#1a9e8c] transition-all duration-700">
+                  <feature.icon className="w-7 h-7 text-[#1a9e8c] group-hover:text-white transition-colors duration-700" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {feature.description}
-                </p>
-              </CardContent>
-            </Card>
+              </div>
+
+              <h3 className="text-xl font-black text-[#111827] mb-3 tracking-tight group-hover:text-[#1a9e8c] transition-colors duration-500">
+                {feature.title}
+              </h3>
+              <p className="text-[#4B5563] font-medium leading-relaxed text-sm">
+                {feature.description}
+              </p>
+            </div>
           ))}
+        </div>
+
+        {/* Additional Trust Indicators */}
+        <div className="mt-20 grid md:grid-cols-3 gap-8">
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-black/[0.03] hover:shadow-xl transition-all duration-500">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#1a9e8c]/10 flex items-center justify-center">
+                <Clock className="w-6 h-6 text-[#1a9e8c]" />
+              </div>
+              <div>
+                <p className="text-3xl font-black text-[#111827]">24/7</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Support</p>
+              </div>
+            </div>
+            <p className="text-sm text-[#4B5563] font-medium">Round-the-clock clinical support team ready to assist.</p>
+          </div>
+
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-black/[0.03] hover:shadow-xl transition-all duration-500">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#1a9e8c]/10 flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-[#1a9e8c]" />
+              </div>
+              <div>
+                <p className="text-3xl font-black text-[#111827]">Instant</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Messaging</p>
+              </div>
+            </div>
+            <p className="text-sm text-[#4B5563] font-medium">Secure, HIPAA-compliant communication platform.</p>
+          </div>
+
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-black/[0.03] hover:shadow-xl transition-all duration-500">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#1a9e8c]/10 flex items-center justify-center">
+                <CreditCard className="w-6 h-6 text-[#1a9e8c]" />
+              </div>
+              <div>
+                <p className="text-3xl font-black text-[#111827]">Safe</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Payments</p>
+              </div>
+            </div>
+            <p className="text-sm text-[#4B5563] font-medium">Bank-grade encryption for all transactions.</p>
+          </div>
         </div>
       </div>
     </section>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  User, 
+import {
+  User,
   Camera,
   MapPin,
   Phone,
@@ -23,8 +23,12 @@ import {
   Heart,
   Clock,
   Save,
-  Eye
+  Eye,
+  Loader2
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const careSpecialisms = [
   "Personal Care",
@@ -58,29 +62,167 @@ const languages = [
 
 export default function CarerProfile() {
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedSpecialisms, setSelectedSpecialisms] = useState([
-    "Personal Care",
-    "Elderly Care",
-    "Medication Support",
-    "Companionship"
-  ]);
-  const [selectedLanguages, setSelectedLanguages] = useState(["English", "Urdu"]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Profile State
+  const [profile, setProfile] = useState<any>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    date_of_birth: "",
+    gender: "",
+    address: "",
+    city: "",
+    postcode: "",
+    country: "UK",
+    avatar_url: ""
+  });
+
+  // Carer Details State
+  const [carerDetails, setCarerDetails] = useState<any>({
+    experience_years: "1",
+    hourly_rate: 25,
+    bio: "",
+    specializations: [],
+    languages: ["English"],
+    travel_radius: 10,
+    min_booking_duration: 1,
+    instant_booking: true,
+    emergency_availability: false,
+    night_shifts: false,
+    live_in_care: false,
+    show_on_search: true
+  });
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+
+      // Fetch Profile
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) throw profileError;
+      if (profileData) setProfile(profileData);
+
+      // Fetch Carer Details
+      const { data: carerData, error: carerError } = await supabase
+        .from("carer_details")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (carerError && carerError.code !== "PGRST116") throw carerError;
+      if (carerData) setCarerDetails(carerData);
+
+    } catch (error: any) {
+      console.error("Error fetching profile:", error);
+      toast({
+        title: "Error loading profile",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Update Profile
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          full_name: `${profile.first_name} ${profile.last_name}`,
+          phone: profile.phone,
+          address: profile.address,
+          city: profile.city,
+          postcode: profile.postcode,
+          country: profile.country,
+          date_of_birth: profile.date_of_birth,
+          gender: profile.gender,
+          avatar_url: profile.avatar_url
+        })
+        .eq("id", user.id);
+
+      if (profileError) throw profileError;
+
+      // Upsert Carer Details
+      const { error: carerError } = await supabase
+        .from("carer_details")
+        .upsert({
+          id: user.id,
+          ...carerDetails
+        });
+
+      if (carerError) throw carerError;
+
+      toast({
+        title: "Profile Updated",
+        description: "Your changes have been saved successfully.",
+      });
+      setIsEditing(false);
+    } catch (error: any) {
+      console.error("Error saving profile:", error);
+      toast({
+        title: "Save Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const toggleSpecialism = (specialism: string) => {
-    setSelectedSpecialisms(prev =>
-      prev.includes(specialism)
-        ? prev.filter(s => s !== specialism)
-        : [...prev, specialism]
-    );
+    setCarerDetails((prev: any) => ({
+      ...prev,
+      specializations: prev.specializations.includes(specialism)
+        ? prev.specializations.filter((s: string) => s !== specialism)
+        : [...prev.specializations, specialism]
+    }));
   };
 
   const toggleLanguage = (language: string) => {
-    setSelectedLanguages(prev =>
-      prev.includes(language)
-        ? prev.filter(l => l !== language)
-        : [...prev, language]
-    );
+    setCarerDetails((prev: any) => ({
+      ...prev,
+      languages: prev.languages.includes(language)
+        ? prev.languages.filter((l: string) => l !== language)
+        : [...prev.languages, language]
+    }));
   };
+
+  if (loading) {
+    return (
+      <DashboardLayout role="carer">
+        <div className="flex items-center justify-center h-[60vh]">
+          <Loader2 className="h-12 w-12 animate-spin text-[#1a9e8c]" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout role="carer">
@@ -96,8 +238,10 @@ export default function CarerProfile() {
               <Eye className="h-4 w-4 mr-2" />
               Preview Profile
             </Button>
-            <Button onClick={() => setIsEditing(!isEditing)}>
-              {isEditing ? (
+            <Button onClick={() => isEditing ? handleSave() : setIsEditing(true)} disabled={saving}>
+              {saving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : isEditing ? (
                 <>
                   <Save className="h-4 w-4 mr-2" />
                   Save Changes
@@ -115,8 +259,10 @@ export default function CarerProfile() {
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               <div className="relative">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src="/placeholder.svg" />
-                  <AvatarFallback className="text-2xl">SK</AvatarFallback>
+                  <AvatarImage src={profile.avatar_url || "/placeholder.svg"} />
+                  <AvatarFallback className="text-2xl">
+                    {profile.first_name?.[0]}{profile.last_name?.[0]}
+                  </AvatarFallback>
                 </Avatar>
                 {isEditing && (
                   <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
@@ -126,30 +272,30 @@ export default function CarerProfile() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-2xl font-bold">Sarah Khan</h2>
+                  <h2 className="text-2xl font-bold">{profile.first_name} {profile.last_name}</h2>
                   <Badge className="bg-emerald-500">
                     <Shield className="h-3 w-3 mr-1" />
-                    Verified
+                    {profile.verified ? 'Verified' : 'Pending Verification'}
                   </Badge>
                 </div>
                 <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
-                    Manchester, M1
+                    {profile.city || 'Location not set'}
                   </span>
                   <span className="flex items-center gap-1">
                     <Star className="h-4 w-4 text-amber-500" />
-                    4.9 (127 reviews)
+                    4.9 (Demo)
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
-                    5 years experience
+                    {carerDetails.experience_years} years experience
                   </span>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Hourly Rate</p>
-                <p className="text-2xl font-bold text-primary">£25/hr</p>
+                <p className="text-2xl font-bold text-primary">£{carerDetails.hourly_rate}/hr</p>
               </div>
             </div>
           </CardContent>
@@ -177,33 +323,60 @@ export default function CarerProfile() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label>First Name</Label>
-                    <Input defaultValue="Sarah" disabled={!isEditing} />
+                    <Input
+                      value={profile.first_name || ""}
+                      disabled={!isEditing}
+                      onChange={(e) => setProfile((p: any) => ({ ...p, first_name: e.target.value }))}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Last Name</Label>
-                    <Input defaultValue="Khan" disabled={!isEditing} />
+                    <Input
+                      value={profile.last_name || ""}
+                      disabled={!isEditing}
+                      onChange={(e) => setProfile((p: any) => ({ ...p, last_name: e.target.value }))}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <Mail className="h-4 w-4" />
                       Email Address
                     </Label>
-                    <Input type="email" defaultValue="sarah.khan@email.com" disabled={!isEditing} />
+                    <Input
+                      type="email"
+                      value={profile.email || ""}
+                      disabled={!isEditing}
+                      onChange={(e) => setProfile((p: any) => ({ ...p, email: e.target.value }))}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <Phone className="h-4 w-4" />
                       Phone Number
                     </Label>
-                    <Input type="tel" defaultValue="+44 7700 900123" disabled={!isEditing} />
+                    <Input
+                      type="tel"
+                      value={profile.phone || ""}
+                      disabled={!isEditing}
+                      onChange={(e) => setProfile((p: any) => ({ ...p, phone: e.target.value }))}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Date of Birth</Label>
-                    <Input type="date" defaultValue="1988-05-15" disabled={!isEditing} />
+                    <Input
+                      type="date"
+                      value={profile.date_of_birth || ""}
+                      disabled={!isEditing}
+                      onChange={(e) => setProfile((p: any) => ({ ...p, date_of_birth: e.target.value }))}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Gender</Label>
-                    <Select defaultValue="female" disabled={!isEditing}>
+                    <Select
+                      value={profile.gender || ""}
+                      disabled={!isEditing}
+                      onValueChange={(val) => setProfile((p: any) => ({ ...p, gender: val }))}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -222,15 +395,34 @@ export default function CarerProfile() {
                     <MapPin className="h-4 w-4" />
                     Address
                   </Label>
-                  <Input defaultValue="123 High Street" disabled={!isEditing} />
+                  <Input
+                    value={profile.address || ""}
+                    disabled={!isEditing}
+                    onChange={(e) => setProfile((p: any) => ({ ...p, address: e.target.value }))}
+                  />
                   <div className="grid md:grid-cols-3 gap-4 mt-2">
-                    <Input defaultValue="Manchester" disabled={!isEditing} placeholder="City" />
-                    <Input defaultValue="M1 1AB" disabled={!isEditing} placeholder="Postcode" />
-                    <Select defaultValue="england" disabled={!isEditing}>
+                    <Input
+                      value={profile.city || ""}
+                      disabled={!isEditing}
+                      placeholder="City"
+                      onChange={(e) => setProfile((p: any) => ({ ...p, city: e.target.value }))}
+                    />
+                    <Input
+                      value={profile.postcode || ""}
+                      disabled={!isEditing}
+                      placeholder="Postcode"
+                      onChange={(e) => setProfile((p: any) => ({ ...p, postcode: e.target.value }))}
+                    />
+                    <Select
+                      value={profile.country || "UK"}
+                      disabled={!isEditing}
+                      onValueChange={(val) => setProfile((p: any) => ({ ...p, country: val }))}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Country" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="UK">United Kingdom</SelectItem>
                         <SelectItem value="england">England</SelectItem>
                         <SelectItem value="wales">Wales</SelectItem>
                         <SelectItem value="scotland">Scotland</SelectItem>
@@ -246,7 +438,7 @@ export default function CarerProfile() {
                     {languages.map(lang => (
                       <Badge
                         key={lang}
-                        variant={selectedLanguages.includes(lang) ? "default" : "outline"}
+                        variant={carerDetails.languages.includes(lang) ? "default" : "outline"}
                         className={`cursor-pointer ${isEditing ? 'hover:bg-primary/80' : ''}`}
                         onClick={() => isEditing && toggleLanguage(lang)}
                       >
@@ -273,7 +465,11 @@ export default function CarerProfile() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label>Years of Experience</Label>
-                    <Select defaultValue="5" disabled={!isEditing}>
+                    <Select
+                      value={carerDetails.experience_years?.toString() || "1"}
+                      disabled={!isEditing}
+                      onValueChange={(val) => setCarerDetails((c: any) => ({ ...c, experience_years: val }))}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -288,16 +484,22 @@ export default function CarerProfile() {
                   </div>
                   <div className="space-y-2">
                     <Label>Hourly Rate (£)</Label>
-                    <Input type="number" defaultValue="25" disabled={!isEditing} />
+                    <Input
+                      type="number"
+                      value={carerDetails.hourly_rate || 25}
+                      disabled={!isEditing}
+                      onChange={(e) => setCarerDetails((c: any) => ({ ...c, hourly_rate: parseFloat(e.target.value) }))}
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Professional Bio</Label>
-                  <Textarea 
+                  <Textarea
                     className="min-h-[150px]"
                     disabled={!isEditing}
-                    defaultValue="I am a dedicated and compassionate carer with over 5 years of experience in providing high-quality personal care and support. I specialise in elderly care and have extensive experience working with clients who have dementia. I am patient, reliable, and committed to maintaining the dignity and independence of those I care for. I hold an NVQ Level 3 in Health and Social Care and am trained in medication administration, first aid, and moving and handling."
+                    value={carerDetails.bio || ""}
+                    onChange={(e) => setCarerDetails((c: any) => ({ ...c, bio: e.target.value }))}
                   />
                 </div>
 
@@ -345,15 +547,14 @@ export default function CarerProfile() {
                   {careSpecialisms.map(specialism => (
                     <div
                       key={specialism}
-                      className={`flex items-center space-x-3 p-4 rounded-lg border cursor-pointer transition-colors ${
-                        selectedSpecialisms.includes(specialism) 
-                          ? "border-primary bg-primary/5" 
+                      className={`flex items-center space-x-3 p-4 rounded-lg border cursor-pointer transition-colors ${carerDetails.specializations.includes(specialism)
+                          ? "border-primary bg-primary/5"
                           : "hover:bg-accent/50"
-                      } ${!isEditing && 'cursor-default'}`}
+                        } ${!isEditing && 'cursor-default'}`}
                       onClick={() => isEditing && toggleSpecialism(specialism)}
                     >
-                      <Checkbox 
-                        checked={selectedSpecialisms.includes(specialism)}
+                      <Checkbox
+                        checked={carerDetails.specializations.includes(specialism)}
                         disabled={!isEditing}
                       />
                       <Label className="cursor-pointer">{specialism}</Label>
@@ -381,42 +582,66 @@ export default function CarerProfile() {
                       <p className="font-medium">Instant Booking</p>
                       <p className="text-sm text-muted-foreground">Allow clients to book without approval</p>
                     </div>
-                    <Switch disabled={!isEditing} defaultChecked />
+                    <Switch
+                      disabled={!isEditing}
+                      checked={carerDetails.instant_booking}
+                      onCheckedChange={(val) => setCarerDetails((c: any) => ({ ...c, instant_booking: val }))}
+                    />
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div>
                       <p className="font-medium">Emergency Availability</p>
                       <p className="text-sm text-muted-foreground">Accept short-notice bookings (within 24 hours)</p>
                     </div>
-                    <Switch disabled={!isEditing} />
+                    <Switch
+                      disabled={!isEditing}
+                      checked={carerDetails.emergency_availability}
+                      onCheckedChange={(val) => setCarerDetails((c: any) => ({ ...c, emergency_availability: val }))}
+                    />
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div>
                       <p className="font-medium">Night Shifts</p>
                       <p className="text-sm text-muted-foreground">Available for overnight care (10pm - 6am)</p>
                     </div>
-                    <Switch disabled={!isEditing} />
+                    <Switch
+                      disabled={!isEditing}
+                      checked={carerDetails.night_shifts}
+                      onCheckedChange={(val) => setCarerDetails((c: any) => ({ ...c, night_shifts: val }))}
+                    />
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div>
                       <p className="font-medium">Live-in Care</p>
                       <p className="text-sm text-muted-foreground">Available for live-in care arrangements</p>
                     </div>
-                    <Switch disabled={!isEditing} />
+                    <Switch
+                      disabled={!isEditing}
+                      checked={carerDetails.live_in_care}
+                      onCheckedChange={(val) => setCarerDetails((c: any) => ({ ...c, live_in_care: val }))}
+                    />
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div>
                       <p className="font-medium">Show on Search</p>
                       <p className="text-sm text-muted-foreground">Appear in carer search results</p>
                     </div>
-                    <Switch disabled={!isEditing} defaultChecked />
+                    <Switch
+                      disabled={!isEditing}
+                      checked={carerDetails.show_on_search}
+                      onCheckedChange={(val) => setCarerDetails((c: any) => ({ ...c, show_on_search: val }))}
+                    />
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label>Travel Radius</Label>
-                    <Select defaultValue="10" disabled={!isEditing}>
+                    <Select
+                      value={carerDetails.travel_radius?.toString() || "10"}
+                      disabled={!isEditing}
+                      onValueChange={(val) => setCarerDetails((c: any) => ({ ...c, travel_radius: parseInt(val) }))}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -431,7 +656,11 @@ export default function CarerProfile() {
                   </div>
                   <div className="space-y-2">
                     <Label>Minimum Booking Duration</Label>
-                    <Select defaultValue="2" disabled={!isEditing}>
+                    <Select
+                      value={carerDetails.min_booking_duration?.toString() || "2"}
+                      disabled={!isEditing}
+                      onValueChange={(val) => setCarerDetails((c: any) => ({ ...c, min_booking_duration: parseInt(val) }))}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>

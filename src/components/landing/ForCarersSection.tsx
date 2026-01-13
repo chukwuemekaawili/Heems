@@ -13,7 +13,7 @@ const carerBenefits = [
 
 const ForCarersSection = () => {
   return (
-    <section className="py-20 lg:py-32 bg-background" id="for-carers">
+    <section className="py-20 lg:pt-32 lg:pb-16 bg-background" id="for-carers">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Content */}
@@ -22,15 +22,15 @@ const ForCarersSection = () => {
               <Star className="w-3 h-3 mr-1" />
               For Carers
             </Badge>
-            
+
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
               Your Skills.{" "}
               <span className="text-gradient">Your Terms.</span>
             </h2>
-            
+
             <p className="text-lg text-muted-foreground mb-8">
-              Join thousands of self-employed carers who've taken control of their careers. 
-              Set your own rates, choose your clients, and build lasting relationships — all while 
+              Join thousands of self-employed carers who've taken control of their careers.
+              Set your own rates, choose your clients, and build lasting relationships — all while
               we handle the admin, payments, and compliance.
             </p>
 

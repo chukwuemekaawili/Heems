@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,114 +7,223 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  FileText, 
-  Upload, 
-  CheckCircle2, 
-  Clock, 
+import {
+  FileText,
+  Upload,
+  CheckCircle2,
+  Clock,
   AlertCircle,
-  Download,
-  Eye,
-  Trash2,
   Shield,
   GraduationCap,
   CreditCard,
   FileCheck,
-  Calendar,
-  RefreshCw
+  ShieldCheck,
+  Users
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
-const documentCategories = [
-  { id: "identity", name: "Identity Documents", icon: CreditCard, required: true },
-  { id: "dbs", name: "DBS Certificate", icon: Shield, required: true },
-  { id: "right-to-work", name: "Right to Work", icon: FileCheck, required: true },
-  { id: "qualifications", name: "Qualifications & Training", icon: GraduationCap, required: false },
-  { id: "references", name: "References", icon: FileText, required: true },
-  { id: "insurance", name: "Insurance", icon: Shield, required: false },
+const documentTypes = [
+  { id: "passport", name: "ID & Passport", icon: CreditCard, required: true },
+  { id: "dbs", name: "Enhanced DBS", icon: Shield, required: true },
+  { id: "right_to_work", name: "Right to Work", icon: FileCheck, required: true },
+  { id: "insurance", name: "Public Liability Insurance", icon: ShieldCheck, required: true },
+  { id: "references", name: "Work References", icon: Users, required: true },
+  { id: "qualifications", name: "Clinical Training", icon: GraduationCap, required: false },
 ];
 
-const documents = [
-  { 
-    id: 1, 
-    name: "Passport", 
-    category: "identity", 
-    status: "verified", 
-    uploadedAt: "2025-06-15", 
-    expiresAt: "2030-06-15",
-    fileName: "passport_scan.pdf"
-  },
-  { 
-    id: 2, 
-    name: "Enhanced DBS Certificate", 
-    category: "dbs", 
-    status: "verified", 
-    uploadedAt: "2025-08-20", 
-    expiresAt: "2028-08-20",
-    fileName: "dbs_certificate.pdf"
-  },
-  { 
-    id: 3, 
-    name: "UK Visa", 
-    category: "right-to-work", 
-    status: "pending", 
-    uploadedAt: "2026-01-05", 
-    expiresAt: "2027-01-05",
-    fileName: "visa_document.pdf"
-  },
-  { 
-    id: 4, 
-    name: "NVQ Level 3 Certificate", 
-    category: "qualifications", 
-    status: "verified", 
-    uploadedAt: "2024-03-10", 
-    expiresAt: null,
-    fileName: "nvq_certificate.pdf"
-  },
-  { 
-    id: 5, 
-    name: "First Aid Training", 
-    category: "qualifications", 
-    status: "expiring", 
-    uploadedAt: "2024-02-15", 
-    expiresAt: "2026-02-15",
-    fileName: "first_aid_cert.pdf"
-  },
-  { 
-    id: 6, 
-    name: "Professional Reference - ABC Care", 
-    category: "references", 
-    status: "verified", 
-    uploadedAt: "2025-05-20", 
-    expiresAt: null,
-    fileName: "reference_abc.pdf"
-  },
-];
-
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case "verified":
-      return <Badge className="bg-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Verified</Badge>;
-    case "pending":
-      return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Pending Review</Badge>;
-    case "expiring":
-      return <Badge variant="outline" className="border-amber-500 text-amber-500"><AlertCircle className="h-3 w-3 mr-1" />Expiring Soon</Badge>;
-    case "expired":
-      return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" />Expired</Badge>;
-    case "rejected":
-      return <Badge variant="destructive">Rejected</Badge>;
-    default:
-      return <Badge variant="outline">Unknown</Badge>;
-  }
-};
+interface VerificationDoc {
+  id: string;
+  dbs_certificate_url: string | null;
+  dbs_status: string;
+  dbs_verified_at: string | null;
+  identity_verified: boolean;
+  right_to_work_verified: boolean;
+  address_verified: boolean;
+  reference_1_email: string | null;
+  reference_1_status: string;
+  reference_2_email: string | null;
+  reference_2_status: string;
+}
 
 export default function CarerDocuments() {
-  const [isUploading, setIsUploading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [verification, setVerification] = useState<VerificationDoc | null>(null);
+  const [carerDetails, setCarerDetails] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const verifiedCount = documents.filter(d => d.status === "verified").length;
-  const totalRequired = documentCategories.filter(c => c.required).length;
-  const completionPercentage = Math.round((verifiedCount / documents.length) * 100);
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  const fetchDocuments = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+
+      // Fetch carer verification data
+      const { data: verificationData } = await supabase
+        .from('carer_verification')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      setVerification(verificationData);
+
+      // Fetch carer details
+      const { data: carerData } = await supabase
+        .from('carer_details')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      setCarerDetails(carerData);
+
+    } catch (error: any) {
+      toast({
+        title: "Error loading documents",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile || !selectedType) {
+      toast({
+        title: "Missing information",
+        description: "Please select both a document type and a file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${user.id}/${selectedType}_${Date.now()}.${fileExt}`;
+
+      // Upload to Supabase Storage - Correct Bucket is 'verification-documents'
+      const { error: uploadError } = await supabase.storage
+        .from('verification-documents')
+        .upload(fileName, selectedFile);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('verification-documents')
+        .getPublicUrl(fileName);
+
+      // Update verification record based on document type
+      if (selectedType === 'dbs') {
+        await supabase
+          .from('carer_verification')
+          .upsert({
+            id: user.id,
+            dbs_certificate_url: publicUrl,
+            dbs_status: 'pending',
+          }, { onConflict: 'id' });
+      }
+
+      toast({
+        title: "Document uploaded",
+        description: "Your document has been submitted for review.",
+      });
+
+      setUploadDialogOpen(false);
+      setSelectedFile(null);
+      fetchDocuments();
+
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const getDocumentStatus = (type: string) => {
+    if (!verification && !carerDetails) return 'missing';
+
+    switch (type) {
+      case 'passport':
+        return verification?.identity_verified ? 'verified' : 'pending';
+      case 'dbs':
+        return verification?.dbs_status || 'missing';
+      case 'right_to_work':
+        return verification?.right_to_work_verified ? 'verified' :
+          carerDetails?.has_right_to_work ? 'pending' : 'missing';
+      case 'insurance':
+        return carerDetails?.has_insurance ? 'verified' : 'missing';
+      case 'references':
+        if (verification?.reference_1_status === 'verified' && verification?.reference_2_status === 'verified') {
+          return 'verified';
+        } else if (verification?.reference_1_email || verification?.reference_2_email) {
+          return 'pending';
+        }
+        return 'missing';
+      default:
+        return 'missing';
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "verified":
+        return <Badge className="bg-[#1a9e8c]"><CheckCircle2 className="h-3 w-3 mr-1" />Verified</Badge>;
+      case "pending":
+        return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+      case "missing":
+        return <Badge variant="outline"><AlertCircle className="h-3 w-3 mr-1" />Required</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const calculateProgress = () => {
+    let verified = 0;
+    let total = documentTypes.filter(d => d.required).length;
+
+    documentTypes.filter(d => d.required).forEach(doc => {
+      if (getDocumentStatus(doc.id) === 'verified') verified++;
+    });
+
+    return Math.round((verified / total) * 100);
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout role="carer">
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const progress = calculateProgress();
 
   return (
     <DashboardLayout role="carer">
@@ -122,10 +231,10 @@ export default function CarerDocuments() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Documents & Compliance</h1>
-            <p className="text-muted-foreground">Manage your verification documents</p>
+            <h1 className="text-2xl font-bold text-foreground">Documents & Verification</h1>
+            <p className="text-muted-foreground">Upload and manage your compliance documents</p>
           </div>
-          <Dialog open={isUploading} onOpenChange={setIsUploading}>
+          <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
             <DialogTrigger asChild>
               <Button>
                 <Upload className="h-4 w-4 mr-2" />
@@ -136,129 +245,133 @@ export default function CarerDocuments() {
               <DialogHeader>
                 <DialogTitle>Upload Document</DialogTitle>
                 <DialogDescription>
-                  Upload a new document for verification
+                  Select the document type and upload your file.
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Document Category</Label>
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {documentCategories.map(cat => (
-                        <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label>Document Type</Label>
+                  <select
+                    className="w-full p-2 border rounded-md"
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                  >
+                    <option value="">Select type...</option>
+                    {documentTypes.map(doc => (
+                      <option key={doc.id} value={doc.id}>{doc.name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Document Name</Label>
-                  <Input placeholder="e.g., Passport, DBS Certificate" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Expiry Date (if applicable)</Label>
-                  <Input type="date" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Upload File</Label>
-                  <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
-                    <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      Drag & drop or click to upload
-                    </p>
+                  <Label>File</Label>
+                  <Input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    disabled={uploading}
+                  />
+                  {selectedFile && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      PDF, JPG, PNG up to 10MB
+                      Selected: {selectedFile.name}
                     </p>
-                  </div>
+                  )}
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsUploading(false)}>Cancel</Button>
-                <Button onClick={() => setIsUploading(false)}>Upload</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setUploadDialogOpen(false);
+                    setSelectedFile(null);
+                  }}
+                  disabled={uploading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleUpload}
+                  disabled={!selectedType || !selectedFile || uploading}
+                  className="bg-[#1a9e8c] hover:bg-[#1a9e8c]/90"
+                >
+                  {uploading ? (
+                    <>
+                      <Clock className="mr-2 h-4 w-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Save & Upload
+                    </>
+                  )}
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
 
-        {/* Verification Status Card */}
-        <Card className="bg-gradient-to-r from-primary/10 to-secondary/10">
+        {/* Progress Card */}
+        <Card>
           <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Shield className="h-8 w-8 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Verification Status</h3>
-                  <p className="text-muted-foreground">
-                    {verifiedCount} of {documents.length} documents verified
-                  </p>
-                </div>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-semibold">Verification Progress</h2>
+                <p className="text-sm text-muted-foreground">
+                  {progress === 100 ? 'All required documents verified!' : 'Complete your document verification to start working'}
+                </p>
               </div>
-              <div className="flex-1 max-w-md">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Compliance Progress</span>
-                  <span className="text-sm font-bold">{completionPercentage}%</span>
-                </div>
-                <Progress value={completionPercentage} className="h-3" />
+              <div className="text-right">
+                <p className="text-3xl font-bold text-primary">{progress}%</p>
+                <p className="text-sm text-muted-foreground">Complete</p>
               </div>
-              <Badge className="bg-emerald-500 text-lg py-2 px-4">
-                <CheckCircle2 className="h-5 w-5 mr-2" />
-                Active Carer
-              </Badge>
             </div>
+            <Progress value={progress} className="h-3" />
           </CardContent>
         </Card>
 
-        {/* Document Categories Grid */}
+        {/* Document Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {documentCategories.map((category) => {
-            const categoryDocs = documents.filter(d => d.category === category.id);
-            const hasVerified = categoryDocs.some(d => d.status === "verified");
-            const Icon = category.icon;
-            
+          {documentTypes.map((doc) => {
+            const status = getDocumentStatus(doc.id);
+            const Icon = doc.icon;
+
             return (
-              <Card key={category.id} className={hasVerified ? "border-emerald-500/50" : ""}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                        hasVerified ? "bg-emerald-500/10" : "bg-muted"
-                      }`}>
-                        <Icon className={`h-5 w-5 ${hasVerified ? "text-emerald-500" : "text-muted-foreground"}`} />
-                      </div>
-                      <div>
-                        <CardTitle className="text-base">{category.name}</CardTitle>
-                        <CardDescription>
-                          {categoryDocs.length} document{categoryDocs.length !== 1 ? 's' : ''}
-                        </CardDescription>
-                      </div>
+              <Card key={doc.id} className={`${status === 'verified' ? 'border-[#1a9e8c]/50' : ''}`}>
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Icon className="h-6 w-6 text-primary" />
                     </div>
-                    {category.required && (
-                      <Badge variant="outline" className="text-xs">Required</Badge>
-                    )}
+                    {getStatusBadge(status)}
                   </div>
-                </CardHeader>
-                <CardContent>
-                  {categoryDocs.length > 0 ? (
-                    <div className="space-y-2">
-                      {categoryDocs.map(doc => (
-                        <div key={doc.id} className="flex items-center justify-between text-sm">
-                          <span className="truncate">{doc.name}</span>
-                          {getStatusBadge(doc.status)}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <Button variant="outline" size="sm" className="w-full" onClick={() => {
-                      setSelectedCategory(category.id);
-                      setIsUploading(true);
-                    }}>
+                  <h3 className="font-semibold mb-1">{doc.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {doc.required ? 'Required document' : 'Optional document'}
+                  </p>
+                  {status === 'verified' && verification && (
+                    <p className="text-xs text-muted-foreground">
+                      Verified on {verification.dbs_verified_at ? format(new Date(verification.dbs_verified_at), 'dd MMM yyyy') : 'N/A'}
+                    </p>
+                  )}
+                  {status === 'missing' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        setSelectedType(doc.id);
+                        setUploadDialogOpen(true);
+                      }}
+                    >
                       <Upload className="h-4 w-4 mr-2" />
                       Upload
                     </Button>
+                  )}
+                  {status === 'pending' && (
+                    <p className="text-xs text-amber-600 flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      Under review
+                    </p>
                   )}
                 </CardContent>
               </Card>
@@ -266,100 +379,67 @@ export default function CarerDocuments() {
           })}
         </div>
 
-        {/* All Documents Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>All Documents</CardTitle>
-            <CardDescription>Complete list of your uploaded documents</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {documents.map((doc) => (
-                <div 
-                  key={doc.id}
-                  className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
+        {/* DBS Details */}
+        {verification?.dbs_certificate_url && (
+          <Card>
+            <CardHeader>
+              <CardTitle>DBS Certificate</CardTitle>
+              <CardDescription>Your enhanced DBS check details</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Enhanced DBS Certificate</p>
+                  <p className="text-sm text-muted-foreground">
+                    Status: {verification.dbs_status || 'Pending'}
+                  </p>
+                </div>
+                <a
+                  href={verification.dbs_certificate_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="font-medium">{doc.name}</p>
-                      <p className="text-sm text-muted-foreground">{doc.fileName}</p>
-                    </div>
-                  </div>
-                  <div className="hidden md:block text-center">
-                    <p className="text-sm text-muted-foreground">Uploaded</p>
-                    <p className="text-sm font-medium">
-                      {new Date(doc.uploadedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </p>
-                  </div>
-                  <div className="hidden md:block text-center">
-                    <p className="text-sm text-muted-foreground">Expires</p>
-                    <p className="text-sm font-medium">
-                      {doc.expiresAt ? (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {new Date(doc.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </span>
-                      ) : (
-                        "N/A"
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    {getStatusBadge(doc.status)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="icon" variant="ghost">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost">
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    {doc.status === "expiring" && (
-                      <Button size="icon" variant="ghost" className="text-amber-500">
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
-                    )}
-                    <Button size="icon" variant="ghost" className="text-destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Expiring Documents Alert */}
-        <Card className="border-amber-500/50 bg-amber-500/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-600">
-              <AlertCircle className="h-5 w-5" />
-              Documents Expiring Soon
-            </CardTitle>
-            <CardDescription>Please renew these documents before they expire</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {documents.filter(d => d.status === "expiring").map(doc => (
-                <div key={doc.id} className="flex items-center justify-between p-3 rounded-lg bg-background border">
-                  <div>
-                    <p className="font-medium">{doc.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Expires on {new Date(doc.expiresAt!).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
-                  </div>
-                  <Button size="sm">
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Renew
+                  <Button variant="outline" size="sm">
+                    <FileText className="h-4 w-4 mr-2" />
+                    View
                   </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Reference Status */}
+        {(verification?.reference_1_email || verification?.reference_2_email) && (
+          <Card>
+            <CardHeader>
+              <CardTitle>References</CardTitle>
+              <CardDescription>Status of your work references</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {verification?.reference_1_email && (
+                  <div className="flex items-center justify-between p-4 rounded-lg border">
+                    <div>
+                      <p className="font-medium">Reference 1</p>
+                      <p className="text-sm text-muted-foreground">{verification.reference_1_email}</p>
+                    </div>
+                    {getStatusBadge(verification.reference_1_status || 'pending')}
+                  </div>
+                )}
+                {verification?.reference_2_email && (
+                  <div className="flex items-center justify-between p-4 rounded-lg border">
+                    <div>
+                      <p className="font-medium">Reference 2</p>
+                      <p className="text-sm text-muted-foreground">{verification.reference_2_email}</p>
+                    </div>
+                    {getStatusBadge(verification.reference_2_status || 'pending')}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </DashboardLayout>
   );

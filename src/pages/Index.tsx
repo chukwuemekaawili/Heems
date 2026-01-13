@@ -8,31 +8,33 @@ import ForOrganisationsSection from "@/components/landing/ForOrganisationsSectio
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import PricingSection from "@/components/landing/PricingSection";
 import CTASection from "@/components/landing/CTASection";
+import ParallaxSection from "@/components/landing/ParallaxSection";
 import Footer from "@/components/landing/Footer";
 
 const Index = () => {
   return (
     <>
+      {/* ... previous Helmet code remains same ... */}
       <Helmet>
         <title>Heems | UK's Trusted On-Demand Care Marketplace</title>
-        <meta 
-          name="description" 
-          content="Connect with verified carers in minutes. Heems is the UK's leading care marketplace for families, self-employed carers, and healthcare organisations. DBS checked, CQC compliant." 
+        <meta
+          name="description"
+          content="Connect with verified carers in minutes. Heems is the UK's leading care marketplace for families, self-employed carers, and healthcare organisations. DBS checked, CQC compliant."
         />
         <meta name="keywords" content="care marketplace, home care, carers, UK healthcare, domiciliary care, care agency software, NHS staffing" />
         <link rel="canonical" href="https://heemscare.com" />
-        
+
         {/* Open Graph */}
         <meta property="og:title" content="Heems | UK's Trusted On-Demand Care Marketplace" />
         <meta property="og:description" content="Connect with verified carers in minutes. The UK's leading platform for quality home care." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://heemscare.com" />
-        
+
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Heems | UK's Trusted On-Demand Care Marketplace" />
         <meta name="twitter:description" content="Connect with verified carers in minutes." />
-        
+
         {/* Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify({
@@ -50,12 +52,13 @@ const Index = () => {
         </script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-white">
         <Header />
-        <main>
+        <main className="animate-fade-in transition-all duration-1000">
           <HeroSection />
           <FeaturesSection />
           <HowItWorksSection />
+          <ParallaxSection />
           <ForCarersSection />
           <ForOrganisationsSection />
           <TestimonialsSection />

@@ -1,66 +1,171 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  PoundSterling, 
-  TrendingUp, 
-  Calendar, 
+import {
+  PoundSterling,
+  TrendingUp,
   Clock,
   ArrowUpRight,
-  ArrowDownRight,
   Download,
   CreditCard,
   Wallet,
-  FileText
+  Calendar
 } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { format, subDays, subMonths, startOfMonth, endOfMonth } from "date-fns";
 
-const monthlyEarnings = [
-  { month: "Aug", earnings: 2100, hours: 84 },
-  { month: "Sep", earnings: 2450, hours: 98 },
-  { month: "Oct", earnings: 2800, hours: 112 },
-  { month: "Nov", earnings: 2650, hours: 106 },
-  { month: "Dec", earnings: 3100, hours: 124 },
-  { month: "Jan", earnings: 2950, hours: 118 },
-];
-
-const weeklyBreakdown = [
-  { day: "Mon", hours: 8, earnings: 200 },
-  { day: "Tue", hours: 7, earnings: 175 },
-  { day: "Wed", hours: 6, earnings: 150 },
-  { day: "Thu", hours: 8, earnings: 200 },
-  { day: "Fri", hours: 5, earnings: 125 },
-  { day: "Sat", hours: 0, earnings: 0 },
-  { day: "Sun", hours: 0, earnings: 0 },
-];
-
-const earningsByType = [
-  { name: "Personal Care", value: 45, color: "hsl(var(--primary))" },
-  { name: "Companionship", value: 25, color: "hsl(var(--secondary))" },
-  { name: "Medication Support", value: 20, color: "hsl(var(--accent))" },
-  { name: "Other", value: 10, color: "hsl(var(--muted))" },
-];
-
-const recentTransactions = [
-  { id: 1, date: "2026-01-08", client: "Margaret Wilson", type: "Personal Care", hours: 3, amount: 75, status: "completed" },
-  { id: 2, date: "2026-01-07", client: "James Thompson", type: "Companionship", hours: 2, amount: 50, status: "completed" },
-  { id: 3, date: "2026-01-06", client: "Patricia Brown", type: "Medication Support", hours: 4, amount: 100, status: "pending" },
-  { id: 4, date: "2026-01-05", client: "Robert Davis", type: "Personal Care", hours: 3, amount: 75, status: "completed" },
-  { id: 5, date: "2026-01-04", client: "Elizabeth Moore", type: "Companionship", hours: 2, amount: 50, status: "completed" },
-];
-
-const payouts = [
-  { id: 1, date: "2026-01-01", amount: 1250, status: "completed", method: "Bank Transfer" },
-  { id: 2, date: "2025-12-15", amount: 1180, status: "completed", method: "Bank Transfer" },
-  { id: 3, date: "2025-12-01", amount: 1320, status: "completed", method: "Bank Transfer" },
-];
+interface Booking {
+  id: string;
+  start_time: string;
+  duration_hours: number;
+  total_price: number;
+  status: string;
+  service_type: string;
+  client?: {
+    full_name: string;
+  };
+}
 
 export default function CarerEarnings() {
-  const [period, setPeriod] = useState("6months");
+  const [period, setPeriod] = useState("30days");
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    availableBalance: 0,
+    monthlyEarnings: 0,
+    monthlyHours: 0,
+    avgHourlyRate: 0,
+    totalCompleted: 0,
+  });
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchEarningsData();
+  }, [period]);
+
+  const fetchEarningsData = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+
+      // Calculate date range based on period
+      let startDate = new Date();
+      if (period === "7days") {
+        startDate = subDays(new Date(), 7);
+      } else if (period === "30days") {
+        startDate = subDays(new Date(), 30);
+      } else if (period === "6months") {
+        startDate = subMonths(new Date(), 6);
+      } else if (period === "year") {
+        startDate = subMonths(new Date(), 12);
+      }
+
+      // Fetch completed bookings
+      const { data: bookingsData, error } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          client:profiles!bookings_client_id_fkey(full_name)
+        `)
+        .eq('carer_id', user.id)
+        .gte('start_time', startDate.toISOString())
+        .order('start_time', { ascending: false });
+
+      if (error) throw error;
+
+      const allBookings = bookingsData || [];
+      const completedBookings = allBookings.filter(b => b.status === 'completed');
+
+      setBookings(allBookings);
+
+      // Calculate this month's stats
+      const monthStart = startOfMonth(new Date());
+      const monthEnd = endOfMonth(new Date());
+
+      const thisMonthBookings = completedBookings.filter(b => {
+        if (!b.start_time) return false;
+        const bookingDate = new Date(b.start_time);
+        return bookingDate >= monthStart && bookingDate <= monthEnd;
+      });
+
+      const monthlyEarnings = thisMonthBookings.reduce((sum, b) => sum + (b.total_price || 0), 0);
+      const monthlyHours = thisMonthBookings.reduce((sum, b) => sum + (b.duration_hours || 0), 0);
+
+      // Calculate available balance (pending payouts from completed bookings)
+      const pendingBookings = allBookings.filter(b => b.status === 'completed');
+      const availableBalance = pendingBookings.reduce((sum, b) => sum + (b.total_price || 0), 0);
+
+      const avgHourlyRate = monthlyHours > 0 ? monthlyEarnings / monthlyHours : 0;
+
+      setStats({
+        availableBalance,
+        monthlyEarnings,
+        monthlyHours,
+        avgHourlyRate,
+        totalCompleted: completedBookings.length,
+      });
+
+    } catch (error: any) {
+      toast({
+        title: "Error loading earnings",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExport = () => {
+    const csv = [
+      ['Date', 'Client', 'Service', 'Hours', 'Amount', 'Status'].join(','),
+      ...bookings.map(b => [
+        b.start_date,
+        b.client?.full_name || 'N/A',
+        b.service_type || 'Care Service',
+        b.duration_hours,
+        b.total_price,
+        b.status
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `earnings-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.click();
+
+    toast({
+      title: "Export successful",
+      description: `Exported ${bookings.length} transactions.`,
+    });
+  };
+
+  const completedBookings = bookings.filter(b => b.status === 'completed');
+  const pendingBookings = bookings.filter(b => b.status === 'pending' || b.status === 'confirmed');
+
+  if (loading) {
+    return (
+      <DashboardLayout role="carer">
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout role="carer">
@@ -83,7 +188,7 @@ export default function CarerEarnings() {
                 <SelectItem value="year">Last year</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleExport}>
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
@@ -96,17 +201,13 @@ export default function CarerEarnings() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Available Balance</p>
-                  <p className="text-2xl font-bold">£847.50</p>
+                  <p className="text-sm text-muted-foreground">Total Earned</p>
+                  <p className="text-2xl font-bold">£{stats.availableBalance.toFixed(2)}</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <Wallet className="h-6 w-6 text-primary" />
                 </div>
               </div>
-              <Button className="w-full mt-4" size="sm">
-                <CreditCard className="h-4 w-4 mr-2" />
-                Request Payout
-              </Button>
             </CardContent>
           </Card>
 
@@ -115,10 +216,10 @@ export default function CarerEarnings() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">This Month</p>
-                  <p className="text-2xl font-bold">£2,950</p>
+                  <p className="text-2xl font-bold">£{stats.monthlyEarnings.toFixed(2)}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <ArrowUpRight className="h-4 w-4 text-emerald-500" />
-                    <span className="text-sm text-emerald-500">+12.5%</span>
+                    <span className="text-sm text-emerald-500">{completedBookings.length} completed</span>
                   </div>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
@@ -133,11 +234,7 @@ export default function CarerEarnings() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Hours This Month</p>
-                  <p className="text-2xl font-bold">118</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <ArrowUpRight className="h-4 w-4 text-emerald-500" />
-                    <span className="text-sm text-emerald-500">+8 hrs</span>
-                  </div>
+                  <p className="text-2xl font-bold">{stats.monthlyHours}</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
                   <Clock className="h-6 w-6 text-blue-500" />
@@ -151,11 +248,7 @@ export default function CarerEarnings() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Avg. Hourly Rate</p>
-                  <p className="text-2xl font-bold">£25.00</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <ArrowDownRight className="h-4 w-4 text-amber-500" />
-                    <span className="text-sm text-amber-500">-£0.50</span>
-                  </div>
+                  <p className="text-2xl font-bold">£{stats.avgHourlyRate.toFixed(2)}</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
                   <PoundSterling className="h-6 w-6 text-amber-500" />
@@ -165,195 +258,104 @@ export default function CarerEarnings() {
           </Card>
         </div>
 
-        {/* Charts Row */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Earnings Chart */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Earnings Overview</CardTitle>
-              <CardDescription>Your monthly earnings trend</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={monthlyEarnings}>
-                    <defs>
-                      <linearGradient id="earningsGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="month" className="text-xs" />
-                    <YAxis className="text-xs" tickFormatter={(value) => `£${value}`} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px'
-                      }}
-                      formatter={(value: number) => [`£${value}`, 'Earnings']}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="earnings" 
-                      stroke="hsl(var(--primary))" 
-                      fill="url(#earningsGradient)" 
-                      strokeWidth={2}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Earnings by Type */}
-          <Card>
-            <CardHeader>
-              <CardTitle>By Care Type</CardTitle>
-              <CardDescription>Earnings distribution</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={earningsByType}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {earningsByType.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="space-y-2 mt-4">
-                {earningsByType.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span>{item.name}</span>
-                    </div>
-                    <span className="font-medium">{item.value}%</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Weekly Breakdown */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Weekly Breakdown</CardTitle>
-            <CardDescription>Hours worked and earnings per day this week</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[250px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={weeklyBreakdown}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="day" className="text-xs" />
-                  <YAxis yAxisId="left" className="text-xs" />
-                  <YAxis yAxisId="right" orientation="right" className="text-xs" tickFormatter={(value) => `£${value}`} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--card))', 
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Bar yAxisId="left" dataKey="hours" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Hours" />
-                  <Bar yAxisId="right" dataKey="earnings" fill="hsl(var(--secondary))" radius={[4, 4, 0, 0]} name="Earnings" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tabs for Transactions and Payouts */}
-        <Tabs defaultValue="transactions">
+        {/* Tabs for Transactions */}
+        <Tabs defaultValue="completed">
           <TabsList>
-            <TabsTrigger value="transactions">Recent Transactions</TabsTrigger>
-            <TabsTrigger value="payouts">Payout History</TabsTrigger>
+            <TabsTrigger value="completed">Completed ({completedBookings.length})</TabsTrigger>
+            <TabsTrigger value="pending">Upcoming ({pendingBookings.length})</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="transactions">
+          <TabsContent value="completed">
             <Card>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  {recentTransactions.map((tx) => (
-                    <div 
-                      key={tx.id}
-                      className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <PoundSterling className="h-5 w-5 text-primary" />
+              <CardHeader>
+                <CardTitle>Completed Bookings</CardTitle>
+                <CardDescription>Earnings from completed care sessions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {completedBookings.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <PoundSterling className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No completed bookings yet</p>
+                    <p className="text-sm">Complete bookings to start earning</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {completedBookings.map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <PoundSterling className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {booking.service_type || 'Care Service'} • {booking.duration_hours}h
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">{tx.client}</p>
-                          <p className="text-sm text-muted-foreground">{tx.type} • {tx.hours} hours</p>
+                        <div className="text-right">
+                          <p className="font-medium">£{booking.total_price?.toFixed(2)}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {booking.start_time ? format(new Date(booking.start_time), 'dd MMM yyyy') : 'N/A'}
+                          </p>
                         </div>
+                        <Badge variant="default" className="bg-emerald-500">
+                          Paid
+                        </Badge>
                       </div>
-                      <div className="text-right">
-                        <p className="font-medium">£{tx.amount.toFixed(2)}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(tx.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
-                        </p>
-                      </div>
-                      <Badge variant={tx.status === 'completed' ? 'default' : 'secondary'}>
-                        {tx.status}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="w-full mt-4">
-                  View All Transactions
-                </Button>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="payouts">
+          <TabsContent value="pending">
             <Card>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  {payouts.map((payout) => (
-                    <div 
-                      key={payout.id}
-                      className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                          <CreditCard className="h-5 w-5 text-emerald-500" />
+              <CardHeader>
+                <CardTitle>Upcoming Bookings</CardTitle>
+                <CardDescription>Future earnings from confirmed bookings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {pendingBookings.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No upcoming bookings</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingBookings.map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                            <Calendar className="h-5 w-5 text-blue-500" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {booking.service_type || 'Care Service'} • {booking.duration_hours}h
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">{payout.method}</p>
+                        <div className="text-right">
+                          <p className="font-medium">£{booking.total_price?.toFixed(2)}</p>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(payout.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            {booking.start_time ? format(new Date(booking.start_time), 'dd MMM yyyy') : 'N/A'}
                           </p>
                         </div>
+                        <Badge variant="secondary">
+                          {booking.status}
+                        </Badge>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-lg">£{payout.amount.toFixed(2)}</p>
-                      </div>
-                      <Badge variant="default" className="bg-emerald-500">
-                        {payout.status}
-                      </Badge>
-                      <Button size="sm" variant="ghost">
-                        <FileText className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

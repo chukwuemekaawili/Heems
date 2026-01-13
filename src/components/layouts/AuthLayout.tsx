@@ -9,77 +9,82 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
   return (
-    <div className="min-h-screen flex">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-hero relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-foreground/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 -left-20 w-72 h-72 bg-secondary/10 rounded-full blur-3xl" />
-        </div>
-        
-        <div className="relative z-10 flex flex-col justify-between p-12 w-full">
+    <div className="min-h-screen flex bg-white font-sans overflow-hidden">
+      {/* Left Panel - Branding & Image */}
+      <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden bg-[#111827]">
+        {/* Background Image with Hover Zoom effect */}
+        <div
+          className="absolute inset-0 opacity-60 bg-cover bg-center transition-transform duration-[20000ms] hover:scale-110"
+          style={{ backgroundImage: 'url("/auth_side.png")' }}
+        />
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111827]/40 via-[#111827]/80 to-[#111827]" />
+
+        <div className="relative z-10 flex flex-col justify-between p-12 w-full h-full">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center">
-              <Heart className="w-5 h-5 text-primary-foreground fill-primary-foreground" />
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center group-hover:bg-[#1a9e8c] transition-all duration-500">
+              <Heart className="w-6 h-6 text-[#111827] group-hover:text-white fill-current" />
             </div>
-            <span className="text-2xl font-bold text-primary-foreground">Heems</span>
+            <span className="text-3xl font-black text-white tracking-tighter">Heems</span>
           </Link>
 
           {/* Content */}
           <div className="max-w-md">
-            <h2 className="text-4xl font-bold text-primary-foreground mb-4">
-              Quality Care at Your Fingertips
+            <div className="flex items-center gap-3 mb-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#1a9e8c]" />
+              <span className="text-xs font-black text-white/40 uppercase tracking-[0.25em]">
+                Clinical Infrastructure
+              </span>
+            </div>
+            <h2 className="text-5xl lg:text-6xl font-black text-white mb-6 tracking-tighter leading-[0.95]">
+              Quality care, <br />
+              <span className="text-[#1a9e8c]">delivered smarter.</span>
             </h2>
-            <p className="text-lg text-primary-foreground/80">
-              Join thousands of families and carers who trust Heems for reliable, 
-              verified care across the UK.
+            <p className="text-lg text-white/50 font-medium leading-relaxed mb-8">
+              Connect with the UK's most elite care professionals through our proprietary matching engine.
             </p>
-            
-            {/* Stats */}
-            <div className="mt-8 grid grid-cols-3 gap-6">
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-8 pt-8 border-t border-white/10">
               <div>
-                <p className="text-3xl font-bold text-primary-foreground">10K+</p>
-                <p className="text-sm text-primary-foreground/70">Verified Carers</p>
+                <p className="text-3xl font-black text-white mb-1">1.2%</p>
+                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Acceptance Rate</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-primary-foreground">98%</p>
-                <p className="text-sm text-primary-foreground/70">Satisfaction</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-primary-foreground">50+</p>
-                <p className="text-sm text-primary-foreground/70">NHS Partners</p>
+                <p className="text-3xl font-black text-white mb-1">24/7</p>
+                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Clinical Support</p>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Heems Care Ltd. All rights reserved.
-          </p>
+          <div className="flex justify-between items-center text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
+            <span>© {new Date().getFullYear()} Heems Care Ltd.</span>
+          </div>
         </div>
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-white overflow-y-auto">
         {/* Mobile Header */}
-        <div className="lg:hidden p-4 border-b border-border">
+        <div className="lg:hidden p-6 border-b border-black/[0.03]">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Heart className="w-4 h-4 text-primary-foreground fill-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl bg-[#111827] flex items-center justify-center">
+              <Heart className="w-5 h-5 text-white fill-current" />
             </div>
-            <span className="text-xl font-bold text-foreground">Heems</span>
+            <span className="text-2xl font-black text-[#111827] tracking-tight">Heems</span>
           </Link>
         </div>
 
-        <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-          <div className="w-full max-w-md">
+        <div className="flex-1 flex items-center justify-center p-8 sm:p-12">
+          <div className="w-full max-w-md animate-in-up">
             <div className="mb-8">
-              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+              <h1 className="text-4xl font-black text-[#111827] mb-3 tracking-tight">
                 {title}
               </h1>
-              <p className="text-muted-foreground">{subtitle}</p>
+              <p className="text-base text-[#4B5563] font-medium leading-relaxed">{subtitle}</p>
             </div>
             {children}
           </div>

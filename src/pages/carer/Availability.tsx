@@ -8,15 +8,20 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { 
-  Calendar as CalendarIcon, 
-  Clock, 
-  Plus, 
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  Plus,
   MapPin,
   Settings,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Loader2
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
+import { format } from "date-fns";
 
 const timeSlots = [
   "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00",
@@ -39,6 +44,9 @@ export default function CarerAvailability() {
   const [emergencyAvailable, setEmergencyAvailable] = useState(false);
   const [travelRadius, setTravelRadius] = useState("10");
   const [isAddingSlot, setIsAddingSlot] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const { toast } = useToast();
 
   const [weeklySchedule, setWeeklySchedule] = useState({
     Monday: { enabled: true, start: "08:00", end: "18:00" },
@@ -49,6 +57,74 @@ export default function CarerAvailability() {
     Saturday: { enabled: false, start: "09:00", end: "14:00" },
     Sunday: { enabled: false, start: "09:00", end: "14:00" },
   });
+
+  useEffect(() => {
+    fetchAvailabilityData();
+  }, []);
+
+  const fetchAvailabilityData = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch Carer Details for preferences
+      const { data: carerData } = await supabase
+        .from("carer_details")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (carerData) {
+        setInstantBooking(carerData.instant_booking ?? true);
+        setEmergencyAvailable(carerData.emergency_availability ?? false);
+        setTravelRadius(carerData.travel_radius?.toString() || "10");
+      }
+
+      // Fetch real bookings
+      const { data: bookingsData } = await supabase
+        .from("bookings")
+        .select(`
+          *,
+          client:profiles!bookings_client_id_fkey(full_name)
+        `)
+        .eq("carer_id", user.id)
+        .gte("start_time", new Date().toISOString())
+        .order("start_time", { ascending: true });
+
+      setBookings(bookingsData || []);
+
+    } catch (error: any) {
+      console.error("Error fetching availability:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updatePreference = async (field: string, value: any) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from("carer_details")
+        .update({ [field]: value })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Preferences Updated",
+        description: "Your booking preferences have been saved.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
 
   const toggleDay = (day: string) => {
     setWeeklySchedule(prev => ({
@@ -68,9 +144,9 @@ export default function CarerAvailability() {
           </div>
           <Dialog open={isAddingSlot} onOpenChange={setIsAddingSlot}>
             <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Time Block
+              <Button size="sm" className="sm:size-default whitespace-nowrap">
+                <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Add Time Block</span>
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -132,9 +208,9 @@ export default function CarerAvailability() {
                   </Select>
                 </div>
               </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddingSlot(false)}>Cancel</Button>
-                <Button onClick={() => setIsAddingSlot(false)}>Save Block</Button>
+              <DialogFooter className="flex-col sm:flex-row gap-2">
+                <Button variant="outline" className="w-full sm:w-auto" onClick={() => setIsAddingSlot(false)}>Cancel</Button>
+                <Button className="w-full sm:w-auto" onClick={() => setIsAddingSlot(false)}>Save Block</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -160,37 +236,37 @@ export default function CarerAvailability() {
                 />
                 <div className="flex-1 space-y-4">
                   <h3 className="font-semibold text-lg">
-                    {selectedDate?.toLocaleDateString('en-GB', { 
-                      weekday: 'long', 
-                      day: 'numeric', 
-                      month: 'long' 
+                    {selectedDate?.toLocaleDateString('en-GB', {
+                      weekday: 'long',
+                      day: 'numeric',
+                      month: 'long'
                     })}
                   </h3>
                   <div className="space-y-3">
-                    {scheduledBookings
-                      .filter(b => b.date === selectedDate?.toISOString().split('T')[0])
+                    {bookings
+                      .filter(b => b.start_time?.split('T')[0] === selectedDate?.toISOString().split('T')[0])
                       .map(booking => (
-                        <div 
+                        <div
                           key={booking.id}
                           className="p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
                         >
                           <div className="flex items-start justify-between">
                             <div>
-                              <p className="font-medium">{booking.client}</p>
-                              <p className="text-sm text-muted-foreground">{booking.type}</p>
+                              <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
+                              <p className="text-sm text-muted-foreground">{booking.service_type || 'Care Service'}</p>
                               <div className="flex items-center gap-1 mt-1 text-sm text-muted-foreground">
                                 <Clock className="h-3 w-3" />
-                                {booking.time}
+                                {format(new Date(booking.start_time), 'HH:mm')} - {format(new Date(booking.end_time), 'HH:mm')}
                               </div>
                             </div>
-                            <Badge variant={booking.status === 'confirmed' ? 'default' : 'secondary'}>
+                            <Badge variant={booking.status === 'confirmed' ? 'default' : 'secondary'} className="capitalize">
                               {booking.status}
                             </Badge>
                           </div>
                         </div>
                       ))
                     }
-                    {scheduledBookings.filter(b => b.date === selectedDate?.toISOString().split('T')[0]).length === 0 && (
+                    {bookings.filter(b => b.start_time?.split('T')[0] === selectedDate?.toISOString().split('T')[0]).length === 0 && (
                       <p className="text-muted-foreground text-sm">No bookings scheduled for this day</p>
                     )}
                   </div>
@@ -214,21 +290,39 @@ export default function CarerAvailability() {
                     <Label>Instant Booking</Label>
                     <p className="text-xs text-muted-foreground">Allow clients to book without approval</p>
                   </div>
-                  <Switch checked={instantBooking} onCheckedChange={setInstantBooking} />
+                  <Switch
+                    checked={instantBooking}
+                    onCheckedChange={(val) => {
+                      setInstantBooking(val);
+                      updatePreference("instant_booking", val);
+                    }}
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label>Emergency Available</Label>
                     <p className="text-xs text-muted-foreground">Accept short-notice bookings</p>
                   </div>
-                  <Switch checked={emergencyAvailable} onCheckedChange={setEmergencyAvailable} />
+                  <Switch
+                    checked={emergencyAvailable}
+                    onCheckedChange={(val) => {
+                      setEmergencyAvailable(val);
+                      updatePreference("emergency_availability", val);
+                    }}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
                     Travel Radius
                   </Label>
-                  <Select value={travelRadius} onValueChange={setTravelRadius}>
+                  <Select
+                    value={travelRadius}
+                    onValueChange={(val) => {
+                      setTravelRadius(val);
+                      updatePreference("travel_radius", parseInt(val));
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -254,7 +348,7 @@ export default function CarerAvailability() {
                   {weekDays.map(day => (
                     <div key={day} className="flex items-center justify-between py-2 border-b last:border-0">
                       <div className="flex items-center gap-3">
-                        <Switch 
+                        <Switch
                           checked={weeklySchedule[day as keyof typeof weeklySchedule].enabled}
                           onCheckedChange={() => toggleDay(day)}
                         />
@@ -287,38 +381,46 @@ export default function CarerAvailability() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {scheduledBookings.map(booking => (
-                <div 
-                  key={booking.id}
-                  className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <CalendarIcon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">{booking.client}</p>
-                      <p className="text-sm text-muted-foreground">{booking.type}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">{new Date(booking.date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</p>
-                    <p className="text-sm text-muted-foreground">{booking.time}</p>
-                  </div>
-                  <Badge variant={booking.status === 'confirmed' ? 'default' : 'secondary'}>
-                    {booking.status}
-                  </Badge>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline">View</Button>
-                    {booking.status === 'pending' && (
-                      <>
-                        <Button size="sm" variant="default">Accept</Button>
-                        <Button size="sm" variant="ghost">Decline</Button>
-                      </>
-                    )}
-                  </div>
+              {bookings.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>No upcoming bookings found</p>
                 </div>
-              ))}
+              ) : (
+                bookings.slice(0, 5).map(booking => (
+                  <div
+                    key={booking.id}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors gap-4"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{booking.client?.full_name || 'Client'}</p>
+                        <p className="text-sm text-muted-foreground">{booking.service_type || 'Care'}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:flex sm:items-center gap-4 sm:gap-6">
+                      <div className="sm:text-right">
+                        <p className="font-medium text-sm sm:text-base">
+                          {format(new Date(booking.start_time), 'EEE, dd MMM')}
+                        </p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          {format(new Date(booking.start_time), 'HH:mm')}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-end sm:justify-start gap-3">
+                        <Badge variant={booking.status === 'confirmed' ? 'default' : 'secondary'} className="capitalize">
+                          {booking.status}
+                        </Badge>
+                        <Button size="sm" variant="outline" className="hidden sm:inline-flex">View</Button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>

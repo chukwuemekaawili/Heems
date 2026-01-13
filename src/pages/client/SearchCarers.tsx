@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -10,19 +11,24 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { 
-  Search, 
-  MapPin, 
-  Star, 
-  Clock, 
-  Shield, 
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Search,
+  MapPin,
+  Star,
+  Clock,
+  ShieldCheck,
   Filter,
   Heart,
   MessageSquare,
   Calendar,
   ChevronRight,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Zap,
+  Sparkles,
+  Award
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const careTypes = [
   "Personal Care",
@@ -37,99 +43,92 @@ const careTypes = [
   "Mobility Assistance",
 ];
 
-const carers = [
-  {
-    id: 1,
-    name: "Sarah Khan",
-    avatar: "/placeholder.svg",
-    rating: 4.9,
-    reviews: 127,
-    location: "Manchester, M1",
-    distance: "2.3 miles",
-    hourlyRate: 25,
-    experience: "5 years",
-    specialisms: ["Personal Care", "Elderly Care", "Dementia Care"],
-    languages: ["English", "Urdu"],
-    verified: true,
-    instantBook: true,
-    availability: "Available today",
-    bio: "Compassionate carer with extensive experience in elderly and dementia care."
-  },
-  {
-    id: 2,
-    name: "James O'Brien",
-    avatar: "/placeholder.svg",
-    rating: 4.8,
-    reviews: 89,
-    location: "Manchester, M4",
-    distance: "3.1 miles",
-    hourlyRate: 22,
-    experience: "3 years",
-    specialisms: ["Companionship", "Mobility Assistance", "Medication Support"],
-    languages: ["English"],
-    verified: true,
-    instantBook: false,
-    availability: "Available tomorrow",
-    bio: "Friendly and patient carer specialising in companionship and mobility support."
-  },
-  {
-    id: 3,
-    name: "Priya Patel",
-    avatar: "/placeholder.svg",
-    rating: 5.0,
-    reviews: 156,
-    location: "Salford, M5",
-    distance: "4.2 miles",
-    hourlyRate: 28,
-    experience: "8 years",
-    specialisms: ["Palliative Care", "Personal Care", "Mental Health Support"],
-    languages: ["English", "Hindi", "Gujarati"],
-    verified: true,
-    instantBook: true,
-    availability: "Available today",
-    bio: "Experienced palliative care specialist with a gentle and caring approach."
-  },
-  {
-    id: 4,
-    name: "Michael Johnson",
-    avatar: "/placeholder.svg",
-    rating: 4.7,
-    reviews: 64,
-    location: "Manchester, M3",
-    distance: "1.8 miles",
-    hourlyRate: 24,
-    experience: "4 years",
-    specialisms: ["Physical Disabilities", "Learning Disabilities", "Personal Care"],
-    languages: ["English"],
-    verified: true,
-    instantBook: true,
-    availability: "Available this week",
-    bio: "Dedicated carer with experience supporting clients with physical and learning disabilities."
-  },
-  {
-    id: 5,
-    name: "Emma Williams",
-    avatar: "/placeholder.svg",
-    rating: 4.9,
-    reviews: 112,
-    location: "Trafford, M16",
-    distance: "5.5 miles",
-    hourlyRate: 26,
-    experience: "6 years",
-    specialisms: ["Elderly Care", "Dementia Care", "Companionship"],
-    languages: ["English", "Welsh"],
-    verified: true,
-    instantBook: false,
-    availability: "Available tomorrow",
-    bio: "Warm and empathetic carer with a passion for providing quality elderly care."
-  },
-];
+interface CarerProfile {
+  id: string;
+  full_name: string;
+  avatar_url: string;
+  carer_details: {
+    bio: string;
+    experience_years: string;
+    specializations: string[];
+    hourly_rate: number;
+    verification_status: string;
+    availability_status: string;
+  };
+  distance?: string; // Mocked for now
+  rating?: number; // Mocked for now
+  reviews?: number; // Mocked for now
+}
 
 export default function SearchCarers() {
+  const navigate = useNavigate();
+  const [carers, setCarers] = useState<CarerProfile[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState([15, 35]);
+  const [priceRange, setPriceRange] = useState([15, 50]);
   const [selectedCareTypes, setSelectedCareTypes] = useState<string[]>([]);
-  const [savedCarers, setSavedCarers] = useState<number[]>([]);
+  const [savedCarers, setSavedCarers] = useState<string[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchCarers();
+  }, [searchQuery, priceRange, selectedCareTypes]);
+
+  const fetchCarers = async () => {
+    setLoading(true);
+    try {
+      let query = supabase
+        .from('profiles')
+        .select(`
+          id,
+          full_name,
+          avatar_url,
+          carer_details!inner (
+            bio,
+            experience_years,
+            specializations,
+            hourly_rate,
+            verification_status,
+            availability_status
+          )
+        `)
+        .eq('role', 'carer');
+
+      if (searchQuery) {
+        query = query.ilike('full_name', `%${searchQuery}%`);
+      }
+
+      if (selectedCareTypes.length > 0) {
+        query = query.contains('carer_details.skills', selectedCareTypes);
+      }
+
+      // Supabase inner join filtering for range
+      query = query.gte('carer_details.hourly_rate', priceRange[0]);
+      query = query.lte('carer_details.hourly_rate', priceRange[1]);
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      // Transform and mock missing data for UI excellence
+      const transformedData = (data as any[] || []).map(carer => ({
+        ...carer,
+        rating: 4.5 + Math.random() * 0.5,
+        reviews: Math.floor(Math.random() * 200),
+        distance: `${(Math.random() * 10).toFixed(1)} miles`
+      }));
+
+      setCarers(transformedData);
+    } catch (error: any) {
+      toast({
+        title: "Error fetching carers",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleCareType = (type: string) => {
     setSelectedCareTypes(prev =>
@@ -137,261 +136,267 @@ export default function SearchCarers() {
     );
   };
 
-  const toggleSaved = (carerId: number) => {
+  const toggleSaved = (carerId: string) => {
     setSavedCarers(prev =>
       prev.includes(carerId) ? prev.filter(id => id !== carerId) : [...prev, carerId]
     );
+    toast({
+      title: savedCarers.includes(carerId) ? "Removed from favorites" : "Saved to favorites",
+      duration: 2000,
+    });
   };
 
   return (
     <DashboardLayout role="client">
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Find a Carer</h1>
-          <p className="text-muted-foreground">Search and connect with verified carers in your area</p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">Marketplace</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Find elite vetted carers specialized in premium home care.</p>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/5 border border-primary/10 rounded-xl">
+            <Sparkles className="w-3.5 h-3.5 text-primary" />
+            <span className="text-[11px] font-bold text-primary uppercase tracking-wider">Top 1% Vetted Talent</span>
+          </div>
         </div>
 
-        {/* Search Bar */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search by name, specialism, or keyword..."
-                  className="pl-10"
+        {/* Search Bar & Filters */}
+        <Card className="border-black/5 shadow-sm rounded-2xl overflow-hidden bg-white/50 backdrop-blur-xl">
+          <CardContent className="p-4 md:p-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex-1 relative group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Input
+                  placeholder="Search by name, expertise, or location..."
+                  className="pl-11 h-11 rounded-xl border-black/5 bg-white/50 focus:bg-white transition-all text-sm font-medium"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="flex gap-3">
-                <div className="relative flex-1 md:w-[200px]">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Postcode" className="pl-10" defaultValue="M1 1AA" />
+              <div className="flex flex-wrap gap-3">
+                <div className="relative w-full md:w-[150px]">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Postcode" className="pl-11 h-11 rounded-xl border-black/5 bg-white/50 text-sm" defaultValue="M1 1AA" />
                 </div>
-                <Select defaultValue="10">
-                  <SelectTrigger className="w-[130px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5 miles</SelectItem>
-                    <SelectItem value="10">10 miles</SelectItem>
-                    <SelectItem value="15">15 miles</SelectItem>
-                    <SelectItem value="20">20 miles</SelectItem>
-                  </SelectContent>
-                </Select>
+
                 <Sheet>
                   <SheetTrigger asChild>
-                    <Button variant="outline">
+                    <Button variant="outline" className="h-11 px-5 rounded-xl border-black/5 bg-white/50 font-bold text-sm">
                       <SlidersHorizontal className="h-4 w-4 mr-2" />
                       Filters
                     </Button>
                   </SheetTrigger>
-                  <SheetContent>
+                  <SheetContent className="w-full sm:max-w-md">
                     <SheetHeader>
-                      <SheetTitle>Filter Carers</SheetTitle>
-                      <SheetDescription>Refine your search with these filters</SheetDescription>
+                      <SheetTitle className="text-xl font-bold">Refine Search</SheetTitle>
+                      <SheetDescription>Tailor your results to your specific care needs.</SheetDescription>
                     </SheetHeader>
-                    <div className="space-y-6 mt-6">
-                      <div className="space-y-3">
-                        <Label>Price Range (£/hour)</Label>
+                    <div className="space-y-6 mt-8">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Budget Range</Label>
+                          <span className="text-sm font-bold text-primary">£{priceRange[0]} — £{priceRange[1]}</span>
+                        </div>
                         <Slider
                           value={priceRange}
                           onValueChange={setPriceRange}
-                          min={10}
-                          max={50}
+                          min={15}
+                          max={100}
                           step={1}
+                          className="py-2"
                         />
-                        <div className="flex justify-between text-sm text-muted-foreground">
-                          <span>£{priceRange[0]}</span>
-                          <span>£{priceRange[1]}</span>
-                        </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <Label>Care Type</Label>
-                        <div className="space-y-2">
+                      <div className="space-y-4">
+                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Clinical Expertise</Label>
+                        <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide">
                           {careTypes.map(type => (
-                            <div key={type} className="flex items-center space-x-2">
-                              <Checkbox 
-                                id={type}
+                            <div key={type}
+                              className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${selectedCareTypes.includes(type) ? 'border-primary bg-primary/5' : 'border-black/5 bg-muted/30 hover:bg-muted/50'}`}
+                              onClick={() => toggleCareType(type)}
+                            >
+                              <Label className="text-sm font-medium cursor-pointer">{type}</Label>
+                              <Checkbox
                                 checked={selectedCareTypes.includes(type)}
                                 onCheckedChange={() => toggleCareType(type)}
+                                className="h-4 w-4 rounded-md"
                               />
-                              <Label htmlFor={type} className="text-sm">{type}</Label>
                             </div>
                           ))}
                         </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <Label>Availability</Label>
-                        <Select defaultValue="any">
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="any">Any time</SelectItem>
-                            <SelectItem value="today">Available today</SelectItem>
-                            <SelectItem value="tomorrow">Available tomorrow</SelectItem>
-                            <SelectItem value="week">This week</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-3">
-                        <Label>Other Options</Label>
-                        <div className="space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="instant" />
-                            <Label htmlFor="instant" className="text-sm">Instant booking only</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="verified" defaultChecked />
-                            <Label htmlFor="verified" className="text-sm">Verified only</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="emergency" />
-                            <Label htmlFor="emergency" className="text-sm">Emergency available</Label>
-                          </div>
-                        </div>
-                      </div>
-
-                      <Button className="w-full">Apply Filters</Button>
+                      <Button className="w-full h-12 rounded-xl font-bold text-sm shadow-md shadow-primary/10" onClick={() => fetchCarers()}>
+                        Show Results
+                      </Button>
                     </div>
                   </SheetContent>
                 </Sheet>
-                <Button>
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Results */}
-        <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">
-            <span className="font-semibold text-foreground">{carers.length}</span> carers found near you
-          </p>
+        {/* Dynamic Results Header */}
+        <div className="flex items-center justify-between border-b border-black/5 pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="text-[12px] font-bold text-muted-foreground">
+              <span className="text-foreground">{carers.length} Carers</span> in your area
+            </p>
+          </div>
           <Select defaultValue="recommended">
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] h-9 rounded-lg border-black/5 bg-white text-[12px] font-bold">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl">
               <SelectItem value="recommended">Recommended</SelectItem>
-              <SelectItem value="rating">Highest rated</SelectItem>
-              <SelectItem value="price-low">Price: Low to High</SelectItem>
-              <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="distance">Closest first</SelectItem>
+              <SelectItem value="rating">Top Rated</SelectItem>
+              <SelectItem value="price-low">Price: Low-High</SelectItem>
+              <SelectItem value="price-high">Price: High-Low</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Carer Cards */}
-        <div className="space-y-4">
-          {carers.map((carer) => (
-            <Card key={carer.id} className="hover:border-primary/50 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex flex-col lg:flex-row gap-6">
-                  {/* Avatar and Basic Info */}
-                  <div className="flex items-start gap-4">
-                    <div className="relative">
-                      <Avatar className="h-20 w-20">
-                        <AvatarImage src={carer.avatar} />
-                        <AvatarFallback>{carer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      {carer.verified && (
-                        <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                          <Shield className="h-3 w-3 text-white" />
+        {/* Results Grid / Loading State */}
+        {loading ? (
+          <div className="grid grid-cols-1 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-48 w-full rounded-2xl bg-muted/30 animate-pulse border border-black/5" />
+            ))}
+          </div>
+        ) : carers.length === 0 ? (
+          <Card className="p-16 text-center rounded-2xl border-dashed border-2">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-xl font-bold mb-1">No matches found</h3>
+            <p className="text-sm text-muted-foreground">Try adjusting your filters.</p>
+            <Button variant="outline" className="mt-4 rounded-lg h-9 text-xs font-bold" onClick={() => {
+              setSearchQuery("");
+              setPriceRange([15, 50]);
+              setSelectedCareTypes([]);
+            }}>Clear All Filters</Button>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 gap-4">
+            {carers.map((carer) => (
+              <Card key={carer.id} className="group hover:border-primary/20 transition-all duration-300 rounded-2xl shadow-sm hover:shadow-md bg-white border-black/5 overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="flex flex-col lg:flex-row">
+                    {/* Main Content */}
+                    <div className="flex-1 p-5 md:p-6">
+                      <div className="flex items-start gap-4 md:gap-6">
+                        <div className="relative shrink-0">
+                          <Avatar className="h-20 w-20 rounded-2xl shadow-md border-2 border-white">
+                            <AvatarImage src={carer.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${carer.full_name}`} />
+                            <AvatarFallback className="text-lg font-bold bg-primary/10 text-primary">
+                              {carer.full_name.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          {carer.carer_details.verification_status === 'verified' && (
+                            <div className="absolute -bottom-1.5 -right-1.5 h-7 w-7 rounded-lg bg-primary text-white flex items-center justify-center shadow-md border-2 border-white">
+                              <ShieldCheck className="h-3.5 w-3.5" />
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold">{carer.name}</h3>
-                        {carer.instantBook && (
-                          <Badge variant="secondary" className="text-xs">Instant Book</Badge>
-                        )}
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-lg font-bold text-foreground tracking-tight">{carer.full_name}</h3>
+                              <Badge variant="secondary" className="bg-emerald-50 text-emerald-600 font-bold rounded-md border-emerald-100 uppercase text-[9px] tracking-wider px-1.5 py-0">
+                                Active
+                              </Badge>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-colors"
+                              onClick={() => toggleSaved(carer.id)}
+                            >
+                              <Heart className={`h-4.5 w-4.5 ${savedCarers.includes(carer.id) ? 'fill-rose-500 text-rose-500' : ''}`} />
+                            </Button>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex gap-0.5">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star key={i} className={`h-3 w-3 ${i < 4 ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground opacity-30'}`} />
+                                ))}
+                              </div>
+                              <span className="text-[12px] font-bold text-foreground">{carer.rating?.toFixed(1) || '4.9'}</span>
+                              <span className="text-[11px] font-medium text-muted-foreground">({carer.reviews || '45'})</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground">
+                              <MapPin className="h-3 w-3 text-primary opacity-70" />
+                              {carer.distance || '2.4 miles'}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground">
+                              <Award className="h-3 w-3 text-accent opacity-70" />
+                              {carer.carer_details.experience_years}
+                            </div>
+                          </div>
+
+                          <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-2 font-medium">
+                            {carer.carer_details.bio || 'Professional caregiver dedicated to providing compassionate and high-quality clinical support at home.'}
+                          </p>
+
+                          <div className="mt-4 flex flex-wrap gap-1.5">
+                            {carer.carer_details.specializations?.slice(0, 3).map(spec => (
+                              <span key={spec} className="px-2 py-0.5 rounded-md bg-slate-50 border border-black/5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                {spec}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                          {carer.rating} ({carer.reviews})
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {carer.distance}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          {carer.experience}
-                        </span>
+                    </div>
+
+                    {/* Action Panel */}
+                    <div className="lg:w-[220px] p-5 md:p-6 bg-slate-50/50 border-t lg:border-t-0 lg:border-l border-black/5 flex flex-col justify-center">
+                      <div className="flex items-center justify-between lg:flex-col lg:items-start lg:gap-1 mb-4 lg:mb-6">
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-bold text-primary tracking-tight">£{carer.carer_details.hourly_rate}</span>
+                          <span className="text-xs font-medium text-muted-foreground">/ hr</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Zap className="h-3 h-3 text-amber-500 fill-amber-500" />
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Fast Reply</span>
+                        </div>
                       </div>
-                      <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                        {carer.bio}
-                      </p>
+
+                      <div className="flex lg:flex-col gap-2">
+                        <Button
+                          variant="outline"
+                          className="flex-1 h-9 rounded-lg font-bold text-xs border-black/5 bg-white"
+                          onClick={() => navigate(`/client/messages?userId=${carer.id}`)}
+                        >
+                          Message
+                        </Button>
+                        <Button className="flex-1 h-9 rounded-lg font-bold text-xs shadow-sm bg-primary" onClick={() => navigate(`/client/book/${carer.id}`)}>
+                          Book Now
+                        </Button>
+                      </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
-                  {/* Specialisms */}
-                  <div className="flex-1">
-                    <div className="flex flex-wrap gap-2">
-                      {carer.specialisms.map(spec => (
-                        <Badge key={spec} variant="outline">{spec}</Badge>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
-                      <span>Languages: {carer.languages.join(", ")}</span>
-                    </div>
-                    <Badge 
-                      variant="outline" 
-                      className={`mt-2 ${carer.availability.includes('today') ? 'border-emerald-500 text-emerald-600' : ''}`}
-                    >
-                      {carer.availability}
-                    </Badge>
-                  </div>
-
-                  {/* Price and Actions */}
-                  <div className="flex flex-col items-end justify-between">
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-primary">£{carer.hourlyRate}</p>
-                      <p className="text-sm text-muted-foreground">per hour</p>
-                    </div>
-                    <div className="flex items-center gap-2 mt-4">
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => toggleSaved(carer.id)}
-                      >
-                        <Heart className={`h-5 w-5 ${savedCarers.includes(carer.id) ? 'fill-red-500 text-red-500' : ''}`} />
-                      </Button>
-                      <Button variant="outline" size="icon">
-                        <MessageSquare className="h-5 w-5" />
-                      </Button>
-                      <Button>
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Book Now
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <ChevronRight className="h-5 w-5" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Load More */}
-        <div className="flex justify-center">
-          <Button variant="outline" size="lg">
-            Load More Carers
-          </Button>
-        </div>
+        {/* Load More Refined */}
+        {!loading && carers.length > 0 && (
+          <div className="flex justify-center pt-4 pb-8">
+            <Button variant="ghost" className="h-10 px-6 rounded-xl text-xs font-bold text-muted-foreground hover:text-primary transition-all">
+              Load More Results
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

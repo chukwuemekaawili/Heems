@@ -1,19 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
-  Calendar as CalendarIcon, 
-  Clock, 
-  MapPin, 
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  MapPin,
   Phone,
   MessageSquare,
   Star,
@@ -22,411 +20,301 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
-  Navigation
+  Navigation,
+  ChevronRight,
+  ShieldCheck,
+  Search,
+  ArrowRight
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
-const bookings = [
-  {
-    id: 1,
-    carer: { name: "Sarah Khan", avatar: "/placeholder.svg", rating: 4.9, phone: "+44 7700 900123" },
-    careRecipient: "Margaret Wilson",
-    date: "2026-01-10",
-    time: "09:00 - 12:00",
-    duration: "3 hours",
-    type: "Personal Care",
-    status: "confirmed",
-    location: "123 High Street, Manchester, M1 1AA",
-    amount: 75,
-    notes: "Please bring medications list"
-  },
-  {
-    id: 2,
-    carer: { name: "James O'Brien", avatar: "/placeholder.svg", rating: 4.8, phone: "+44 7700 900456" },
-    careRecipient: "Margaret Wilson",
-    date: "2026-01-11",
-    time: "14:00 - 17:00",
-    duration: "3 hours",
-    type: "Companionship",
-    status: "pending",
-    location: "123 High Street, Manchester, M1 1AA",
-    amount: 66,
-    notes: ""
-  },
-  {
-    id: 3,
-    carer: { name: "Priya Patel", avatar: "/placeholder.svg", rating: 5.0, phone: "+44 7700 900789" },
-    careRecipient: "Margaret Wilson",
-    date: "2026-01-12",
-    time: "10:00 - 14:00",
-    duration: "4 hours",
-    type: "Personal Care",
-    status: "in_progress",
-    location: "123 High Street, Manchester, M1 1AA",
-    amount: 112,
-    notes: "Weekly visit"
-  },
-  {
-    id: 4,
-    carer: { name: "Sarah Khan", avatar: "/placeholder.svg", rating: 4.9, phone: "+44 7700 900123" },
-    careRecipient: "Margaret Wilson",
-    date: "2026-01-05",
-    time: "09:00 - 12:00",
-    duration: "3 hours",
-    type: "Personal Care",
-    status: "completed",
-    location: "123 High Street, Manchester, M1 1AA",
-    amount: 75,
-    notes: ""
-  },
-  {
-    id: 5,
-    carer: { name: "Michael Johnson", avatar: "/placeholder.svg", rating: 4.7, phone: "+44 7700 900321" },
-    careRecipient: "Margaret Wilson",
-    date: "2026-01-03",
-    time: "14:00 - 16:00",
-    duration: "2 hours",
-    type: "Medication Support",
-    status: "cancelled",
-    location: "123 High Street, Manchester, M1 1AA",
-    amount: 48,
-    notes: "Client rescheduled"
-  },
-];
+import { format } from "date-fns";
+import { Link } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "confirmed":
-      return <Badge className="bg-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Confirmed</Badge>;
+      return <Badge className="bg-emerald-500 rounded-lg px-3 py-1 font-black uppercase text-[10px] tracking-widest"><CheckCircle2 className="h-3 w-3 mr-1" />Confirmed</Badge>;
     case "pending":
-      return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+      return <Badge variant="secondary" className="rounded-lg px-3 py-1 font-black uppercase text-[10px] tracking-widest bg-amber-50 text-amber-600 border-amber-100"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
     case "in_progress":
-      return <Badge className="bg-blue-500"><Navigation className="h-3 w-3 mr-1" />In Progress</Badge>;
+      return <Badge className="bg-blue-500 rounded-lg px-3 py-1 font-black uppercase text-[10px] tracking-widest"><Navigation className="h-3 w-3 mr-1" />In Progress</Badge>;
     case "completed":
-      return <Badge variant="outline"><CheckCircle2 className="h-3 w-3 mr-1" />Completed</Badge>;
+      return <Badge variant="outline" className="rounded-lg px-3 py-1 font-black uppercase text-[10px] tracking-widest border-emerald-200 text-emerald-600 bg-emerald-50"><CheckCircle2 className="h-3 w-3 mr-1" />Completed</Badge>;
     case "cancelled":
-      return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Cancelled</Badge>;
+      return <Badge variant="destructive" className="rounded-lg px-3 py-1 font-black uppercase text-[10px] tracking-widest"><XCircle className="h-3 w-3 mr-1" />Cancelled</Badge>;
     default:
-      return <Badge variant="outline">Unknown</Badge>;
+      return <Badge variant="outline" className="rounded-lg px-3 py-1 font-black uppercase text-[10px] tracking-widest">Unknown</Badge>;
   }
 };
 
 export default function ClientBookings() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [isNewBooking, setIsNewBooking] = useState(false);
+  const navigate = useNavigate();
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const upcomingBookings = bookings.filter(b => ["confirmed", "pending", "in_progress"].includes(b.status));
-  const pastBookings = bookings.filter(b => ["completed", "cancelled"].includes(b.status));
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('bookings')
+        .select(`
+          id,
+          start_time,
+          end_time,
+          status,
+          total_price,
+          carer:profiles!bookings_carer_id_fkey (
+            id,
+            full_name,
+            avatar_url,
+            carer_details (
+              hourly_rate,
+              verification_status
+            )
+          )
+        `)
+        .eq('client_id', user.id)
+        .order('start_time', { ascending: false });
+
+      if (error) throw error;
+      setBookings(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error fetching bookings",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const upcomingBookings = bookings.filter(b => b.status === "pending" || b.status === "confirmed" || b.status === "in_progress");
+  const pastBookings = bookings.filter(b => b.status === "completed" || b.status === "cancelled");
+
+  if (loading) {
+    return (
+      <DashboardLayout role="client">
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout role="client">
-      <div className="space-y-6">
+      <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-12">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Bookings</h1>
-            <p className="text-muted-foreground">Manage your care appointments</p>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+          <div className="space-y-1.5">
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">Care Appointments</h1>
+            <p className="text-sm text-muted-foreground font-medium">Manage your professional care schedule.</p>
           </div>
-          <Dialog open={isNewBooking} onOpenChange={setIsNewBooking}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                New Booking
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Create New Booking</DialogTitle>
-                <DialogDescription>Schedule a care visit with one of your carers</DialogDescription>
-              </DialogHeader>
-              <div className="grid md:grid-cols-2 gap-6 py-4">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Select Carer</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose a carer" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="sarah">Sarah Khan</SelectItem>
-                        <SelectItem value="james">James O'Brien</SelectItem>
-                        <SelectItem value="priya">Priya Patel</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Care Recipient</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select recipient" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="margaret">Margaret Wilson</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Care Type</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="personal">Personal Care</SelectItem>
-                        <SelectItem value="companionship">Companionship</SelectItem>
-                        <SelectItem value="medication">Medication Support</SelectItem>
-                        <SelectItem value="mobility">Mobility Assistance</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Start Time</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Start" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map(t => (
-                            <SelectItem key={t} value={t}>{t}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Duration</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Duration" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">1 hour</SelectItem>
-                          <SelectItem value="2">2 hours</SelectItem>
-                          <SelectItem value="3">3 hours</SelectItem>
-                          <SelectItem value="4">4 hours</SelectItem>
-                          <SelectItem value="6">6 hours</SelectItem>
-                          <SelectItem value="8">8 hours</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Notes for Carer</Label>
-                    <Textarea placeholder="Any special instructions or requirements..." />
-                  </div>
-                </div>
-                <div>
-                  <Label className="mb-2 block">Select Date</Label>
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    className="rounded-md border"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsNewBooking(false)}>Cancel</Button>
-                <Button onClick={() => setIsNewBooking(false)}>Create Booking</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button className="h-11 px-6 rounded-xl font-bold shadow-md shadow-primary/10" asChild>
+            <Link to="/client/search">
+              <Plus className="h-4 w-4 mr-2" />
+              New Booking
+            </Link>
+          </Button>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid sm:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <CheckCircle2 className="h-6 w-6 text-emerald-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{upcomingBookings.filter(b => b.status === 'confirmed').length}</p>
-                  <p className="text-sm text-muted-foreground">Confirmed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-amber-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{upcomingBookings.filter(b => b.status === 'pending').length}</p>
-                  <p className="text-sm text-muted-foreground">Pending</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <Navigation className="h-6 w-6 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{upcomingBookings.filter(b => b.status === 'in_progress').length}</p>
-                  <p className="text-sm text-muted-foreground">In Progress</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Stats Summary */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="p-5 rounded-2xl bg-white border border-black/5 shadow-sm">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Active</p>
+            <p className="text-2xl font-bold">{upcomingBookings.length}</p>
+          </div>
+          <div className="p-5 rounded-2xl bg-white border border-black/5 shadow-sm">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Completed</p>
+            <p className="text-2xl font-bold">{pastBookings.filter(b => b.status === 'completed').length}</p>
+          </div>
+          <div className="p-5 rounded-2xl bg-slate-900 text-white shadow-sm">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Total Spent</p>
+            <p className="text-2xl font-bold tracking-tight">£{bookings.reduce((acc, b) => acc + (b.total_price || 0), 0)}</p>
+          </div>
+          <div className="p-5 rounded-2xl bg-primary text-white shadow-md shadow-primary/10">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Response Avg</p>
+            <p className="text-2xl font-bold">15m</p>
+          </div>
         </div>
 
-        <Tabs defaultValue="upcoming">
-          <TabsList>
-            <TabsTrigger value="upcoming">Upcoming ({upcomingBookings.length})</TabsTrigger>
-            <TabsTrigger value="past">Past Bookings ({pastBookings.length})</TabsTrigger>
+        <Tabs defaultValue="upcoming" className="space-y-6">
+          <TabsList className="bg-slate-100 p-1 rounded-xl h-11 w-fit border border-black/5">
+            <TabsTrigger value="upcoming" className="h-9 px-6 rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs">
+              Upcoming ({upcomingBookings.length})
+            </TabsTrigger>
+            <TabsTrigger value="past" className="h-9 px-6 rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs">
+              History ({pastBookings.length})
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upcoming" className="space-y-4 mt-6">
-            {upcomingBookings.map((booking) => (
-              <Card key={booking.id}>
-                <CardContent className="p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                    {/* Carer Info */}
-                    <div className="flex items-center gap-4 min-w-[200px]">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={booking.carer.avatar} />
-                        <AvatarFallback>{booking.carer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold">{booking.carer.name}</p>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                          {booking.carer.rating}
+          <TabsContent value="upcoming" className="space-y-4">
+            {upcomingBookings.length === 0 ? (
+              <Card className="rounded-2xl border-2 border-dashed border-black/5 bg-slate-50/50 p-12 text-center">
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm border border-black/5">
+                  <CalendarIcon className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-1">No appointments</h3>
+                <p className="text-sm text-muted-foreground font-medium mb-6">Find professional care tailored to your needs.</p>
+                <Button className="h-11 px-8 rounded-xl font-bold text-xs" asChild>
+                  <Link to="/client/search">Explore Marketplace</Link>
+                </Button>
+              </Card>
+            ) : (
+              upcomingBookings.map((booking) => (
+                <Card key={booking.id} className="rounded-2xl border-black/5 shadow-sm overflow-hidden group hover:border-primary/20 transition-all duration-300">
+                  <CardContent className="p-0">
+                    <div className="flex flex-col lg:flex-row">
+                      {/* Left: Carer Identity */}
+                      <div className="lg:w-1/4 p-5 md:p-6 bg-slate-50/50 border-r border-black/5 flex flex-col justify-between gap-5">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-14 w-14 rounded-2xl shadow-sm border-2 border-white">
+                            <AvatarImage src={booking.carer?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${booking.carer?.full_name}`} />
+                            <AvatarFallback className="text-lg font-bold">{booking.carer?.full_name[0]}</AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0">
+                            <h3 className="text-base font-bold tracking-tight truncate">{booking.carer?.full_name}</h3>
+                            <div className="flex items-center gap-1.5 text-primary mt-0.5">
+                              <ShieldCheck className="w-3 h-3 fill-primary text-slate-50" />
+                              <span className="text-[9px] font-bold uppercase tracking-wider">Vetted Pro</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            className="flex-1 h-9 rounded-lg bg-white border-black/5 font-bold text-xs"
+                            onClick={() => navigate(`/client/messages?userId=${booking.carer?.id}`)}
+                          >
+                            <MessageSquare className="w-3.5 h-3.5 mr-1.5 text-primary" /> Chat
+                          </Button>
+                          <Button variant="outline" className="h-9 w-9 p-0 rounded-lg bg-white border-black/5">
+                            <Phone className="w-3.5 h-3.5 text-emerald-500" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Right: Booking Details */}
+                      <div className="flex-1 p-5 md:p-6 flex flex-col justify-between">
+                        <div className="grid md:grid-cols-3 gap-6">
+                          <div className="space-y-2">
+                            <Label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Schedule</Label>
+                            <div className="space-y-0.5">
+                              <p className="text-sm font-bold tracking-tight">{format(new Date(booking.start_time), "EEEE, MMM do")}</p>
+                              <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                                <Clock className="w-3 h-3 text-primary opacity-70" /> {format(new Date(booking.start_time), "HH:mm")} - {format(new Date(booking.end_time), "HH:mm")}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Session Value</Label>
+                            <div className="space-y-0.5">
+                              <p className="text-lg font-bold text-primary tracking-tight">£{booking.total_price}</p>
+                              <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Escrow Protected</p>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Status</Label>
+                            <div>
+                              {getStatusBadge(booking.status)}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="pt-5 border-t border-black/5 mt-5 flex justify-between items-center">
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground italic">
+                            <AlertCircle className="w-3 h-3" />
+                            Policy: 24h cancellation
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 px-3 rounded-lg text-xs font-bold group">
+                                Manage
+                                <ChevronRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="rounded-xl p-1.5 border-black/5 shadow-xl">
+                              <DropdownMenuItem className="rounded-lg font-bold text-xs p-2.5">Full Details</DropdownMenuItem>
+                              <DropdownMenuItem className="rounded-lg font-bold text-xs p-2.5">Reschedule</DropdownMenuItem>
+                              <DropdownMenuItem className="rounded-lg font-bold text-xs p-2.5 text-rose-500">Cancel Visit</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
                     </div>
-
-                    {/* Booking Details */}
-                    <div className="flex-1 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Date & Time</p>
-                        <p className="font-medium flex items-center gap-1">
-                          <CalendarIcon className="h-4 w-4" />
-                          {new Date(booking.date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
-                        </p>
-                        <p className="text-sm flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {booking.time}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Care Type</p>
-                        <p className="font-medium">{booking.type}</p>
-                        <p className="text-sm text-muted-foreground">{booking.duration}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">For</p>
-                        <p className="font-medium">{booking.careRecipient}</p>
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {booking.location.split(',')[0]}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Amount</p>
-                        <p className="font-bold text-lg">£{booking.amount}</p>
-                      </div>
-                    </div>
-
-                    {/* Status and Actions */}
-                    <div className="flex items-center gap-3">
-                      {getStatusBadge(booking.status)}
-                      <div className="flex items-center gap-2">
-                        <Button size="icon" variant="outline">
-                          <Phone className="h-4 w-4" />
-                        </Button>
-                        <Button size="icon" variant="outline">
-                          <MessageSquare className="h-4 w-4" />
-                        </Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="ghost">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem>Reschedule</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">Cancel Booking</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
-                  </div>
-                  {booking.notes && (
-                    <div className="mt-4 p-3 bg-muted rounded-lg">
-                      <p className="text-sm"><span className="font-medium">Notes:</span> {booking.notes}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </TabsContent>
 
-          <TabsContent value="past" className="space-y-4 mt-6">
-            {pastBookings.map((booking) => (
-              <Card key={booking.id} className="opacity-75">
-                <CardContent className="p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                    <div className="flex items-center gap-4 min-w-[200px]">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={booking.carer.avatar} />
-                        <AvatarFallback>{booking.carer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold">{booking.carer.name}</p>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                          {booking.carer.rating}
+          <TabsContent value="past" className="space-y-4">
+            {pastBookings.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-sm font-bold text-muted-foreground">No past history.</p>
+              </div>
+            ) : (
+              pastBookings.map((booking) => (
+                <Card key={booking.id} className="rounded-2xl border-black/5 shadow-sm overflow-hidden opacity-80 hover:opacity-100 transition-all">
+                  <CardContent className="p-5 md:p-6">
+                    <div className="flex flex-col lg:flex-row lg:items-center gap-6 md:gap-10">
+                      <div className="flex items-center gap-4 min-w-[200px]">
+                        <Avatar className="h-11 w-11 rounded-xl border-2 border-white shadow-sm">
+                          <AvatarImage src={booking.carer?.avatar_url} />
+                          <AvatarFallback className="text-xs font-bold">{booking.carer?.full_name[0]}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-bold tracking-tight">{booking.carer?.full_name}</p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            {getStatusBadge(booking.status)}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex-1 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Date & Time</p>
-                        <p className="font-medium">
-                          {new Date(booking.date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
-                        </p>
-                        <p className="text-sm">{booking.time}</p>
+                      <div className="flex-1 grid grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                          <p className="text-[9px] font-bold uppercase text-muted-foreground mb-1">Service Date</p>
+                          <p className="text-xs font-bold text-foreground">{format(new Date(booking.start_time), "MMM d, yyyy")}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold uppercase text-muted-foreground mb-1">Total Paid</p>
+                          <p className="font-bold text-foreground text-sm">£{booking.total_price}</p>
+                        </div>
+                        <div className="hidden lg:block">
+                          <p className="text-[9px] font-bold uppercase text-muted-foreground mb-1">Feedback</p>
+                          <div className="flex gap-0.5">
+                            {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-3 h-3 text-amber-400 fill-amber-400" />)}
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Care Type</p>
-                        <p className="font-medium">{booking.type}</p>
-                        <p className="text-sm text-muted-foreground">{booking.duration}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">For</p>
-                        <p className="font-medium">{booking.careRecipient}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Amount</p>
-                        <p className="font-bold text-lg">£{booking.amount}</p>
-                      </div>
-                    </div>
 
-                    <div className="flex items-center gap-3">
-                      {getStatusBadge(booking.status)}
-                      {booking.status === 'completed' && (
-                        <Button variant="outline" size="sm">
-                          <Star className="h-4 w-4 mr-2" />
-                          Leave Review
+                      <div className="flex items-center gap-2">
+                        {booking.status === 'completed' && (
+                          <Button variant="outline" className="h-9 rounded-lg border-black/5 font-bold text-xs">
+                            Review
+                          </Button>
+                        )}
+                        <Button className="h-9 rounded-lg font-bold text-xs px-5" asChild>
+                          <Link to={`/client/book/${booking.carer?.id}`}>
+                            Rebook
+                          </Link>
                         </Button>
-                      )}
-                      <Button variant="outline" size="sm">
-                        Book Again
-                      </Button>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </TabsContent>
         </Tabs>
       </div>

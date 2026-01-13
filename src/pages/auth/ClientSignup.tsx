@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthLayout from "@/components/layouts/AuthLayout";
-import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, ArrowLeft, ShieldCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const ClientSignup = () => {
   const [formData, setFormData] = useState({
@@ -29,11 +30,11 @@ const ClientSignup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Passwords don't match",
-        description: "Please make sure your passwords match.",
+        description: "Please check your credentials.",
         variant: "destructive",
       });
       return;
@@ -41,177 +42,226 @@ const ClientSignup = () => {
 
     setIsLoading(true);
 
-    // TODO: Implement actual auth with Supabase
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Registration functionality",
-        description: "Connect Lovable Cloud to enable authentication.",
+    try {
+      // Create auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            phone: formData.phone,
+            role: 'client',
+          }
+        }
       });
-    }, 1000);
+
+      if (authError) {
+        toast({
+          title: "Signup failed",
+          description: authError.message,
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (authData.user) {
+        // Wait for trigger to create profile
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Upsert profile with role
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: authData.user.id,
+            email: formData.email,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            full_name: `${formData.firstName} ${formData.lastName}`,
+            phone: formData.phone,
+            role: 'client',
+          }, {
+            onConflict: 'id'
+          });
+
+        if (profileError) {
+          console.error('Profile upsert error:', profileError);
+        }
+
+        toast({
+          title: "Account Created",
+          description: "Welcome to Heems. You can now search for verified carers.",
+        });
+
+        // Redirect to login or dashboard
+        navigate("/login");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <AuthLayout
-      title="Find care for your loved ones"
-      subtitle="Create a client account to get started"
+      title="Find Elite Care"
+      subtitle="Connect with vetted professionals in minutes."
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4 animate-in-up">
         {/* Back Link */}
         <Link
           to="/signup"
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#111827] transition-colors"
         >
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Back to options
+          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+          Back to roles
         </Link>
 
         {/* Name Fields */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="firstName">First name</Label>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">First Name</Label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
-                id="firstName"
                 name="firstName"
-                placeholder="John"
+                placeholder="Sarah"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="pl-10"
+                className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
                 required
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="lastName">Last name</Label>
+          <div className="space-y-1.5">
+            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Last Name</Label>
             <Input
-              id="lastName"
               name="lastName"
-              placeholder="Doe"
+              placeholder="Jenkins"
               value={formData.lastName}
               onChange={handleChange}
+              className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
               required
             />
           </div>
         </div>
 
         {/* Email */}
-        <div className="space-y-2">
-          <Label htmlFor="email">Email address</Label>
+        <div className="space-y-1.5">
+          <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Email Address</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
-              id="email"
               name="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder="sarah@example.com"
               value={formData.email}
               onChange={handleChange}
-              className="pl-10"
+              className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
               required
             />
           </div>
         </div>
 
         {/* Phone */}
-        <div className="space-y-2">
-          <Label htmlFor="phone">Phone number</Label>
+        <div className="space-y-1.5">
+          <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Phone Number</Label>
           <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
-              id="phone"
               name="phone"
               type="tel"
               placeholder="+44 7700 900000"
               value={formData.phone}
               onChange={handleChange}
-              className="pl-10"
+              className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
               required
             />
           </div>
         </div>
 
         {/* Password */}
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+        <div className="space-y-1.5">
+          <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Security Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
-              id="password"
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               value={formData.password}
               onChange={handleChange}
-              className="pl-10 pr-10"
+              className="pl-11 pr-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
               required
               minLength={8}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#111827]"
             >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
-          <p className="text-xs text-muted-foreground">Minimum 8 characters</p>
         </div>
 
         {/* Confirm Password */}
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm password</Label>
+        <div className="space-y-1.5">
+          <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirm Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
-              id="confirmPassword"
               name="confirmPassword"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="pl-10"
+              className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
               required
+              minLength={8}
             />
           </div>
         </div>
 
         {/* Terms */}
-        <div className="flex items-start gap-2">
+        <div className="flex items-start gap-3 py-2">
           <Checkbox
             id="terms"
             checked={agreeTerms}
             onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
-            className="mt-1"
           />
-          <Label htmlFor="terms" className="text-sm font-normal cursor-pointer leading-relaxed">
-            I agree to the{" "}
-            <Link to="/terms" className="text-primary hover:underline">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link to="/privacy" className="text-primary hover:underline">
-              Privacy Policy
-            </Link>
+          <Label htmlFor="terms" className="text-[11px] font-bold text-slate-500 leading-tight">
+            I agree to the transactional introductory model and verified compliance standards of Heems.
           </Label>
         </div>
 
         {/* Submit */}
         <Button
           type="submit"
-          className="w-full"
-          size="lg"
+          className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl shadow-black/5"
           disabled={isLoading || !agreeTerms}
         >
-          {isLoading ? "Creating account..." : "Create account"}
+          {isLoading ? "Creating Profile..." : "Create Account"}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
 
+        <div className="p-4 rounded-2xl bg-[#1a9e8c]/5 border border-[#1a9e8c]/20 text-center">
+          <p className="text-[10px] font-black text-[#1a9e8c] uppercase tracking-widest flex items-center justify-center gap-2">
+            <ShieldCheck className="w-3 h-3" /> GDPR & CQC COMPLIANT
+          </p>
+        </div>
+
         {/* Sign In Link */}
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm font-bold text-[#475569] pt-2">
           Already have an account?{" "}
-          <Link to="/login" className="text-primary font-medium hover:underline">
+          <Link to="/login" className="text-[#111827] font-black hover:text-[#1a9e8c] transition-colors">
             Sign in
           </Link>
         </p>
