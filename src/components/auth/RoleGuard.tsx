@@ -25,36 +25,57 @@ export default function RoleGuard({ children, allowedRoles, redirectTo }: RoleGu
     const { toast } = useToast();
 
     useEffect(() => {
-        checkAuthorization();
+        const abortController = new AbortController();
+
+        checkAuthorization(abortController.signal);
+
+        return () => {
+            abortController.abort();
+        };
     }, [location.pathname]);
 
-    const checkAuthorization = async () => {
+    const checkAuthorization = async (signal?: AbortSignal) => {
         try {
             const { data: { user } } = await supabase.auth.getUser();
+
+            // Check if aborted
+            if (signal?.aborted) return;
 
             if (!user) {
                 navigate("/login", { state: { from: location.pathname } });
                 return;
             }
 
-            // Fetch user's role from profiles
+            // Try to fetch user's role from profiles
             const { data: profile, error } = await supabase
                 .from('profiles')
                 .select('role')
                 .eq('id', user.id)
                 .single();
 
-            if (error || !profile) {
+            // Check if aborted after async call
+            if (signal?.aborted) return;
+
+            // Determine role - use profile if available, otherwise fallback to user metadata
+            let userRole: string | null = null;
+
+            if (profile?.role) {
+                userRole = profile.role;
+            } else {
+                // Fallback to user metadata (useful when profiles table doesn't exist yet)
+                userRole = user.user_metadata?.role || null;
+                console.log('RoleGuard: Using metadata role:', userRole);
+            }
+
+            if (!userRole) {
                 toast({
                     title: "Authorization Error",
-                    description: "Could not verify your access permissions.",
+                    description: "Could not verify your access permissions. Please contact support.",
                     variant: "destructive",
                 });
                 navigate("/login");
                 return;
             }
-
-            const userRole = profile.role;
 
             if (!allowedRoles.includes(userRole)) {
                 toast({
@@ -76,7 +97,11 @@ export default function RoleGuard({ children, allowedRoles, redirectTo }: RoleGu
             }
 
             setAuthorized(true);
-        } catch (error) {
+        } catch (error: any) {
+            // Ignore abort errors
+            if (error.name === 'AbortError' || error.message?.includes('aborted')) {
+                return;
+            }
             console.error("Auth check error:", error);
             navigate("/login");
         } finally {
@@ -123,7 +148,9 @@ export function useRoleCheck() {
                     .eq('id', user.id)
                     .single();
 
-                setRole(profile?.role || null);
+                // Use profile role if available, otherwise fallback to metadata
+                const userRole = profile?.role || user.user_metadata?.role || null;
+                setRole(userRole);
             } catch (error) {
                 console.error("Role check error:", error);
             } finally {

@@ -44,7 +44,10 @@ const Login = () => {
           description: "Successfully signed in to your account.",
         });
 
-        // Get user profile to determine role and redirect accordingly
+        // Determine role - first try profile, then user metadata
+        let userRole: string | undefined;
+
+        // Try to get from profiles table
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role')
@@ -55,49 +58,53 @@ const Login = () => {
         console.log('Profile error:', profileError);
         console.log('User metadata:', data.user.user_metadata);
 
-        // Determine role from profile or fallback to user metadata
-        let userRole = profile?.role;
-
-        // If no role in profile, check user metadata
-        if (!userRole || userRole === '') {
+        if (profile?.role) {
+          userRole = profile.role;
+        } else {
+          // Fallback to user metadata
           userRole = data.user.user_metadata?.role;
           console.log('Using metadata role:', userRole);
 
-          // If we found a role in metadata, try to save it to profile
+          // If we found a role in metadata, try to upsert to profile (don't await, ignore errors)
           if (userRole) {
-            await supabase
+            supabase
               .from('profiles')
               .upsert({
                 id: data.user.id,
                 email: data.user.email,
                 role: userRole,
+                full_name: data.user.user_metadata?.full_name,
               }, {
                 onConflict: 'id'
-              });
+              })
+              .then(() => console.log('Profile upsert attempted'))
+              .catch(err => console.log('Profile upsert failed (expected if table missing):', err));
           }
         }
 
         console.log('Final role for redirect:', userRole);
 
-        // Redirect based on user role
+        // Determine redirect path
+        let redirectPath = '/client/dashboard'; // Default
         if (userRole === 'admin') {
-          navigate('/admin/dashboard');
+          redirectPath = '/admin/dashboard';
         } else if (userRole === 'carer') {
-          navigate('/carer/dashboard');
+          redirectPath = '/carer/dashboard';
         } else if (userRole === 'organisation') {
-          navigate('/organisation/dashboard');
-        } else {
-          // Default to client dashboard
-          navigate('/client/dashboard');
+          redirectPath = '/organisation/dashboard';
         }
+
+        // Use window.location for hard redirect to avoid React Router issues
+        // This ensures the redirect happens even if RoleGuard has issues
+        window.location.href = redirectPath;
       }
     } catch (error: any) {
+      console.error('Login error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };
