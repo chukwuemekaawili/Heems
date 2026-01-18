@@ -29,6 +29,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { MINIMUM_HOURLY_RATE, validateMinimumRate } from "@/lib/fees";
 
 const careSpecialisms = [
   "Personal Care",
@@ -148,6 +149,17 @@ export default function CarerProfile() {
       setSaving(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      // Validate minimum hourly rate
+      if (!validateMinimumRate(carerDetails.hourly_rate)) {
+        toast({
+          title: "Rate Below Minimum",
+          description: `Your hourly rate must be at least £${MINIMUM_HOURLY_RATE}/hour as per platform policy.`,
+          variant: "destructive",
+        });
+        setSaving(false);
+        return;
+      }
 
       // Update Profile
       const { error: profileError } = await supabase
@@ -486,10 +498,16 @@ export default function CarerProfile() {
                     <Label>Hourly Rate (£)</Label>
                     <Input
                       type="number"
+                      min={MINIMUM_HOURLY_RATE}
                       value={carerDetails.hourly_rate || 25}
                       disabled={!isEditing}
                       onChange={(e) => setCarerDetails((c: any) => ({ ...c, hourly_rate: parseFloat(e.target.value) }))}
+                      className={carerDetails.hourly_rate < MINIMUM_HOURLY_RATE ? "border-red-500" : ""}
                     />
+                    {carerDetails.hourly_rate < MINIMUM_HOURLY_RATE && (
+                      <p className="text-xs text-red-500">Minimum rate is £{MINIMUM_HOURLY_RATE}/hour</p>
+                    )}
+                    <p className="text-xs text-muted-foreground">Platform minimum: £{MINIMUM_HOURLY_RATE}/hr</p>
                   </div>
                 </div>
 
@@ -548,8 +566,8 @@ export default function CarerProfile() {
                     <div
                       key={specialism}
                       className={`flex items-center space-x-3 p-4 rounded-lg border cursor-pointer transition-colors ${carerDetails.specializations.includes(specialism)
-                          ? "border-primary bg-primary/5"
-                          : "hover:bg-accent/50"
+                        ? "border-primary bg-primary/5"
+                        : "hover:bg-accent/50"
                         } ${!isEditing && 'cursor-default'}`}
                       onClick={() => isEditing && toggleSpecialism(specialism)}
                     >

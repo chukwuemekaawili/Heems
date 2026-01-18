@@ -36,12 +36,11 @@ serve(async (req) => {
             let hasExpired = false;
             let expiringSoon = false;
 
-            // Check each document type
+            // Check each document type - using correct column names from schema
             const documents = [
-                { type: 'DBS', expiry: verification.dbs_expiry_date },
-                { type: 'ID', expiry: verification.id_expiry_date },
-                { type: 'RTW', expiry: verification.rtw_expiry_date },
-                { type: 'Insurance', expiry: verification.insurance_expiry_date },
+                { type: 'dbs', expiry: verification.dbs_expiry },
+                { type: 'rtw', expiry: verification.rtw_expiry },
+                { type: 'insurance', expiry: verification.insurance_expiry },
             ];
 
             for (const doc of documents) {
@@ -51,19 +50,19 @@ serve(async (req) => {
 
                 // Check if expired
                 if (expiryDate < today) {
-                    console.log(`${doc.type} expired for carer ${verification.carer_id}`);
+                    console.log(`${doc.type} expired for carer ${verification.id}`);
                     hasExpired = true;
 
                     // Update document status to expired
-                    const statusField = `${doc.type.toLowerCase()}_status`;
+                    const statusField = `${doc.type}_status`;
                     await supabase
                         .from('carer_verification')
-                        .update({ [statusField]: 'expired' })
-                        .eq('carer_id', verification.carer_id);
+                        .update({ [statusField]: 'rejected' }) // Using 'rejected' as per schema constraint
+                        .eq('id', verification.id);
                 }
                 // Check if expiring soon (within 30 days)
                 else if (expiryDate <= thirtyDaysFromNow) {
-                    console.log(`${doc.type} expiring soon for carer ${verification.carer_id}`);
+                    console.log(`${doc.type} expiring soon for carer ${verification.id}`);
                     expiringSoon = true;
                 }
             }
@@ -76,19 +75,19 @@ serve(async (req) => {
                         overall_status: 'pending',
                         updated_at: new Date().toISOString(),
                     })
-                    .eq('carer_id', verification.carer_id);
+                    .eq('id', verification.id);
 
-                deVerifiedCarers.push(verification.carer_id);
+                deVerifiedCarers.push(verification.id);
                 expiredCount++;
 
                 // TODO: Send email notification to carer
-                console.log(`De-verified carer ${verification.carer_id} due to expired documents`);
+                console.log(`De-verified carer ${verification.id} due to expired documents`);
             }
 
             if (expiringSoon && !hasExpired) {
                 expiringSoonCount++;
                 // TODO: Send reminder email to carer
-                console.log(`Reminder needed for carer ${verification.carer_id}`);
+                console.log(`Reminder needed for carer ${verification.id}`);
             }
         }
 

@@ -66,12 +66,29 @@ export function validateMinimumRate(rate: number): boolean {
 
 /**
  * Get the current pricing phase from system config
- * This should be fetched from the database in production
+ * Fetches from Supabase system_config table
  */
 export async function getCurrentPricingPhase(): Promise<PricingPhase> {
-    // TODO: Fetch from Supabase system_config table
-    // For now, default to Phase 1
-    return '1';
+    try {
+        // Import supabase dynamically to avoid circular dependencies
+        const { supabase } = await import('@/integrations/supabase/client');
+
+        const { data, error } = await supabase
+            .from('system_config')
+            .select('value')
+            .eq('id', 'active_phase')
+            .single();
+
+        if (error || !data) {
+            console.warn('Could not fetch pricing phase, defaulting to Phase 1:', error?.message);
+            return '1';
+        }
+
+        return (data.value === '2' ? '2' : '1') as PricingPhase;
+    } catch (error) {
+        console.error('Error fetching pricing phase:', error);
+        return '1';
+    }
 }
 
 /**
