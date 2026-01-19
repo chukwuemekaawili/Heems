@@ -261,7 +261,7 @@ const DashboardLayout = ({
                 <img
                   src="/heems-logo.png"
                   alt="Heems"
-                  className="h-9 w-auto"
+                  className="h-9 w-auto brightness-0 invert"
                 />
               </Link>
               <button
