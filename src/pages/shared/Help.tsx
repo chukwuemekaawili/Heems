@@ -160,7 +160,14 @@ const Help = () => {
 
             {/* Quick Actions */}
             <div className="grid sm:grid-cols-3 gap-4">
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card
+                    className="hover:shadow-lg transition-shadow cursor-pointer"
+                    onClick={() => {
+                        // Find and click the chat widget button
+                        const chatButton = document.querySelector('[data-chat-widget-trigger]') as HTMLButtonElement;
+                        if (chatButton) chatButton.click();
+                    }}
+                >
                     <CardContent className="pt-6 text-center">
                         <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                             <MessageCircle className="h-6 w-6 text-primary" />

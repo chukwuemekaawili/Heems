@@ -101,8 +101,8 @@ const ForCarers = () => {
                                     </div>
                                 ))}
                             </div>
-                            <Button className="h-16 px-12 rounded-2xl bg-[#1a9e8c] text-white font-black hover:bg-[#15806c] shadow-xl shadow-[#1a9e8c]/20 transition-all text-lg">
-                                Start Your Application
+                            <Button className="h-16 px-12 rounded-2xl bg-[#1a9e8c] text-white font-black hover:bg-[#15806c] shadow-xl shadow-[#1a9e8c]/20 transition-all text-lg" asChild>
+                                <Link to="/signup/carer">Start Your Application</Link>
                             </Button>
                         </div>
                         <div className="flex-1 bg-slate-50 p-10 rounded-[3rem] border border-black/5">

@@ -35,7 +35,7 @@ const Solutions = () => {
 
                     <div className="relative max-w-6xl mx-auto px-10 py-10 bg-slate-50 border border-black/5 rounded-[4rem] overflow-hidden">
                         <img
-                            src="/smart_care_dashboard_mockup.png"
+                            src="/carer-dashboard-mockup.png"
                             alt="Heems Enterprise Dashboard"
                             className="w-full rounded-3xl shadow-2xl border border-black/10"
                         />
@@ -101,8 +101,8 @@ const Solutions = () => {
                     <div className="container mx-auto px-6 lg:px-12 text-center text-white">
                         <h2 className="text-4xl lg:text-7xl font-black mb-8 tracking-tighter">Modernize your care layer.</h2>
                         <p className="text-white/60 font-medium mb-12 max-w-xl mx-auto">Join the forward-thinking healthcare organisers using Heems to deliver better outcomes.</p>
-                        <Button size="lg" className="h-16 px-12 rounded-2xl bg-[#1a9e8c] text-white font-black hover:bg-[#15806c] shadow-2xl shadow-[#1a9e8c]/10 text-lg transition-all">
-                            Enterprise Enquiry
+                        <Button size="lg" className="h-16 px-12 rounded-2xl bg-[#1a9e8c] text-white font-black hover:bg-[#15806c] shadow-2xl shadow-[#1a9e8c]/10 text-lg transition-all" asChild>
+                            <Link to="/contact">Enterprise Enquiry</Link>
                         </Button>
                     </div>
                 </section>

@@ -56,7 +56,7 @@ const Blog = () => {
                             </div>
                             <div className="w-full lg:max-w-sm">
                                 <Card className="bg-white/5 border-white/10 backdrop-blur-md rounded-3xl p-6">
-                                    <h3 className="text-lg font-bold mb-4">Search Insights</h3>
+                                    <h3 className="text-lg font-bold mb-4 text-white">Search Insights</h3>
                                     <div className="relative">
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/30" />
                                         <Input className="pl-10 h-12 bg-white/5 border-white/10 rounded-xl text-white placeholder:text-white/30 focus-visible:ring-[#1a9e8c]" placeholder="Search articles..." />

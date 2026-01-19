@@ -30,6 +30,7 @@ export const ChatWidget = () => {
         return (
             <Button
                 onClick={() => setIsOpen(true)}
+                data-chat-widget-trigger="true"
                 className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#1a9e8c] hover:bg-[#15806c] shadow-2xl shadow-[#1a9e8c]/40 animate-bounce group z-50 p-0"
             >
                 <MessageCircle className="h-6 w-6 text-white group-hover:scale-110 transition-transform" />
@@ -69,8 +70,8 @@ export const ChatWidget = () => {
                             {chatHistory.map((chat, i) => (
                                 <div key={i} className={`flex ${chat.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                     <div className={`max-w-[80%] p-3 rounded-2xl text-sm font-medium shadow-sm ${chat.role === 'user'
-                                            ? 'bg-[#1a9e8c] text-white rounded-tr-none'
-                                            : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none'
+                                        ? 'bg-[#1a9e8c] text-white rounded-tr-none'
+                                        : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none'
                                         }`}>
                                         {chat.text}
                                     </div>
