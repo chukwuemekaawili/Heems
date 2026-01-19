@@ -481,6 +481,186 @@ ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.conversations;
 
 -- ============================================
+-- BLOG POSTS TABLE
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS public.blog_posts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  excerpt TEXT,
+  content TEXT,
+  author TEXT NOT NULL,
+  category TEXT NOT NULL DEFAULT 'General',
+  reading_time TEXT DEFAULT '5 min read',
+  featured_image TEXT,
+  is_published BOOLEAN DEFAULT false,
+  is_featured BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  published_at TIMESTAMPTZ
+);
+
+-- RLS for blog_posts
+ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read published posts
+CREATE POLICY "Anyone can read published blog posts"
+  ON public.blog_posts FOR SELECT
+  USING (is_published = true);
+
+-- Admins can manage all posts
+CREATE POLICY "Admins can manage blog posts"
+  ON public.blog_posts FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+-- ============================================
+-- CONTACT SUBMISSIONS TABLE
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS public.contact_submissions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT,
+  subject TEXT,
+  message TEXT NOT NULL,
+  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'read', 'replied', 'archived')),
+  admin_notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- RLS for contact_submissions
+ALTER TABLE public.contact_submissions ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can submit a contact form
+CREATE POLICY "Anyone can submit contact form"
+  ON public.contact_submissions FOR INSERT
+  WITH CHECK (true);
+
+-- Admins can view and manage submissions
+CREATE POLICY "Admins can manage contact submissions"
+  ON public.contact_submissions FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+-- ============================================
+-- SEED DATA: BLOG POSTS
+-- ============================================
+
+INSERT INTO public.blog_posts (title, slug, excerpt, content, author, category, reading_time, is_published, is_featured, published_at) VALUES
+(
+  'The Future of Specialist Care in the UK',
+  'future-of-specialist-care-uk',
+  'How technological infrastructure is solving the fragmentation of private care and improving clinical outcomes.',
+  '<h2>Introduction</h2>
+<p>The UK''s private care sector is undergoing a significant transformation. For decades, families seeking specialist care for their loved ones have navigated a fragmented landscape of agencies, independent carers, and often inadequate vetting processes.</p>
+
+<h2>The Current Challenges</h2>
+<p>Traditional care agencies often charge high fees while paying carers relatively little. This creates a situation where quality professionals leave the sector, and families struggle to find reliable, verified care.</p>
+
+<h2>Technology as the Solution</h2>
+<p>Platforms like Heems are changing this dynamic by providing clinical-grade vetting infrastructure, real-time matching algorithms, and transparent pricing that benefits both families and carers.</p>
+
+<h2>Looking Ahead</h2>
+<p>The future of UK care lies in technology-enabled marketplaces that prioritize safety, transparency, and fair compensation for care professionals.</p>',
+  'Dr. Sarah Jameson',
+  'Industry Insights',
+  '8 min read',
+  true,
+  false,
+  NOW() - INTERVAL '5 days'
+),
+(
+  '5 Things to Look for in a Specialist Carer',
+  '5-things-specialist-carer',
+  'A comprehensive guide for families navigating the vetting process for complex care needs.',
+  '<h2>Finding the Right Carer</h2>
+<p>Choosing a carer for a loved one with complex needs is one of the most important decisions a family can make. Here are five critical factors to consider.</p>
+
+<h2>1. Verified Qualifications</h2>
+<p>Always verify that your carer has the appropriate qualifications and training for your specific care needs. This includes NVQ levels, specialist certifications, and up-to-date mandatory training.</p>
+
+<h2>2. DBS Check Status</h2>
+<p>An Enhanced DBS check is essential. Ensure this has been completed recently and covers the appropriate workforce type.</p>
+
+<h2>3. Professional References</h2>
+<p>Look for carers with verifiable references from previous care roles. A good platform will have already vetted these.</p>
+
+<h2>4. Specialist Experience</h2>
+<p>If your loved one has specific conditions like dementia, Parkinson''s, or requires palliative care, seek carers with documented experience in these areas.</p>
+
+<h2>5. Personality Fit</h2>
+<p>Beyond qualifications, the personal connection matters. Many platforms now offer video introductions or trial visits.</p>',
+  'Marcus Thorne',
+  'Family Guide',
+  '5 min read',
+  true,
+  false,
+  NOW() - INTERVAL '7 days'
+),
+(
+  'Automating Compliance: The Heems Story',
+  'automating-compliance-heems-story',
+  'Behind the scenes of the engine that ensures every carer on our platform meets the highest standards.',
+  '<h2>Building Trust Through Technology</h2>
+<p>When we started Heems, we knew that trust would be our most important currency. Families entrusting us with finding care for their loved ones needed absolute confidence in our vetting process.</p>
+
+<h2>The 20-Point Verification System</h2>
+<p>Our compliance engine checks 20 distinct data points for every carer, from identity verification to professional references, DBS status to insurance coverage.</p>
+
+<h2>Real-Time Monitoring</h2>
+<p>Compliance isn''t a one-time check. Our system continuously monitors document expiry dates, re-verifies credentials, and flags any issues before they become problems.</p>
+
+<h2>The Human Element</h2>
+<p>While technology does the heavy lifting, our clinical team reviews edge cases and maintains the human judgment that complex care decisions require.</p>
+
+<h2>Results That Speak</h2>
+<p>Since implementing our automated compliance system, we''ve achieved a 99.9% verification accuracy rate with an average verification time of just 24 hours.</p>',
+  'James Heems',
+  'Engineering',
+  '12 min read',
+  true,
+  false,
+  NOW() - INTERVAL '10 days'
+),
+(
+  'Connecting the Dots: How Shared Data is Transforming Clinical-at-Home Outcomes',
+  'shared-data-clinical-outcomes',
+  'An in-depth analysis of how integrated data layers are giving carers and families the real-time insights they need to prevent hospital readmissions.',
+  '<h2>The Data Revolution in Home Care</h2>
+<p>Home care has traditionally operated in information silos. The GP has one set of records, the hospital another, and home carers often work with limited information.</p>
+
+<h2>Breaking Down Barriers</h2>
+<p>Modern care platforms are changing this by creating integrated data layers that allow relevant health information to be shared securely between all parties involved in a patient''s care.</p>
+
+<h2>Preventing Readmissions</h2>
+<p>With access to real-time care logs, medication tracking, and vital signs monitoring, potential issues can be identified and addressed before they escalate to hospital-level interventions.</p>
+
+<h2>The Privacy Balance</h2>
+<p>Data sharing must be balanced with privacy. GDPR-compliant systems ensure that only relevant information is shared with those who need it, with full audit trails.</p>
+
+<h2>Looking Forward</h2>
+<p>The future will see even greater integration with NHS systems, wearable devices, and AI-powered predictive analytics.</p>',
+  'David Elan',
+  'Clinical Innovation',
+  '10 min read',
+  true,
+  true,
+  NOW() - INTERVAL '3 days'
+);
+
+-- ============================================
 -- VERIFICATION QUERY
 -- ============================================
 
