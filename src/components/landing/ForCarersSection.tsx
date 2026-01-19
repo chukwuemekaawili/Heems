@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, CheckCircle2, Star, Clock, Shield, TrendingUp, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -63,53 +62,34 @@ const ForCarersSection = () => {
           {/* Visual */}
           <div className="order-1 lg:order-2">
             <div className="relative">
-              <Card variant="gradient" className="p-6 lg:p-8">
-                <CardContent className="p-0">
-                  {/* Earnings preview */}
-                  <div className="bg-card rounded-xl p-6 shadow-md mb-6">
-                    <p className="text-sm text-muted-foreground mb-2">This month's earnings</p>
-                    <p className="text-4xl font-bold text-foreground mb-1">£3,247.50</p>
-                    <p className="text-sm text-success flex items-center gap-1">
-                      <TrendingUp className="w-4 h-4" />
-                      +12% from last month
-                    </p>
-                  </div>
+              {/* Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-emerald-500/20 rounded-3xl blur-3xl opacity-50"></div>
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-foreground">42</p>
-                      <p className="text-xs text-muted-foreground">Hours worked</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-foreground">8</p>
-                      <p className="text-xs text-muted-foreground">Clients</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-foreground">4.9</p>
-                      <p className="text-xs text-muted-foreground">Rating</p>
-                    </div>
-                  </div>
-
-                  {/* Upcoming */}
-                  <div className="bg-primary/5 rounded-xl p-4">
-                    <p className="text-sm font-medium text-foreground mb-2">Next appointment</p>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-foreground">Mrs. Thompson</p>
-                        <p className="text-sm text-muted-foreground">Today, 2:00 PM • 3 hours</p>
-                      </div>
-                      <Badge variant="success">Confirmed</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Dashboard Mockup Image */}
+              <div className="relative">
+                <img
+                  src="/carer-dashboard-mockup.png"
+                  alt="Heems Carer Dashboard App"
+                  className="w-full max-w-md mx-auto rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-500"
+                  style={{
+                    filter: 'drop-shadow(0 25px 50px rgba(26, 158, 140, 0.25))',
+                  }}
+                />
+              </div>
 
               {/* Floating badge */}
               <div className="absolute -bottom-4 -left-4 bg-success text-success-foreground rounded-2xl p-3 shadow-lg animate-bounce-subtle">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5" />
                   <span className="text-sm font-semibold">Weekly payouts</span>
+                </div>
+              </div>
+
+              {/* Additional floating element */}
+              <div className="absolute -top-4 -right-4 bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  <span className="text-sm font-semibold text-slate-900">Top Rated</span>
                 </div>
               </div>
             </div>
