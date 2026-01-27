@@ -155,7 +155,34 @@ serve(async (req) => {
         }
 
         console.log("Creating Stripe session...");
-        const session = await stripe.checkout.sessions.create(sessionParams);
+        let session;
+        try {
+            session = await stripe.checkout.sessions.create(sessionParams);
+        } catch (error: any) {
+            console.warn("Initial session creation failed:", error.code);
+
+            // Handle valid case where Customer ID exists in DB but not in Stripe (e.g. test mode reset)
+            if (error.code === 'resource_missing' && error.param === 'customer') {
+                console.log("Stripe customer missing. Recreating...");
+
+                const newCustomer = await stripe.customers.create({
+                    email: userEmail,
+                    metadata: { supabase_id: clientId },
+                });
+
+                // Update DB with new ID
+                await supabaseAdmin
+                    .from('profiles')
+                    .update({ stripe_customer_id: newCustomer.id })
+                    .eq('id', clientId);
+
+                // Retry session creation with new customer
+                sessionParams.customer = newCustomer.id;
+                session = await stripe.checkout.sessions.create(sessionParams);
+            } else {
+                throw error;
+            }
+        }
         console.log("Session created:", session.id);
 
         return new Response(

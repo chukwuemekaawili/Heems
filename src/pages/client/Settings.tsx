@@ -181,9 +181,23 @@ const ClientSettings = () => {
             }
         } catch (error: any) {
             console.error('Stripe setup error:', error);
+
+            // Try to extract detailed error from Edge Function response if available
+            let errorMessage = error.message || "Failed to initiate payment method setup";
+            if (error && error.context && error.context.json) {
+                try {
+                    const errorBody = await error.context.json();
+                    if (errorBody && errorBody.error) {
+                        errorMessage = errorBody.error;
+                    }
+                } catch (e) {
+                    // JSON parsing failed, just use original message
+                }
+            }
+
             toast({
-                title: "Error",
-                description: error.message || "Failed to initiate payment method setup",
+                title: "Payment Setup Failed",
+                description: errorMessage,
                 variant: "destructive"
             });
         } finally {
@@ -461,7 +475,7 @@ const ClientSettings = () => {
                                     ) : (
                                         <Plus className="h-4 w-4 mr-2" />
                                     )}
-                                    {addingCard ? "Redirecting..." : "Add your first card"}
+                                    {addingCard ? "Redirecting..." : "Add New Payment Method"}
                                 </Button>
                             </div>
                         </div>
@@ -491,7 +505,7 @@ const ClientSettings = () => {
                             Add Payment Method
                         </DialogTitle>
                         <DialogDescription>
-                            We use Stripe to securely process your payments. You will be redirected to a secure Stripe-hosted page to enter your card details.
+                            All major credit/debit cards accepted. You will be redirected to a secure Stripe-hosted page to verify your payment method.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-6 space-y-4">
@@ -517,7 +531,7 @@ const ClientSettings = () => {
                             disabled={addingCard}
                         >
                             {addingCard && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                            Proceed to Stripe
+                            Proceed to Secure Checkout
                         </Button>
                     </DialogFooter>
                 </DialogContent>

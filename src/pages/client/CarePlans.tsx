@@ -168,7 +168,6 @@ export default function CarePlans() {
   const selectedRecipient = careRecipients[0];
 
   return (
-  return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">

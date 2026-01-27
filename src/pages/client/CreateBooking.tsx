@@ -70,7 +70,16 @@ export default function CreateBooking() {
                 .single();
 
             if (error) throw error;
-            setCarer(data);
+
+            // Normalize carer data (handle case where 1:1 relation returns array)
+            const normalizedCarer = {
+                ...data,
+                carer_details: Array.isArray(data.carer_details)
+                    ? data.carer_details[0]
+                    : data.carer_details
+            };
+
+            setCarer(normalizedCarer);
         } catch (error: any) {
             toast({
                 title: "Error fetching carer",
@@ -121,7 +130,7 @@ export default function CreateBooking() {
             if (!user) throw new Error("Please log in to book");
 
             // Validate minimum rate
-            const rate = carer.carer_details.hourly_rate;
+            const rate = carer?.carer_details?.hourly_rate || 0;
             if (!validateMinimumRate(rate)) {
                 throw new Error(`Rate must be at least £${MINIMUM_HOURLY_RATE}/hour`);
             }
@@ -298,7 +307,7 @@ export default function CreateBooking() {
                                             )}
 
                                             {/* Rate Compliance Alert */}
-                                            {carer.carer_details.hourly_rate < MINIMUM_HOURLY_RATE && (
+                                            {carer?.carer_details?.hourly_rate < MINIMUM_HOURLY_RATE && (
                                                 <Alert variant="destructive">
                                                     <AlertCircle className="h-4 w-4" />
                                                     <AlertDescription>
@@ -316,7 +325,7 @@ export default function CreateBooking() {
                                         <Button
                                             className="w-full h-12 rounded-xl font-bold text-sm shadow-md shadow-primary/10"
                                             onClick={handleBooking}
-                                            disabled={loading || (carer.carer_details.hourly_rate < MINIMUM_HOURLY_RATE)}
+                                            disabled={loading || (carer?.carer_details?.hourly_rate < MINIMUM_HOURLY_RATE)}
                                         >
                                             {loading ? "Processing..." : "Confirm Booking"}
                                             {!loading && <CheckCircle2 className="w-4 h-4 ml-2" />}
@@ -373,7 +382,7 @@ export default function CreateBooking() {
                             <div className="space-y-3 pt-5 border-t border-white/5">
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="font-semibold text-white/40">Hourly Rate</span>
-                                    <span className="font-bold tracking-tight">£{carer?.carer_details.hourly_rate}</span>
+                                    <span className="font-bold tracking-tight">£{carer?.carer_details?.hourly_rate || '0.00'}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-[11px]">
                                     <span className="font-semibold text-white/40 flex items-center gap-2">
