@@ -21,6 +21,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_payout_due_date ON bookings;
+
 CREATE TRIGGER update_payout_due_date
 BEFORE INSERT OR UPDATE OF end_time ON bookings
 FOR EACH ROW
