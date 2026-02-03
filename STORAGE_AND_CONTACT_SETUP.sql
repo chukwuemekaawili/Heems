@@ -15,7 +15,7 @@
 -- Users can only upload to their own folder
 -- Admins can view all documents
 
--- Policy: Users can upload their own verification documents
+DROP POLICY IF EXISTS "Users can upload own verification docs" ON storage.objects;
 CREATE POLICY "Users can upload own verification docs"
 ON storage.objects FOR INSERT
 TO authenticated
@@ -24,7 +24,7 @@ WITH CHECK (
     AND (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- Policy: Users can view their own verification documents
+DROP POLICY IF EXISTS "Users can view own verification docs" ON storage.objects;
 CREATE POLICY "Users can view own verification docs"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -33,7 +33,7 @@ USING (
     AND (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- Policy: Users can update their own verification documents
+DROP POLICY IF EXISTS "Users can update own verification docs" ON storage.objects;
 CREATE POLICY "Users can update own verification docs"
 ON storage.objects FOR UPDATE
 TO authenticated
@@ -42,7 +42,7 @@ USING (
     AND (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- Policy: Users can delete their own verification documents
+DROP POLICY IF EXISTS "Users can delete own verification docs" ON storage.objects;
 CREATE POLICY "Users can delete own verification docs"
 ON storage.objects FOR DELETE
 TO authenticated
@@ -51,7 +51,7 @@ USING (
     AND (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- Policy: Admins can view all verification documents
+DROP POLICY IF EXISTS "Admins can view all verification docs" ON storage.objects;
 CREATE POLICY "Admins can view all verification docs"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -66,7 +66,7 @@ USING (
 -- 2. Message Attachments Bucket
 -- Users can upload and view their own message attachments
 
--- Policy: Users can upload message attachments
+DROP POLICY IF EXISTS "Users can upload message attachments" ON storage.objects;
 CREATE POLICY "Users can upload message attachments"
 ON storage.objects FOR INSERT
 TO authenticated
@@ -75,7 +75,7 @@ WITH CHECK (
     AND (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- Policy: Users can view message attachments they're involved with
+DROP POLICY IF EXISTS "Users can view relevant message attachments" ON storage.objects;
 CREATE POLICY "Users can view relevant message attachments"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -83,7 +83,7 @@ USING (
     bucket_id = 'message-attachments'
 );
 
--- Policy: Admins can view all message attachments
+DROP POLICY IF EXISTS "Admins can view all message attachments" ON storage.objects;
 CREATE POLICY "Admins can view all message attachments"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS contact_submissions (
 ALTER TABLE contact_submissions ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Only admins can view contact submissions
+DROP POLICY IF EXISTS "Admins can view contact submissions" ON contact_submissions;
 CREATE POLICY "Admins can view contact submissions"
 ON contact_submissions FOR SELECT
 TO authenticated
@@ -128,18 +129,21 @@ USING (
 );
 
 -- Policy: Anyone can insert contact submissions (for the form)
+DROP POLICY IF EXISTS "Anyone can submit contact form" ON contact_submissions;
 CREATE POLICY "Anyone can submit contact form"
 ON contact_submissions FOR INSERT
 TO authenticated
 WITH CHECK (true);
 
 -- Policy: Allow anonymous insertions for non-logged-in users
+DROP POLICY IF EXISTS "Anonymous can submit contact form" ON contact_submissions;
 CREATE POLICY "Anonymous can submit contact form"
 ON contact_submissions FOR INSERT
 TO anon
 WITH CHECK (true);
 
 -- Policy: Admins can update contact submissions
+DROP POLICY IF EXISTS "Admins can update contact submissions" ON contact_submissions;
 CREATE POLICY "Admins can update contact submissions"
 ON contact_submissions FOR UPDATE
 TO authenticated
