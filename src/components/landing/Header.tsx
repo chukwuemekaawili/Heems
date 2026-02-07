@@ -100,7 +100,7 @@ const Header = () => {
   };
 
   const navLinks = [
-    { name: "Find Carers", href: "/marketplace" },
+    { name: "Find a Carer", href: "/marketplace" },
     { name: "For Carers", href: "/carers" },
     { name: "Types of Care", href: "/types-of-care" },
     { name: "How it Works", href: "/how-it-works" },

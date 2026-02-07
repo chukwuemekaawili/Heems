@@ -65,7 +65,7 @@ const getDefaultNavItems = (role: string): NavItem[] => {
       return [
         { name: "Dashboard", href: "/client/dashboard", icon: LayoutDashboard },
         { name: "Post a Job", href: "/client/post-job", icon: Briefcase },
-        { name: "Find Carers", href: "/client/search", icon: Search },
+        { name: "Find a Carer", href: "/client/search", icon: Search },
         { name: "My Bookings", href: "/client/bookings", icon: Calendar },
         { name: "Routines", href: "/client/care-plans", icon: ClipboardList },
         { name: "Messages", href: "/client/messages", icon: MessageSquare },

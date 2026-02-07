@@ -168,7 +168,7 @@ const HowItWorksSection = () => {
             </div>
             <Button size="lg" className="h-16 px-12 rounded-2xl bg-white text-[#111827] font-black text-lg hover:bg-[#1a9e8c] hover:text-white shadow-2xl transition-all" asChild>
               <Link to="/marketplace">
-                Find Carers
+                Find a Carer
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>
