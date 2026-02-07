@@ -5,7 +5,7 @@ const CareTypesSection: FC = () => {
         {
             title: "Visiting care.",
             description:
-                "Flexible visits for support as you need it—perfect for daily routines such as bathing, meals, household tasks, or companionship, whether for regular visits or one-off help.",
+                "Flexible visits for support as you need it—perfect for daily routines such as meals preparation, walks, household tasks, or companionship. Visits may be arranged regularly or as one-off support.",
             image: "/visiting_care.png",
         },
         {
