@@ -121,7 +121,7 @@ const HeroSection = () => {
                   <img
                     src="/app-store-badge.svg"
                     alt="Download on the App Store"
-                    className="h-[52px] w-auto"
+                    className="h-[56px] w-auto"
                   />
                 </a>
 
@@ -133,7 +133,8 @@ const HeroSection = () => {
                   <img
                     src="/google-play-badge.png"
                     alt="Get it on Google Play"
-                    className="h-[52px] w-auto"
+                    className="h-[56px] w-auto"
+                    style={{ objectFit: 'contain' }}
                   />
                 </a>
               </div>
