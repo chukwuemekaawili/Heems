@@ -34,11 +34,12 @@ jobs:
       
       # 5. Deploy to Namecheap via FTP
       - name: Deploy to Namecheap
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: /public_html/
-          dangerous-clean-slate: true  # Cleans old files before uploading
+          protocol: ftps
+          port: 21
