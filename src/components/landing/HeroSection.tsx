@@ -116,31 +116,25 @@ const HeroSection = () => {
                 {/* Official Apple App Store Badge */}
                 <a
                   href="#"
-                  className="inline-block transition-transform duration-300 hover:opacity-90"
+                  className="inline-block transition-transform duration-200 hover:opacity-80"
                 >
-                  <div className="bg-black rounded-lg px-6 py-3 flex items-center gap-2.5 border border-white/10" style={{ minWidth: '150px', height: '44px' }}>
-                    <svg className="w-7 h-7 text-white flex-shrink-0" viewBox="0 0 384 512" fill="currentColor">
-                      <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
-                    </svg>
-                    <div className="flex flex-col justify-center">
-                      <div className="text-[10px] text-white/95 font-normal leading-tight" style={{ letterSpacing: '0.02em' }}>Download on the</div>
-                      <div className="text-xl text-white font-semibold leading-tight" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', letterSpacing: '-0.02em', marginTop: '-2px' }}>App Store</div>
-                    </div>
-                  </div>
+                  <img
+                    src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1301011200"
+                    alt="Download on the App Store"
+                    className="h-[52px] w-auto"
+                  />
                 </a>
 
-                {/* Google Play Button */}
+                {/* Official Google Play Badge */}
                 <a
                   href="#"
-                  className="group flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105"
+                  className="inline-block transition-transform duration-200 hover:opacity-80"
                 >
-                  <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                    <Play className="w-6 h-6 text-slate-900" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-xs text-slate-400">GET IT ON</div>
-                    <div className="text-sm font-bold text-white">Google Play</div>
-                  </div>
+                  <img
+                    src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                    alt="Get it on Google Play"
+                    className="h-[52px] w-auto"
+                  />
                 </a>
               </div>
             </div>
