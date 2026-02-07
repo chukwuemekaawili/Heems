@@ -167,7 +167,7 @@ const HeroSection = () => {
                   ))}
                 </div>
                 <p className="text-sm text-slate-400 mt-1">
-                  <span className="font-bold text-white">2,000+</span> verified carers
+                  <span className="font-bold text-white">400+</span> verified carers
                 </p>
               </div>
             </div>
