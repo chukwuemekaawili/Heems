@@ -131,10 +131,9 @@ const HeroSection = () => {
                   className="inline-block transition-transform duration-200 hover:opacity-80"
                 >
                   <img
-                    src="/google-play-badge.png"
+                    src="/google-play-badge.svg"
                     alt="Get it on Google Play"
                     className="h-[56px] w-auto"
-                    style={{ objectFit: 'contain' }}
                   />
                 </a>
               </div>
