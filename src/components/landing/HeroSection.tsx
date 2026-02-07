@@ -119,7 +119,7 @@ const HeroSection = () => {
                   className="inline-block transition-transform duration-200 hover:opacity-80"
                 >
                   <img
-                    src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1301011200"
+                    src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
                     alt="Download on the App Store"
                     className="h-[52px] w-auto"
                   />
