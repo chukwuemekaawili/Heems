@@ -11,7 +11,7 @@ const CareTypesSection: FC = () => {
         {
             title: "Overnight care.",
             description:
-                "A trusted carer provides assistance, reassurance, and safety during nighttime hours. Ideal for those needing help with medication, bathroom trips, or simply a comforting presence.",
+                "A carer remains present during the night to provide reassurance and assistance with routine, such as medication prompting, safe bathroom visits, and responding to overnight needs, helping to maintain comfort and peace of mind.",
             image: "/overnight_care.png",
         },
         {
