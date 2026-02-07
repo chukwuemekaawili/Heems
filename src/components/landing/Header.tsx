@@ -101,7 +101,7 @@ const Header = () => {
 
   const navLinks = [
     { name: "Find a Carer", href: "/marketplace" },
-    { name: "For Carers", href: "/carers" },
+    { name: "For Carer", href: "/carers" },
     { name: "Types of Care", href: "/types-of-care" },
     { name: "How it Works", href: "/how-it-works" },
 
@@ -269,7 +269,7 @@ const Header = () => {
                     <Link to="/login">Sign In</Link>
                   </Button>
                   <Button className="h-11 rounded-xl font-bold text-xs bg-[#1a9e8c] hover:bg-[#15806c] text-white" asChild>
-                    <Link to="/signup">Start Free</Link>
+                    <Link to="/signup">Get Started</Link>
                   </Button>
                 </div>
               )}
