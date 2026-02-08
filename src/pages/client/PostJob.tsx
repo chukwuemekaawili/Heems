@@ -36,6 +36,7 @@ export default function PostJob() {
 
         // Q3
         recipient_relationship: "", // 'myself', 'family', 'friend'
+        recipient_age_group: "", // 'under_18', '18_35', '35_65', 'over_65'
 
         // Q5 (Funding)
         funding_source: "", // 'self', 'local_authority', 'nhs'
@@ -69,6 +70,7 @@ export default function PostJob() {
             if (!formData.start_timeline) return toast({ title: "Please select when you need care", variant: "destructive" });
             if (formData.start_timeline === 'specific_date' && !formData.specific_start_date) return toast({ title: "Please select a start date", variant: "destructive" });
             if (!formData.recipient_relationship) return toast({ title: "Please select who needs care", variant: "destructive" });
+            if (!formData.recipient_age_group) return toast({ title: "Please select the age group", variant: "destructive" });
         }
         if (step === 3) {
             if (!formData.funding_source) return toast({ title: "Please select funding source", variant: "destructive" });
@@ -323,6 +325,28 @@ export default function PostJob() {
                                     </div>
                                 </RadioGroup>
                             </div>
+
+                            <div className="space-y-4 pt-4 border-t animate-in fade-in slide-in-from-top-2">
+                                <Label className="text-base">Age group of care recipient</Label>
+                                <RadioGroup value={formData.recipient_age_group} onValueChange={(val) => updateField('recipient_age_group', val)} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div className="flex items-center space-x-2 border px-4 py-3 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <RadioGroupItem value="under_18" id="age1" />
+                                        <Label htmlFor="age1" className="cursor-pointer">Under 18</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2 border px-4 py-3 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <RadioGroupItem value="18_35" id="age2" />
+                                        <Label htmlFor="age2" className="cursor-pointer">18-35 years</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2 border px-4 py-3 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <RadioGroupItem value="35_65" id="age3" />
+                                        <Label htmlFor="age3" className="cursor-pointer">35-65 years</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2 border px-4 py-3 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <RadioGroupItem value="over_65" id="age4" />
+                                        <Label htmlFor="age4" className="cursor-pointer">Over 65</Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
                         </div>
                     )}
 
@@ -426,6 +450,7 @@ export default function PostJob() {
                                     <div><span className="text-muted-foreground">Subtype:</span> <span className="font-medium capitalize">{formData.care_subtype.replace('_', ' ')}</span></div>
                                     <div><span className="text-muted-foreground">Timeline:</span> <span className="font-medium capitalize">{formData.start_timeline.replace('_', ' ')}</span></div>
                                     <div><span className="text-muted-foreground">Location:</span> <span className="font-medium">{formData.postcode}</span></div>
+                                    <div><span className="text-muted-foreground">Age Group:</span> <span className="font-medium capitalize">{formData.recipient_age_group?.replace('_', '-')}</span></div>
                                 </div>
                             </div>
                         </div>
