@@ -423,7 +423,7 @@ export default function CarePlans() {
                     <p className="text-xs leading-relaxed text-foreground/70 font-medium mb-3">{log.summary}</p>
                     {log.notes && (
                       <div className="p-3 bg-slate-50/50 rounded-xl border border-black/5 text-[11px] font-medium text-muted-foreground italic">
-                        <span className="font-bold text-foreground/60 not-italic mr-2">Clinician Notes:</span>
+                        <span className="font-bold text-foreground/60 not-italic mr-2">Care Report:</span>
                         "{log.notes}"
                       </div>
                     )}
