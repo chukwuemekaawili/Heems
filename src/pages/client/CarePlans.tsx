@@ -246,62 +246,7 @@ export default function CarePlans() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Care Portal</h1>
           <p className="text-sm text-muted-foreground font-medium">Coordinate routines and monitor wellbeing.</p>
         </div>
-        <Dialog open={isAddingPlan} onOpenChange={setIsAddingPlan}>
-          <DialogTrigger asChild>
-            <Button className="h-10 px-6 rounded-xl font-bold shadow-sm">
-              <Plus className="h-4 w-4 mr-2" />
-              New Protocol
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md rounded-2xl">
-            {/* ... existing dialog content ... */}
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold">New Care Protocol</DialogTitle>
-              <DialogDescription className="text-sm">Define a new routine for your recipient.</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Title</Label>
-                <Input className="h-10 rounded-lg border-black/5" placeholder="e.g., Physiotherapy Routine" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</Label>
-                  <Select>
-                    <SelectTrigger className="h-10 rounded-lg border-black/5 text-xs">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="personal" className="text-xs">Personal Care</SelectItem>
-                      <SelectItem value="medication" className="text-xs">Medication</SelectItem>
-                      <SelectItem value="nutrition" className="text-xs">Nutrition</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Priority</Label>
-                  <Select>
-                    <SelectTrigger className="h-10 rounded-lg border-black/5 text-xs">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="high" className="text-xs">High</SelectItem>
-                      <SelectItem value="medium" className="text-xs">Medium</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Notes</Label>
-                <Textarea className="rounded-lg border-black/5 min-h-[100px] text-xs" placeholder="Specific instructions..." />
-              </div>
-            </div>
-            <DialogFooter className="gap-2 sm:gap-0">
-              <Button variant="ghost" className="h-10 rounded-lg text-xs font-bold" onClick={() => setIsAddingPlan(false)}>Cancel</Button>
-              <Button className="h-10 rounded-lg text-xs font-bold" onClick={() => setIsAddingPlan(false)}>Create Protocol</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {/* New Protocol button removed as per request */}
       </div>
 
       {/* Care Recipient Card */}
