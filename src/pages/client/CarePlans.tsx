@@ -410,7 +410,7 @@ export default function CarePlans() {
                   </CardHeader>
                   <CardContent className="p-5 pt-0">
                     <div className="space-y-2.5 mb-5 mt-2">
-                      {plan.tasks.slice(0, 3).map((task) => (
+                      {plan.tasks.map((task) => (
                         <div key={task.id} className="flex items-center gap-2.5 group/task">
                           <Checkbox
                             checked={task.completed}
@@ -427,11 +427,6 @@ export default function CarePlans() {
                           </span>
                         </div>
                       ))}
-                      {plan.tasks.length > 3 && (
-                        <p className="text-[10px] font-bold text-primary px-7">
-                          + {plan.tasks.length - 3} additional tasks
-                        </p>
-                      )}
                     </div>
                     <div className="space-y-1.5 pt-4 border-t border-black/5">
                       <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
