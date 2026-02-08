@@ -124,6 +124,10 @@ const DashboardLayout = ({
 }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [counts, setCounts] = useState<{ [key: string]: number }>({});
+  const [userData, setUserData] = useState<{ name: string; avatar?: string }>({
+    name: userName,
+    avatar: userAvatar
+  });
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -194,6 +198,23 @@ const DashboardLayout = ({
             })
         );
       }
+
+      // 4. Fetch User Profile
+      queries.push(
+        supabase
+          .from('profiles')
+          .select('full_name, avatar_url')
+          .eq('id', userId)
+          .single()
+          .then(({ data }) => {
+            if (data) {
+              setUserData({
+                name: data.full_name || "User",
+                avatar: data.avatar_url || undefined
+              });
+            }
+          })
+      );
 
       // Wait for all queries to complete in parallel
       await Promise.all(queries);
@@ -354,9 +375,9 @@ const DashboardLayout = ({
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-sidebar-accent transition-colors">
                     <Avatar className="w-9 h-9">
-                      <AvatarImage src={userAvatar} alt={userName} />
+                      <AvatarImage src={userData.avatar} alt={userData.name} />
                       <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm">
-                        {userName
+                        {userData.name
                           .split(" ")
                           .map((n) => n[0])
                           .join("")
@@ -365,7 +386,7 @@ const DashboardLayout = ({
                     </Avatar>
                     <div className="flex-1 text-left">
                       <p className="text-sm font-medium text-sidebar-foreground truncate">
-                        {userName}
+                        {userData.name}
                       </p>
                       <p className="text-xs text-sidebar-foreground/60 truncate">
                         {roleLabels[role]}
