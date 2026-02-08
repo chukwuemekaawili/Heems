@@ -45,6 +45,7 @@ import CarerSignup from "./pages/auth/CarerSignup";
 import OrganisationSignup from "./pages/auth/OrganisationSignup";
 import SignupSuccess from "./pages/auth/SignupSuccess";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import UpdatePassword from "./pages/auth/UpdatePassword";
 
 // ============================================
 // DASHBOARD PAGES - Lazy loaded for faster initial load
@@ -192,6 +193,7 @@ const App = () => (
               <Route path="/signup/organisation" element={<OrganisationSignup />} />
               <Route path="/signup/success" element={<SignupSuccess />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/update-password" element={<UpdatePassword />} />
 
               {/* Client Routes */}
               <Route element={
