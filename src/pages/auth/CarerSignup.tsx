@@ -173,8 +173,8 @@ const CarerSignup = () => {
 
   return (
     <AuthLayout
-      title={step === 1 ? "Elite Carer Onboarding" : step === 2 ? "Professional Vetting" : "Work Referrals"}
-      subtitle={step === 1 ? "Step 1 of 3: Credentials" : step === 2 ? "Step 2 of 3: Compliance" : "Step 3 of 3: Verification"}
+      title={step === 1 ? "Elite Carer Onboarding" : "Professional Vetting"}
+      subtitle={step === 1 ? "Step 1 of 2: Credentials" : "Step 2 of 2: Compliance"}
     >
       <form onSubmit={handleSubmit} className="space-y-4 animate-in-up">
         {/* Back Link */}
@@ -189,7 +189,7 @@ const CarerSignup = () => {
 
         {/* Improved Progress Bar */}
         <div className="flex gap-1.5 py-2">
-          {[1, 2, 3].map((s) => (
+          {[1, 2].map((s) => (
             <div
               key={s}
               className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= s ? "bg-[#1a9e8c]" : "bg-slate-100"
@@ -229,7 +229,19 @@ const CarerSignup = () => {
               <Input name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
             </div>
 
-            <Button type="button" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl" onClick={() => setStep(2)}>
+            <Button type="button" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl"
+              onClick={() => {
+                if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword) {
+                  toast({
+                    title: "Missing Information",
+                    description: "Please fill in all fields to continue.",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                setStep(2);
+              }}
+            >
               Continue to Compliance
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -285,56 +297,23 @@ const CarerSignup = () => {
               </div>
             </div>
 
-            <Button type="button" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl" onClick={() => setStep(3)}>
-              Proceed to Referrals
+            <div className="flex items-start gap-3 py-4">
+              <Checkbox id="terms" checked={agreeTerms} onCheckedChange={(c) => setAgreeTerms(!!c)} />
+              <Label htmlFor="terms" className="text-[11px] font-bold text-slate-500 leading-tight">
+                I agree to the Terms of Service and understand that I will need to complete verification before accepting bookings.
+              </Label>
+            </div>
+
+            <Button type="submit" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl" disabled={isLoading || !agreeTerms}>
+              {isLoading ? "Creating Account..." : "Create Account & Start Vetting"}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
         )}
 
-        {step === 3 && (
-          <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-[#1a9e8c]/5 border border-[#1a9e8c]/20 mb-4">
-              <div className="flex gap-3 items-center text-[#1a9e8c] mb-2">
-                <ShieldCheck className="w-5 h-5" />
-                <span className="text-xs font-black uppercase tracking-widest">Verification Shield</span>
-              </div>
-              <p className="text-[11px] font-bold text-slate-500 leading-relaxed">
-                Per PRD v2.3 compliance, we require **two professional referrals** from previous health or social care employers.
-              </p>
-            </div>
+        {/* Step 3 removed as per user request */}
 
-            <div className="space-y-3">
-              <div className="p-4 rounded-2xl border border-black/[0.05] space-y-3">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase text-[#111827]">
-                  <Users className="w-3 h-3" /> Referral 01
-                </div>
-                <Input name="referral1Name" placeholder="Referees Full Name" value={formData.referral1Name} onChange={handleChange} className="h-10 bg-slate-50 border-black/[0.03] text-sm" required />
-                <Input name="referral1Email" type="email" placeholder="Referee Work Email" value={formData.referral1Email} onChange={handleChange} className="h-10 bg-slate-50 border-black/[0.03] text-sm" required />
-              </div>
-
-              <div className="p-4 rounded-2xl border border-black/[0.05] space-y-3">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase text-[#111827]">
-                  <Users className="w-3 h-3" /> Referral 02
-                </div>
-                <Input name="referral2Name" placeholder="Referees Full Name" value={formData.referral2Name} onChange={handleChange} className="h-10 bg-slate-50 border-black/[0.03] text-sm" required />
-                <Input name="referral2Email" type="email" placeholder="Referee Work Email" value={formData.referral2Email} onChange={handleChange} className="h-10 bg-slate-50 border-black/[0.03] text-sm" required />
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 py-4">
-              <Checkbox id="terms" checked={agreeTerms} onCheckedChange={(c) => setAgreeTerms(!!c)} />
-              <Label htmlFor="terms" className="text-[11px] font-bold text-slate-500 leading-tight">
-                I understand that I will remain **unverified** and hidden from the marketplace until these referees respond.
-              </Label>
-            </div>
-
-            <Button type="submit" className="w-full h-14 rounded-xl bg-[#1a9e8c] text-white font-black hover:bg-[#15806c] shadow-xl shadow-[#1a9e8c]/20" disabled={isLoading || !agreeTerms}>
-              {isLoading ? "Validating Application..." : "Submit Application"}
-              <ShieldCheck className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-        )}
+        {/* Step 3 was here: Referrals */}
 
         {/* Sign In Link */}
         <p className="text-center text-sm font-bold text-[#475569] pt-4">
