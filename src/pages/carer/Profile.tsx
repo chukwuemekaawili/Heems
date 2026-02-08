@@ -24,8 +24,13 @@ import {
   Clock,
   Save,
   Eye,
-  Loader2
+  Loader2,
+  Trash2,
+  Upload,
+  Video,
+  Play
 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -103,6 +108,10 @@ export default function CarerProfile() {
     hobbies: "",
     has_transportation: false
   });
+
+  // Video Upload State
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(0);
 
   useEffect(() => {
     fetchProfileData();
@@ -229,6 +238,92 @@ export default function CarerProfile() {
         ? prev.languages.filter((l: string) => l !== language)
         : [...prev.languages, language]
     }));
+  };
+
+  const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 50 * 1024 * 1024) { // 50MB
+      toast({
+        title: "File too large",
+        description: "Video must be under 50MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!file.type.startsWith('video/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a video file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setUploadingVideo(true);
+      setVideoProgress(10); // Start progress
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}_intro.${fileExt}`;
+
+      // Simulate progress
+      const interval = setInterval(() => {
+        setVideoProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(interval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 500);
+
+      const { error } = await supabase.storage
+        .from('carer-videos')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      clearInterval(interval);
+      setVideoProgress(100);
+
+      if (error) throw error;
+
+      // Get Public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('carer-videos')
+        .getPublicUrl(fileName);
+
+      setCarerDetails((prev: any) => ({ ...prev, video_url: publicUrl }));
+
+      toast({
+        title: "Video Uploaded",
+        description: "Your introduction video has been uploaded successfully.",
+      });
+
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingVideo(false);
+      setTimeout(() => setVideoProgress(0), 1000);
+    }
+  };
+
+  const handleRemoveVideo = () => {
+    if (window.confirm("Are you sure you want to remove your video?")) {
+      setCarerDetails((prev: any) => ({ ...prev, video_url: "" }));
+    }
   };
 
   if (loading) {
@@ -577,18 +672,87 @@ export default function CarerProfile() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                  <Camera className="h-4 w-4" />
-                  Welcome Video (URL)
-                </Label>
-                <Input
-                  placeholder="https://youtube.com/watch?v=..."
-                  disabled={!isEditing}
-                  value={carerDetails.video_url || ""}
-                  onChange={(e) => setCarerDetails((c: any) => ({ ...c, video_url: e.target.value }))}
-                />
-                <p className="text-xs text-muted-foreground">Link to a short video introducing yourself to clients (YouTube, Loom, etc.)</p>
+              <Label className="flex items-center gap-2">
+                <Video className="h-4 w-4" />
+                Introduction Video
+                <Badge variant="outline" className="ml-2 text-xs font-normal">Highly Recommended</Badge>
+              </Label>
+
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-xl p-6 transition-all hover:bg-muted/10">
+                {carerDetails.video_url ? (
+                  <div className="space-y-4">
+                    <div className="relative aspect-video rounded-lg overflow-hidden bg-black border border-border">
+                      <video
+                        src={carerDetails.video_url}
+                        controls
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="flex justify-end gap-3">
+                      {isEditing && (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={handleRemoveVideo}
+                          className="h-8 text-xs"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                          Remove Video
+                        </Button>
+                      )}
+                      {isEditing && (
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="video/*"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={handleVideoUpload}
+                            disabled={uploadingVideo}
+                          />
+                          <Button variant="outline" size="sm" className="h-8 text-xs">
+                            <Upload className="w-3.5 h-3.5 mr-1.5" />
+                            Replace Video
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center space-y-4 py-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Video className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-semibold">Upload an Introduction Video</p>
+                      <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                        Introduce yourself to potential clients. Keep it short (1-2 mins), friendly, and professional.
+                      </p>
+                    </div>
+
+                    {uploadingVideo ? (
+                      <div className="w-full max-w-xs space-y-2">
+                        <Progress value={videoProgress} className="h-2" />
+                        <p className="text-xs text-center text-muted-foreground">Uploading... {videoProgress}%</p>
+                      </div>
+                    ) : (
+                      isEditing && (
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="video/*"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={handleVideoUpload}
+                          />
+                          <Button>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Select Video File
+                          </Button>
+                        </div>
+                      )
+                    )}
+                    <p className="text-xs text-muted-foreground">MP4, WebM up to 50MB</p>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-4">

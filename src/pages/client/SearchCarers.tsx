@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Search,
@@ -26,7 +27,8 @@ import {
   SlidersHorizontal,
   Zap,
   Sparkles,
-  Award
+  Award,
+  Play
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PostcodeAddressLookup } from "@/components/shared/PostcodeAddressLookup";
@@ -55,6 +57,7 @@ interface CarerProfile {
     hourly_rate: number;
     verification_status: string;
     availability_status: string;
+    video_url?: string;
   };
   distance?: string; // Mocked for now
   rating?: number; // Mocked for now
@@ -69,6 +72,7 @@ export default function SearchCarers() {
   const [priceRange, setPriceRange] = useState([15, 50]);
   const [selectedCareTypes, setSelectedCareTypes] = useState<string[]>([]);
   const [savedCarers, setSavedCarers] = useState<string[]>([]);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -90,7 +94,10 @@ export default function SearchCarers() {
             specializations,
             hourly_rate,
             verification_status,
-            availability_status
+            hourly_rate,
+            verification_status,
+            availability_status,
+            video_url
           )
         `)
         .eq('role', 'carer');
@@ -292,15 +299,22 @@ export default function SearchCarers() {
                   {/* Main Content */}
                   <div className="flex-1 p-5 md:p-6">
                     <div className="flex items-start gap-4 md:gap-6">
-                      <div className="relative shrink-0">
-                        <Avatar className="h-20 w-20 rounded-2xl shadow-md border-2 border-white">
+                      <div className="relative shrink-0 group/avatar cursor-pointer" onClick={() => carer.carer_details.video_url && setSelectedVideo(carer.carer_details.video_url)}>
+                        <Avatar className="h-20 w-20 rounded-2xl shadow-md border-2 border-white transition-transform group-hover/avatar:scale-105">
                           <AvatarImage src={carer.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${carer.full_name}`} />
                           <AvatarFallback className="text-lg font-bold bg-primary/10 text-primary">
                             {carer.full_name.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         </Avatar>
+                        {carer.carer_details.video_url && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-2xl opacity-0 group-hover/avatar:opacity-100 transition-opacity">
+                            <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow-lg transform scale-0 group-hover/avatar:scale-100 transition-transform duration-300">
+                              <Play className="w-4 h-4 text-primary fill-primary ml-0.5" />
+                            </div>
+                          </div>
+                        )}
                         {carer.carer_details.verification_status === 'verified' && (
-                          <div className="absolute -bottom-1.5 -right-1.5 h-7 w-7 rounded-lg bg-primary text-white flex items-center justify-center shadow-md border-2 border-white">
+                          <div className="absolute -bottom-1.5 -right-1.5 h-7 w-7 rounded-lg bg-primary text-white flex items-center justify-center shadow-md border-2 border-white z-10">
                             <ShieldCheck className="h-3.5 w-3.5" />
                           </div>
                         )}
@@ -401,6 +415,19 @@ export default function SearchCarers() {
           </Button>
         </div>
       )}
+      {/* Video Dialog */}
+      <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
+        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden bg-black border-none rounded-2xl">
+          {selectedVideo && (
+            <video
+              src={selectedVideo}
+              controls
+              autoPlay
+              className="w-full h-full aspect-video"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
