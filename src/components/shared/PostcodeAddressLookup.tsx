@@ -35,20 +35,29 @@ export function PostcodeAddressLookup({
 
         setIsSearching(true);
         try {
-            const response = await fetch(`https://api.postcodes.io/postcodes/${pc}`);
+            // Encode the postcode to handle spaces correctly
+            const response = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(pc.trim())}`);
+
+            if (!response.ok) throw new Error("Postcode lookup failed");
+
             const data = await response.json();
 
-            if (data.status === 200) {
+            if (data.status === 200 && data.result) {
                 const { result } = data;
-                const area = result.admin_district || result.parliamentary_constituency || "Main";
-                const region = result.region || result.european_electoral_region || "London";
+                const area = result.admin_district || result.parliamentary_constituency || result.parish || "Area";
+                const region = result.region || result.european_electoral_region || "";
 
+                const locationSuffix = region ? `, ${region}` : "";
+
+                // Note: postcodes.io is open data and does not provide individual property level data.
+                // We generate plausible street names based on the locale for demonstration.
+                // In a production environment with paid API keys (e.g. GetAddress.io), real data would be used.
                 const mockAddresses = [
-                    `12 ${area} Way, ${region}`,
-                    `45 ${result.parish || area} Road, ${region}`,
-                    `Flat 3, ${area} House, ${result.outcode}`,
-                    `The Old Rectory, ${area}, ${region}`,
-                    `Unit 4, Industrial Park, ${area}`
+                    `11 ${area} Road${locationSuffix}`,
+                    `12 ${area} Road${locationSuffix}`,
+                    `14 ${area} Road${locationSuffix}`,
+                    `Flat 1, ${area} House, ${result.outcode} ${result.incode}`,
+                    `The Cottage, ${area}${locationSuffix}`
                 ];
                 setAddresses(mockAddresses);
             } else {
@@ -56,6 +65,7 @@ export function PostcodeAddressLookup({
             }
         } catch (error) {
             console.error("Postcode lookup error:", error);
+            // On error we don't show the dropdown, falling back to manual entry
             setAddresses([]);
         } finally {
             setIsSearching(false);
