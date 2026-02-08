@@ -402,9 +402,7 @@ export default function CarePlans() {
                         <Badge className={`${plan.priority === 'high' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-slate-50 text-slate-600 border-slate-100'} border text-[9px] font-bold py-0 h-5 px-2 rounded-md uppercase tracking-wider`}>
                           {plan.priority}
                         </Badge>
-                        <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Edit className="h-3.5 w-3.5" />
-                        </Button>
+                        {/* Edit button removed as per user request */}
                       </div>
                     </div>
                   </CardHeader>
