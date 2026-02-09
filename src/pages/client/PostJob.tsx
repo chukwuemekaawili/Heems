@@ -18,6 +18,15 @@ import { PostcodeAddressLookup } from "@/components/shared/PostcodeAddressLookup
 
 const STEPS = 5;
 
+const LANGUAGES = [
+    "Arabic", "Bengali", "British Sign Language", "Cantonese", "French",
+    "German", "Greek", "Gujarati", "Hindi", "Italian",
+    "Lithuanian", "Makaton", "Mandarin", "Persian/Farsi", "Polish",
+    "Portuguese", "Punjabi", "Romanian", "Russian", "Sign Supported English",
+    "Somali", "Spanish", "Tagalog/Filipino", "Tamil", "Turkish",
+    "Urdu", "Welsh"
+];
+
 export default function PostJob() {
     const navigate = useNavigate();
     const { toast } = useToast();
@@ -45,6 +54,7 @@ export default function PostJob() {
         driver_required: "dont_mind", // 'yes', 'no', 'dont_mind'
         non_smoker_required: "dont_mind",
         has_pets: "no", // 'yes', 'no'
+        languages: [] as string[], // New languages field
 
         // Q7
         gender_preference: "dont_mind",
@@ -56,6 +66,15 @@ export default function PostJob() {
         // Q9
         additional_info: ""
     });
+
+    const toggleLanguage = (lang: string) => {
+        setFormData(prev => ({
+            ...prev,
+            languages: prev.languages.includes(lang)
+                ? prev.languages.filter(l => l !== lang)
+                : [...prev.languages, lang]
+        }));
+    };
 
     const handleNext = () => {
         // Validation
@@ -96,40 +115,19 @@ export default function PostJob() {
             if (!user) throw new Error("Not authenticated");
 
             // Save to database
-            // Note: Assuming 'jobs' table exists as per previous migration request
             const { error } = await supabase
                 .from('jobs')
                 .insert({
                     client_id: user.id,
                     ...formData,
-                    has_pets: formData.has_pets === 'yes' // Convert string to boolean for DB if needed, but schema said boolean. Let's adjust state or conversion.
+                    has_pets: formData.has_pets === 'yes',
+                    languages: formData.languages, // Add languages
+                    // Important: Ensure DB has 'languages' (text[]) column and 'non_smoker_required' (text or boolean).
+                    // If boolean, existing column:
+                    // non_smoker_required: formData.non_smoker_required === 'yes'
                 });
 
             if (error) throw error;
-
-            // Notify carers in the same area
-            try {
-                const outcode = formData.postcode.split(' ')[0].toUpperCase();
-                const { data: carers } = await supabase
-                    .from('carer_details')
-                    .select('id')
-                    .filter('postcode', 'ilike', `${outcode}%`);
-
-                if (carers && carers.length > 0) {
-                    const notifications = carers.map(carer => ({
-                        user_id: carer.id,
-                        type: 'booking',
-                        title: "New Job in Your Area",
-                        message: `A new ${formData.care_type} care job has been posted in ${outcode}.`,
-                        is_read: false,
-                        created_at: new Date().toISOString()
-                    }));
-                    await supabase.from('notifications').insert(notifications);
-                }
-            } catch (notifyError) {
-                console.error("Failed to send area notifications:", notifyError);
-                // Don't fail the job post if notifications fail
-            }
 
             toast({
                 title: "Job Posted Successfully",
@@ -393,7 +391,7 @@ export default function PostJob() {
                     {/* STEP 4: Preferences */}
                     {step === 4 && (
                         <div className="space-y-8">
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label className="text-base">Is a driver necessary?</Label>
                                 <RadioGroup value={formData.driver_required} onValueChange={(val) => updateField('driver_required', val)} className="flex flex-wrap gap-4">
                                     <div className="flex items-center space-x-2"><RadioGroupItem value="yes" id="d_y" /><Label htmlFor="d_y">Yes</Label></div>
@@ -402,7 +400,7 @@ export default function PostJob() {
                                 </RadioGroup>
                             </div>
 
-                            <div className="space-y-3 border-t pt-4">
+                            <div className="space-y-2 pt-2">
                                 <Label className="text-base">Are you looking for a non-smoker?</Label>
                                 <RadioGroup value={formData.non_smoker_required} onValueChange={(val) => updateField('non_smoker_required', val)} className="flex flex-wrap gap-4">
                                     <div className="flex items-center space-x-2"><RadioGroupItem value="yes" id="s_y" /><Label htmlFor="s_y">Yes</Label></div>
@@ -411,7 +409,34 @@ export default function PostJob() {
                                 </RadioGroup>
                             </div>
 
-                            <div className="space-y-3 border-t pt-4">
+                            <div className="space-y-2 pt-2">
+                                <Label className="text-base">Is a language other than English essential?</Label>
+                                <p className="text-sm text-muted-foreground mb-3">Please select (Optional)</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {LANGUAGES.map(lang => (
+                                        <button
+                                            key={lang}
+                                            type="button"
+                                            onClick={() => toggleLanguage(lang)}
+                                            className={`
+                                                px-3 py-1.5 rounded-full text-sm font-medium transition-all
+                                                ${formData.languages.includes(lang)
+                                                    ? 'bg-primary text-primary-foreground shadow-sm ring-2 ring-primary ring-offset-2'
+                                                    : 'bg-white border text-slate-600 hover:bg-slate-50 hover:border-slate-300'}
+                                            `}
+                                        >
+                                            + {lang}
+                                        </button>
+                                    ))}
+                                </div>
+                                {formData.languages.length > 0 && (
+                                    <p className="text-xs text-muted-foreground mt-2">
+                                        Selected: {formData.languages.join(", ")}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2 pt-4">
                                 <Label className="text-base">Do you have a pet in your home?</Label>
                                 <RadioGroup value={formData.has_pets} onValueChange={(val) => updateField('has_pets', val)} className="flex gap-4">
                                     <div className="flex items-center space-x-2"><RadioGroupItem value="yes" id="p_y" /><Label htmlFor="p_y">Yes</Label></div>
@@ -419,7 +444,7 @@ export default function PostJob() {
                                 </RadioGroup>
                             </div>
 
-                            <div className="space-y-3 border-t pt-4">
+                            <div className="space-y-2 pt-4">
                                 <Label className="text-base">Do you have a preference for your Care professional?</Label>
                                 <RadioGroup value={formData.gender_preference} onValueChange={(val) => updateField('gender_preference', val)} className="flex flex-wrap gap-4">
                                     <div className="flex items-center space-x-2"><RadioGroupItem value="male" id="g_m" /><Label htmlFor="g_m">Male</Label></div>
@@ -451,6 +476,7 @@ export default function PostJob() {
                                     <div><span className="text-muted-foreground">Timeline:</span> <span className="font-medium capitalize">{formData.start_timeline.replace('_', ' ')}</span></div>
                                     <div><span className="text-muted-foreground">Location:</span> <span className="font-medium">{formData.postcode}</span></div>
                                     <div><span className="text-muted-foreground">Age Group:</span> <span className="font-medium capitalize">{formData.recipient_age_group?.replace('_', '-')}</span></div>
+                                    <div><span className="text-muted-foreground">Languages:</span> <span className="font-medium">{formData.languages.length > 0 ? formData.languages.join(", ") : "None"}</span></div>
                                 </div>
                             </div>
                         </div>
