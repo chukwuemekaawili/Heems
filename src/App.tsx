@@ -108,7 +108,7 @@ const CarerAvailability = lazy(() => import("./pages/carer/Availability"));
 const CarerBookings = lazy(() => import("./pages/carer/BookingsEnhanced"));
 const CarerEarnings = lazy(() => import("./pages/carer/Earnings"));
 const EarningsEnhanced = lazy(() => import("./pages/carer/EarningsEnhanced"));
-const CarerDocuments = lazy(() => import("./pages/carer/Documents"));
+const CarerDocuments = lazy(() => import("./pages/carer/DocumentsNew")); // Renamed to use Enhanced Documents
 const DocumentsNew = lazy(() => import("./pages/carer/DocumentsNew"));
 const CarerProfile = lazy(() => import("./pages/carer/Profile"));
 const ProfileEnhanced = lazy(() => import("./pages/carer/ProfileEnhanced"));
