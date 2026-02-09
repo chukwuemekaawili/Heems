@@ -138,6 +138,24 @@ export default function PostJob() {
             if (formData.selected_dates.length === 0) {
                 return toast({ title: "Please select at least one date", variant: "destructive" });
             }
+
+            // AUTO-FILL OVERNIGHT SCHEDULE
+            if (formData.care_type === 'overnight') {
+                const newSchedule = { ...formData.schedule };
+                formData.selected_dates.forEach(date => {
+                    const dateStr = date.toISOString().split('T')[0];
+                    // Always pre-fill 20:00 - 08:00 for overnight, ensuring it's not empty
+                    newSchedule[dateStr] = ['20:00', '08:00 (Next Day)'];
+                });
+                setFormData(prev => ({ ...prev, schedule: newSchedule }));
+            }
+
+            // SKIP LOGIC: Live-in Full Time skips schedule step
+            if (formData.care_type === 'live_in' && formData.care_subtype === 'full_time') {
+                setStep(5); // Jump to Recipient Details
+                window.scrollTo(0, 0);
+                return;
+            }
         }
 
         // Step 4: Schedule Configuration (Formerly Step 3)
@@ -179,7 +197,14 @@ export default function PostJob() {
     };
 
     const handleBack = () => {
-        if (step > 1) setStep(step - 1);
+        if (step > 1) {
+            // SKIP LOGIC BACKWARDS
+            if (step === 5 && formData.care_type === 'live_in' && formData.care_subtype === 'full_time') {
+                setStep(3); // Go back to Dates
+            } else {
+                setStep(step - 1);
+            }
+        }
     };
 
     const handleSubmit = async () => {
@@ -654,6 +679,12 @@ export default function PostJob() {
                                     <div><span className="text-muted-foreground">Age Group:</span> <span className="font-medium capitalize">{formData.recipient_age_group?.replace('_', '-')}</span></div>
                                     <div><span className="text-muted-foreground">Languages:</span> <span className="font-medium">{formData.languages.length > 0 ? formData.languages.join(", ") : "None"}</span></div>
                                 </div>
+                                {formData.additional_info && (
+                                    <div className="pt-2 border-t mt-2">
+                                        <span className="text-muted-foreground block mb-1">Additional Information:</span>
+                                        <p className="text-slate-700 whitespace-pre-wrap">{formData.additional_info}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
