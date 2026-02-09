@@ -47,7 +47,7 @@ const ForCarers = () => {
                                     <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                                         <PoundSterling className="w-5 h-5 text-emerald-600" />
                                     </div>
-                                    <div className="text-2xl font-black text-[#111827]">£28.50</div>
+                                    <div className="text-2xl font-black text-[#111827]">£22.50</div>
                                 </div>
                                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Avg. Hourly Rate</p>
                             </div>

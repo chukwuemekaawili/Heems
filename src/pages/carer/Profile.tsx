@@ -36,6 +36,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { MINIMUM_HOURLY_RATE, validateMinimumRate } from "@/lib/fees";
 import { PostcodeAddressLookup } from "@/components/shared/PostcodeAddressLookup";
+import { CertificationSelect } from "@/components/carer/CertificationSelect";
 
 const careSpecialisms = [
   "Personal Care",
@@ -96,6 +97,7 @@ export default function CarerProfile() {
     bio: "",
     specializations: [],
     languages: ["English"],
+    certifications: [],
     travel_radius: 10,
     min_booking_duration: 1,
     instant_booking: true,
@@ -757,28 +759,11 @@ export default function CarerProfile() {
 
               <div className="space-y-4">
                 <Label>Qualifications & Training</Label>
-                <div className="space-y-3">
-                  {[
-                    { name: "NVQ Level 3 Health & Social Care", year: "2020" },
-                    { name: "Enhanced DBS Certificate", year: "2023" },
-                    { name: "First Aid Certified", year: "2024" },
-                    { name: "Moving & Handling Training", year: "2024" },
-                    { name: "Medication Administration", year: "2023" },
-                  ].map((qual, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-lg border">
-                      <div className="flex items-center gap-3">
-                        <GraduationCap className="h-5 w-5 text-primary" />
-                        <span>{qual.name}</span>
-                      </div>
-                      <Badge variant="outline">{qual.year}</Badge>
-                    </div>
-                  ))}
-                </div>
-                {isEditing && (
-                  <Button variant="outline" className="w-full">
-                    + Add Qualification
-                  </Button>
-                )}
+                <CertificationSelect
+                  selected={carerDetails.certifications || []}
+                  onChange={(certs) => setCarerDetails((c: any) => ({ ...c, certifications: certs }))}
+                  disabled={!isEditing}
+                />
               </div>
             </CardContent>
           </Card>

@@ -10,13 +10,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PostcodeAddressLookup } from "@/components/shared/PostcodeAddressLookup";
+import { Calendar } from "@/components/ui/calendar";
+import { Calendar as CalendarIcon } from "lucide-react";
 
-const STEPS = 5;
+const STEPS = 7;
 
 const LANGUAGES = [
     "Arabic", "Bengali", "British Sign Language", "Cantonese", "French",
@@ -26,6 +28,12 @@ const LANGUAGES = [
     "Somali", "Spanish", "Tagalog/Filipino", "Tamil", "Turkish",
     "Urdu", "Welsh"
 ];
+
+// Hour blocks for Hourly care (07:00 to 21:00)
+const HOURLY_BLOCKS = Array.from({ length: 15 }, (_, i) => {
+    const hour = i + 7;
+    return `${hour.toString().padStart(2, '0')}:00`;
+});
 
 export default function PostJob() {
     const navigate = useNavigate();
@@ -39,16 +47,18 @@ export default function PostJob() {
         care_subtype: "", // 'hourly', 'sleeping', 'waking', 'part_time', 'full_time'
         live_in_confirmed: false,
 
-        // Q2
-        start_timeline: "", // 'immediate', 'few_weeks', 'specific_date'
-        specific_start_date: "",
+        // Q2 & Q3 (Date & Schedule)
+        start_timeline: "specific_dates", // Default to specific dates for clarity
+        selected_dates: [] as Date[], // Array of selected dates
+        schedule: {} as Record<string, string[]>, // Map of date string -> array of selected times
 
-        // Q3
+        // Q4
         recipient_relationship: "", // 'myself', 'family', 'friend'
         recipient_age_group: "", // 'under_18', '18_35', '35_65', 'over_65'
 
-        // Q5 (Funding)
+        // Q5 (Funding & Rate)
         funding_source: "", // 'self', 'local_authority', 'nhs'
+        preferred_rate: "",
 
         // Q6 (Preferences)
         driver_required: "dont_mind", // 'yes', 'no', 'dont_mind'
@@ -67,6 +77,19 @@ export default function PostJob() {
         additional_info: ""
     });
 
+    const getRateHelperText = () => {
+        if (formData.care_type === 'hourly') return "The average rate per hour is £22.50";
+        if (formData.care_type === 'live_in') {
+            if (formData.care_subtype === 'part_time') return "The average daily rate is £160";
+            if (formData.care_subtype === 'full_time') return "The average weekly rate is £1,120";
+        }
+        if (formData.care_type === 'overnight') return "The average rate per hour is £22.50"; // Defaulting to hourly for overnight
+        return "Enter your preferred rate.";
+    };
+
+
+
+
     const toggleLanguage = (lang: string) => {
         setFormData(prev => ({
             ...prev,
@@ -74,6 +97,24 @@ export default function PostJob() {
                 ? prev.languages.filter(l => l !== lang)
                 : [...prev.languages, lang]
         }));
+    };
+
+    const toggleTimeSlot = (dateStr: string, time: string) => {
+        setFormData(prev => {
+            const currentSlots = prev.schedule[dateStr] || [];
+            // Handle 'flexible' specially if needed, but for now treat as string
+            const newSlots = currentSlots.includes(time)
+                ? currentSlots.filter(t => t !== time)
+                : [...currentSlots, time].sort();
+
+            return {
+                ...prev,
+                schedule: {
+                    ...prev.schedule,
+                    [dateStr]: newSlots
+                }
+            };
+        });
     };
 
     const handleNext = () => {
@@ -85,15 +126,48 @@ export default function PostJob() {
                 return toast({ title: "Confirmation Required", description: "You must acknowledge the requirements for live-in care.", variant: "destructive" });
             }
         }
+
+        // Step 2: Location (Moved UP)
         if (step === 2) {
-            if (!formData.start_timeline) return toast({ title: "Please select when you need care", variant: "destructive" });
-            if (formData.start_timeline === 'specific_date' && !formData.specific_start_date) return toast({ title: "Please select a start date", variant: "destructive" });
+            if (!formData.postcode) return toast({ title: "Postcode is required", variant: "destructive" });
+            if (!formData.address) return toast({ title: "Address is required", variant: "destructive" });
+        }
+
+        // Step 3: Date Selection (Formerly Step 2)
+        if (step === 3) {
+            if (formData.selected_dates.length === 0) {
+                return toast({ title: "Please select at least one date", variant: "destructive" });
+            }
+        }
+
+        // Step 4: Schedule Configuration (Formerly Step 3)
+        if (step === 4) {
+            // For hourly care, ensure at least one slot is selected for each date
+            if (formData.care_type === 'hourly') {
+                const missingSchedule = formData.selected_dates.some(date => {
+                    const dateStr = date.toISOString().split('T')[0];
+                    return !formData.schedule[dateStr] || formData.schedule[dateStr].length === 0;
+                });
+
+                if (missingSchedule) {
+                    return toast({
+                        title: "Incomplete Schedule",
+                        description: "Please select at least one time slot for each selected date.",
+                        variant: "destructive"
+                    });
+                }
+            }
+            // For overnight, we auto-set logic, so it's fine.
+        }
+
+        if (step === 5) {
             if (!formData.recipient_relationship) return toast({ title: "Please select who needs care", variant: "destructive" });
             if (!formData.recipient_age_group) return toast({ title: "Please select the age group", variant: "destructive" });
         }
-        if (step === 3) {
+
+        if (step === 6) {
             if (!formData.funding_source) return toast({ title: "Please select funding source", variant: "destructive" });
-            if (!formData.postcode) return toast({ title: "Postcode is required", variant: "destructive" });
+            // Rate is optional but recommended
         }
 
         if (step < STEPS) {
@@ -114,6 +188,15 @@ export default function PostJob() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("Not authenticated");
 
+            // Prepare schedule for DB
+            // If overnight, ensure schedule is set to '20:00 - 08:00' for all dates
+            const finalSchedule = { ...formData.schedule };
+            if (formData.care_type === 'overnight') {
+                formData.selected_dates.forEach(date => {
+                    finalSchedule[date.toISOString().split('T')[0]] = ['20:00', '08:00 (Next Day)'];
+                });
+            }
+
             // Save to database
             const { error } = await supabase
                 .from('jobs')
@@ -121,10 +204,10 @@ export default function PostJob() {
                     client_id: user.id,
                     ...formData,
                     has_pets: formData.has_pets === 'yes',
-                    languages: formData.languages, // Add languages
-                    // Important: Ensure DB has 'languages' (text[]) column and 'non_smoker_required' (text or boolean).
-                    // If boolean, existing column:
-                    // non_smoker_required: formData.non_smoker_required === 'yes'
+                    languages: formData.languages,
+                    schedule: finalSchedule, // New column
+                    specific_start_date: formData.selected_dates[0]?.toISOString(), // Primary start date
+                    // Store full list if needed in 'schedule' column
                 });
 
             if (error) throw error;
@@ -169,10 +252,13 @@ export default function PostJob() {
                 <CardHeader>
                     <CardTitle>
                         {step === 1 && "Type of Care"}
-                        {step === 2 && "Timing & Recipient"}
-                        {step === 3 && "Details & Funding"}
-                        {step === 4 && "Preferences"}
-                        {step === 5 && "Review & Submit"}
+                        {step === 2 && "Location of Care"}
+                        {step === 3 && "Select Dates"}
+                        {step === 4 && "Schedule Details"}
+                        {step === 5 && "Recipient Details"}
+                        {step === 6 && "Funding & Rates"}
+                        {step === 7 && "Preferences"}
+                        {step === 8 && "Review & Submit"}
                     </CardTitle>
                     <CardDescription>
                         Step {step} of {STEPS}
@@ -271,42 +357,133 @@ export default function PostJob() {
                         </div>
                     )}
 
-                    {/* STEP 2: Timing & Recipient */}
+
+                    {/* STEP 2: Location (Moved Here) */}
                     {step === 2 && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                            <div className="space-y-4">
+                                <Label className="text-base">Where will the care take place?</Label>
+                                <div className="grid gap-4">
+                                    <PostcodeAddressLookup
+                                        postcode={formData.postcode}
+                                        onPostcodeChange={(pc) => updateField('postcode', pc)}
+                                        onAddressSelect={(addr) => updateField('address', addr)}
+                                        label="Postcode"
+                                    />
+
+                                    <div className="space-y-2">
+                                        <Label>Address Line 1</Label>
+                                        <Input
+                                            placeholder="Street address..."
+                                            value={formData.address}
+                                            onChange={(e) => updateField('address', e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STEP 3: Date Selection (Multi-Select) */}
+                    {step === 3 && (
                         <div className="space-y-6">
                             <div className="space-y-4">
-                                <Label className="text-base">When do you need care?</Label>
-                                <RadioGroup value={formData.start_timeline} onValueChange={(val) => updateField('start_timeline', val)}>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center space-x-2 border p-3 rounded-lg hover:bg-slate-50 cursor-pointer">
-                                            <RadioGroupItem value="immediate" id="t1" />
-                                            <Label htmlFor="t1" className="flex-1 cursor-pointer">Immediate start</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2 border p-3 rounded-lg hover:bg-slate-50 cursor-pointer">
-                                            <RadioGroupItem value="few_weeks" id="t2" />
-                                            <Label htmlFor="t2" className="flex-1 cursor-pointer">Within next few weeks</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2 border p-3 rounded-lg hover:bg-slate-50 cursor-pointer">
-                                            <RadioGroupItem value="specific_date" id="t3" />
-                                            <Label htmlFor="t3" className="flex-1 cursor-pointer">Specific start date</Label>
-                                        </div>
-                                    </div>
-                                </RadioGroup>
-
-                                {formData.start_timeline === 'specific_date' && (
-                                    <div className="pt-2 animate-in fade-in">
-                                        <Label>Select Date</Label>
-                                        <Input
-                                            type="date"
-                                            className="mt-1"
-                                            value={formData.specific_start_date}
-                                            onChange={(e) => updateField('specific_start_date', e.target.value)}
-                                        />
+                                <Label className="text-base">Select the days you need care</Label>
+                                <p className="text-sm text-muted-foreground">You can select multiple days or a range.</p>
+                                <div className="flex justify-center p-4 border rounded-xl bg-slate-50/50">
+                                    <Calendar
+                                        mode="multiple"
+                                        selected={formData.selected_dates}
+                                        onSelect={(dates) => updateField('selected_dates', dates || [])}
+                                        className="rounded-md border bg-white shadow-sm"
+                                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                                    />
+                                </div>
+                                {formData.selected_dates.length > 0 && (
+                                    <div className="text-sm text-center font-medium">
+                                        {formData.selected_dates.length} day(s) selected
                                     </div>
                                 )}
                             </div>
+                        </div>
+                    )}
 
-                            <div className="space-y-4 pt-4 border-t">
+                    {/* STEP 4: Dynamic Schedule Grid */}
+                    {step === 4 && (
+                        <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
+                            <div className="space-y-2">
+                                <h3 className="text-lg font-semibold">Select Times</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    {formData.care_type === 'overnight'
+                                        ? "Overnight shifts are typically 20:00 to 08:00."
+                                        : "Select the hours you need for each day."}
+                                </p>
+                            </div>
+
+                            <div className="space-y-6">
+                                {[...formData.selected_dates].sort((a, b) => a.getTime() - b.getTime()).map((date) => {
+                                    const dateStr = date.toISOString().split('T')[0];
+                                    const dayName = date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+                                    const selectedSlots = formData.schedule[dateStr] || [];
+
+                                    return (
+                                        <div key={dateStr} className="space-y-3 border-b pb-6 last:border-0 last:pb-0">
+                                            <h4 className="font-medium text-base flex items-center gap-2">
+                                                <CalendarIcon className="h-4 w-4 text-primary" />
+                                                {dayName}
+                                            </h4>
+
+                                            {formData.care_type === 'overnight' ? (
+                                                /* Overnight: Pre-selected block */
+                                                <div className="p-4 bg-slate-100 rounded-lg border border-slate-200 text-sm text-slate-700 font-medium flex items-center justify-between">
+                                                    <span>Overnight Shift</span>
+                                                    <span className="bg-slate-200 px-3 py-1 rounded text-slate-900">20:00 - 08:00</span>
+                                                </div>
+                                            ) : (
+                                                /* Hourly: Selectable Grid */
+                                                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2">
+                                                    {HOURLY_BLOCKS.map(time => (
+                                                        <Button
+                                                            key={time}
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => toggleTimeSlot(dateStr, time)}
+                                                            className={`
+                                                                text-xs h-9 transition-all
+                                                                ${selectedSlots.includes(time)
+                                                                    ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90'
+                                                                    : 'hover:bg-slate-50 text-slate-600'}
+                                                            `}
+                                                        >
+                                                            {time}
+                                                        </Button>
+                                                    ))}
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => toggleTimeSlot(dateStr, 'flexible')}
+                                                        className={`
+                                                            text-xs h-9 transition-all col-span-2 sm:col-span-1 border-dashed
+                                                            ${selectedSlots.includes('flexible')
+                                                                ? 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
+                                                                : 'hover:bg-slate-50 text-slate-500'}
+                                                        `}
+                                                    >
+                                                        Flexible
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STEP 5: Recipient Details */}
+                    {step === 5 && (
+                        <div className="space-y-6">
+                            <div className="space-y-4">
                                 <Label className="text-base">Who needs care?</Label>
                                 <RadioGroup value={formData.recipient_relationship} onValueChange={(val) => updateField('recipient_relationship', val)} className="flex flex-wrap gap-4">
                                     <div className="flex items-center space-x-2 border px-4 py-3 rounded-lg hover:bg-slate-50 cursor-pointer min-w-[120px]">
@@ -348,8 +525,8 @@ export default function PostJob() {
                         </div>
                     )}
 
-                    {/* STEP 3: Details & Funding */}
-                    {step === 3 && (
+                    {/* STEP 6: Details & Funding */}
+                    {step === 6 && (
                         <div className="space-y-6">
                             <div className="space-y-4">
                                 <Label className="text-base">How are you funding your care?</Label>
@@ -365,31 +542,30 @@ export default function PostJob() {
                                 </Select>
                             </div>
 
-                            <div className="space-y-4 pt-4 border-t">
-                                <Label className="text-base">Location</Label>
-                                <div className="grid gap-4">
-                                    <PostcodeAddressLookup
-                                        postcode={formData.postcode}
-                                        onPostcodeChange={(pc) => updateField('postcode', pc)}
-                                        onAddressSelect={(addr) => updateField('address', addr)}
-                                        label="Postcode"
-                                    />
-
-                                    <div className="space-y-2">
-                                        <Label>Address Line 1</Label>
+                            <div className="space-y-4 pt-4 border-t animate-in fade-in slide-in-from-top-2">
+                                <Label className="text-base">Proposed Rate</Label>
+                                <div className="max-w-xs">
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">£</span>
                                         <Input
-                                            placeholder="Street address..."
-                                            value={formData.address}
-                                            onChange={(e) => updateField('address', e.target.value)}
+                                            type="number"
+                                            className="pl-7"
+                                            placeholder="0.00"
+                                            value={formData.preferred_rate}
+                                            onChange={(e) => updateField('preferred_rate', e.target.value)}
                                         />
                                     </div>
+                                    <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2 bg-slate-50 p-2 rounded border text-slate-600">
+                                        <Info className="h-4 w-4 text-blue-500" />
+                                        {getRateHelperText()}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    {/* STEP 4: Preferences */}
-                    {step === 4 && (
+                    {/* STEP 7: Preferences */}
+                    {step === 7 && (
                         <div className="space-y-8">
                             <div className="space-y-2">
                                 <Label className="text-base">Is a driver necessary?</Label>
@@ -455,8 +631,8 @@ export default function PostJob() {
                         </div>
                     )}
 
-                    {/* STEP 5: Final Review */}
-                    {step === 5 && (
+                    {/* STEP 8: Final Review */}
+                    {step === 8 && (
                         <div className="space-y-6">
                             <div className="space-y-2">
                                 <Label className="text-base">Additional Information</Label>
@@ -498,6 +674,6 @@ export default function PostJob() {
 
                 </CardContent>
             </Card>
-        </div>
+        </div >
     );
 }
