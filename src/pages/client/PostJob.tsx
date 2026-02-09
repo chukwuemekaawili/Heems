@@ -18,7 +18,7 @@ import { PostcodeAddressLookup } from "@/components/shared/PostcodeAddressLookup
 import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
 
-const STEPS = 7;
+const STEPS = 8;
 
 const LANGUAGES = [
     "Arabic", "Bengali", "British Sign Language", "Cantonese", "French",
@@ -151,8 +151,10 @@ export default function PostJob() {
             }
 
             // SKIP LOGIC: Live-in Full Time skips schedule step
+            // We check specifically for 'live_in' and 'full_time'
             if (formData.care_type === 'live_in' && formData.care_subtype === 'full_time') {
-                setStep(5); // Jump to Recipient Details
+                console.log("Skipping schedule for Live-in Full-Time");
+                setStep(5); // Jump to Recipient Details (Step 5)
                 window.scrollTo(0, 0);
                 return;
             }
