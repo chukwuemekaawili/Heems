@@ -31,7 +31,7 @@ const documentTypes = [
   { id: "right_to_work", name: "Right to Work", icon: FileCheck, required: true },
   { id: "insurance", name: "Public Liability Insurance", icon: ShieldCheck, required: true },
   { id: "references", name: "Work References", icon: Users, required: true },
-  { id: "qualifications", name: "Care Training", icon: GraduationCap, required: false },
+  { id: "qualifications", name: "Care Training", icon: GraduationCap, required: true },
 ];
 
 interface VerificationDoc {
@@ -46,6 +46,12 @@ interface VerificationDoc {
   reference_1_status: string;
   reference_2_email: string | null;
   reference_2_status: string;
+  // New columns for enhanced verification
+  id_document_back_url?: string | null;
+  birth_cert_url?: string | null;
+  ni_proof_url?: string | null;
+  photo_id_url?: string | null;
+  care_training_url?: string | null; // Column added for automation
 }
 
 export default function CarerDocuments() {
@@ -54,6 +60,8 @@ export default function CarerDocuments() {
   const [loading, setLoading] = useState(true);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("");
+  const [uploadSide, setUploadSide] = useState<"front" | "back">("front"); // For ID/Passport
+  const [showAlternativeRTW, setShowAlternativeRTW] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
@@ -133,13 +141,35 @@ export default function CarerDocuments() {
         .getPublicUrl(fileName);
 
       // Update verification record based on document type
+      // Update verification record based on document type
+      const updates: any = {};
+
       if (selectedType === 'dbs') {
+        updates.dbs_certificate_url = publicUrl;
+        updates.dbs_status = 'pending';
+      } else if (selectedType === 'passport') {
+        if (uploadSide === 'back') {
+          updates.id_document_back_url = publicUrl;
+        } else {
+          updates.id_document_url = publicUrl;
+        }
+        // Admin manually verifies identity, but we store the URLs
+      } else if (selectedType === 'birth_cert') {
+        updates.birth_cert_url = publicUrl;
+      } else if (selectedType === 'ni_proof') {
+        updates.ni_proof_url = publicUrl;
+      } else if (selectedType === 'photo_id') {
+        updates.photo_id_url = publicUrl;
+      } else if (selectedType === 'qualifications') {
+        updates.care_training_url = publicUrl;
+      }
+
+      if (Object.keys(updates).length > 0) {
         await supabase
           .from('carer_verification')
           .upsert({
             id: user.id,
-            dbs_certificate_url: publicUrl,
-            dbs_status: 'pending',
+            ...updates
           }, { onConflict: 'id' });
       }
 
@@ -184,6 +214,8 @@ export default function CarerDocuments() {
           return 'pending';
         }
         return 'missing';
+      case 'qualifications':
+        return verification?.care_training_url ? 'pending' : 'missing';
       default:
         return 'missing';
     }
@@ -267,6 +299,34 @@ export default function CarerDocuments() {
                   onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                   disabled={uploading}
                 />
+                {selectedType === 'passport' && (
+                  <div className="flex gap-4 mt-2">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="front"
+                        name="side"
+                        value="front"
+                        checked={uploadSide === 'front'}
+                        onChange={() => setUploadSide('front')}
+                        className="cursor-pointer"
+                      />
+                      <label htmlFor="front" className="text-sm cursor-pointer">Front of ID</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="back"
+                        name="side"
+                        value="back"
+                        checked={uploadSide === 'back'}
+                        onChange={() => setUploadSide('back')}
+                        className="cursor-pointer"
+                      />
+                      <label htmlFor="back" className="text-sm cursor-pointer">Back of ID</label>
+                    </div>
+                  </div>
+                )}
                 {selectedFile && (
                   <p className="text-xs text-muted-foreground mt-1">
                     Selected: {selectedFile.name}
@@ -374,6 +434,67 @@ export default function CarerDocuments() {
             </Card>
           );
         })}
+      </div>
+
+      {/* Alternative Right to Work Section */}
+      <div className="mt-4">
+        {!showAlternativeRTW ? (
+          <button
+            onClick={() => setShowAlternativeRTW(true)}
+            className="text-primary hover:underline text-sm font-medium flex items-center gap-1"
+          >
+            British citizen without a passport? Click here.
+          </button>
+        ) : (
+          <div className="space-y-4 animate-in fade-in slide-in-from-top-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Step 2 — Alternative route</h3>
+              <button
+                onClick={() => setShowAlternativeRTW(false)}
+                className="text-muted-foreground hover:text-foreground text-sm"
+              >
+                Close
+              </button>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                { id: 'birth_cert', name: 'UK Birth Certificate', icon: FileText, desc: 'Full birth certificate' },
+                { id: 'ni_proof', name: 'Proof of NI Number', icon: FileText, desc: 'One document only' },
+                { id: 'photo_id', name: 'Photo ID', icon: CreditCard, desc: 'Driving licence preferred' }
+              ].map((doc) => (
+                <Card key={doc.id}>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <doc.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      {/* Status Check Logic Needed Here - For now show upload if missing */}
+                      {verification?.[`${doc.id}_url` as keyof VerificationDoc] ? (
+                        <Badge className="bg-[#1a9e8c]"><CheckCircle2 className="h-3 w-3 mr-1" />Uploaded</Badge>
+                      ) : (
+                        <Badge variant="outline"><AlertCircle className="h-3 w-3 mr-1" />Required</Badge>
+                      )}
+                    </div>
+                    <h3 className="font-semibold mb-1">{doc.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{doc.desc}</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        setSelectedType(doc.id);
+                        setUploadDialogOpen(true);
+                      }}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* DBS Details */}

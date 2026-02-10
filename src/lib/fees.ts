@@ -21,7 +21,8 @@ export const PHASE_2_CARER_FEE = 0.08; // 8%
 export function calculateFees(
     baseRate: number,
     hours: number,
-    phase: PricingPhase
+    phase: PricingPhase,
+    onboardedAt?: string | null // Optional: Carer's onboarding date
 ): FeeCalculation {
     // Enforce minimum rate (only if a rate is provided)
     if (baseRate > 0 && baseRate < MINIMUM_HOURLY_RATE) {
@@ -45,8 +46,21 @@ export function calculateFees(
     const subtotal = baseRate * hours;
 
     // Determine fee percentages based on phase
-    const clientFeePercentage = phase === '1' ? PHASE_1_CLIENT_FEE : PHASE_2_CLIENT_FEE;
-    const carerFeePercentage = phase === '1' ? PHASE_1_CARER_FEE : PHASE_2_CARER_FEE;
+    // Determine fee percentages based on phase
+    let clientFeePercentage = phase === '1' ? PHASE_1_CLIENT_FEE : PHASE_2_CLIENT_FEE;
+    let carerFeePercentage = phase === '1' ? PHASE_1_CARER_FEE : PHASE_2_CARER_FEE;
+
+    // Check for 6-Month Commission-Free Promo
+    if (onboardedAt) {
+        const onboardedDate = new Date(onboardedAt);
+        const sixMonthsLater = new Date(onboardedDate);
+        sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+
+        if (new Date() < sixMonthsLater) {
+            console.log("Applying 6-Month Commission-Free Promo!");
+            carerFeePercentage = 0.00; // 0% Commission
+        }
+    }
 
     // Calculate fees
     const clientFee = subtotal * clientFeePercentage;

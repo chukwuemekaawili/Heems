@@ -126,6 +126,14 @@ export default function CarerAvailability() {
     }
   };
 
+
+  const updateDayTime = (day: string, type: 'start' | 'end', value: string) => {
+    setWeeklySchedule(prev => ({
+      ...prev,
+      [day]: { ...prev[day as keyof typeof prev], [type]: value }
+    }));
+  };
+
   const toggleDay = (day: string) => {
     setWeeklySchedule(prev => ({
       ...prev,
@@ -354,9 +362,30 @@ export default function CarerAvailability() {
                       <span className="text-sm font-medium w-24">{day}</span>
                     </div>
                     {weeklySchedule[day as keyof typeof weeklySchedule].enabled ? (
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-                        {weeklySchedule[day as keyof typeof weeklySchedule].start} - {weeklySchedule[day as keyof typeof weeklySchedule].end}
+                      <div className="flex items-center gap-2">
+                        <Select
+                          value={weeklySchedule[day as keyof typeof weeklySchedule].start}
+                          onValueChange={(v) => updateDayTime(day, 'start', v)}
+                        >
+                          <SelectTrigger className="w-[85px] h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {timeSlots.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                        <span className="text-muted-foreground">-</span>
+                        <Select
+                          value={weeklySchedule[day as keyof typeof weeklySchedule].end}
+                          onValueChange={(v) => updateDayTime(day, 'end', v)}
+                        >
+                          <SelectTrigger className="w-[85px] h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {timeSlots.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1 text-sm text-muted-foreground">

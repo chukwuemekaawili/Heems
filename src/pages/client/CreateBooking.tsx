@@ -63,7 +63,8 @@ export default function CreateBooking() {
           carer_details (
             bio,
             hourly_rate,
-            verification_status
+            verification_status,
+            onboarded_at
           )
         `)
                 .eq('id', carerId)
@@ -111,7 +112,9 @@ export default function CreateBooking() {
     const calculateFeeBreakdown = () => {
         try {
             const rate = carer?.carer_details?.hourly_rate || 25;
-            const fees = calculateFees(rate, duration, currentPhase);
+            const rate = carer?.carer_details?.hourly_rate || 25;
+            const onboardedAt = carer?.carer_details?.onboarded_at;
+            const fees = calculateFees(rate, duration, currentPhase, onboardedAt);
             setFeeBreakdown(fees);
         } catch (error: any) {
             console.error('Fee calculation error:', error);
@@ -394,6 +397,15 @@ export default function CreateBooking() {
                             </div>
 
                             <div className="pt-5 space-y-3">
+                                <Button
+                                    className="w-full h-10 rounded-xl font-bold text-xs bg-white text-slate-900 hover:bg-white/90"
+                                    onClick={() => navigate(`/client/messages?userId=${carer.id}`)}
+                                >
+                                    Message {carer.full_name?.split(' ')[0]}
+                                </Button>
+                            </div>
+
+                            <div className="pt-3 space-y-3">
                                 <Label className="text-[9px] font-bold uppercase tracking-widest text-white/30">Payment Protection</Label>
                                 <div className="flex gap-3 items-center">
                                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">

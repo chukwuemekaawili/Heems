@@ -47,6 +47,8 @@ const EXPERIENCE_LEVELS = [
     { value: '3', label: '3-5 years' },
     { value: '5', label: '5-10 years' },
     { value: '10', label: '10+ years' },
+    { value: '15', label: '15+ years' },
+    { value: '20', label: '20+ years' },
 ];
 
 interface Carer {

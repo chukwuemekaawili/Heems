@@ -150,14 +150,14 @@ export default function PostJob() {
                 setFormData(prev => ({ ...prev, schedule: newSchedule }));
             }
 
-            // SKIP LOGIC: Live-in Full Time skips schedule step
-            // We check specifically for 'live_in' and 'full_time'
-            if (formData.care_type === 'live_in' && formData.care_subtype === 'full_time') {
-                console.log("Skipping schedule for Live-in Full-Time");
-                setStep(5); // Jump to Recipient Details (Step 5)
-                window.scrollTo(0, 0);
-                return;
-            }
+
+        }
+
+        // Skip Schedule (Step 4) for Live-in Full-Time
+        if (step === 3 && formData.care_type === 'live_in' && formData.care_subtype === 'full_time') {
+            setStep(5);
+            window.scrollTo(0, 0);
+            return;
         }
 
         // Step 4: Schedule Configuration (Formerly Step 3)
@@ -199,13 +199,12 @@ export default function PostJob() {
     };
 
     const handleBack = () => {
+        if (step === 5 && formData.care_type === 'live_in' && formData.care_subtype === 'full_time') {
+            setStep(3);
+            return;
+        }
         if (step > 1) {
-            // SKIP LOGIC BACKWARDS
-            if (step === 5 && formData.care_type === 'live_in' && formData.care_subtype === 'full_time') {
-                setStep(3); // Go back to Dates
-            } else {
-                setStep(step - 1);
-            }
+            setStep(step - 1);
         }
     };
 

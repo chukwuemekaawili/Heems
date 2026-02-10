@@ -31,6 +31,7 @@ export interface CarerDetails {
   dbs_check_date: string | null;
   availability_status: AvailabilityStatus;
   stripe_account_id: string | null;
+  onboarded_at: string | null; // For 6-month commission-free promo
   created_at: string;
 }
 
@@ -56,7 +57,7 @@ export interface CarerVerification {
   rtw_expiry: string | null;
   last_vetted_at: string | null;
   overall_status: OverallVerificationStatus;
-  
+
   // Document URLs (stored in Supabase Storage)
   dbs_document_url: string | null;
   id_document_url: string | null;
@@ -93,13 +94,13 @@ export interface Booking {
   status: BookingStatus;
   total_price: number;
   notes: string | null;
-  
+
   // New fee fields
   rate_per_hour: number;
   client_fee: number; // Amount client pays extra (10% or 12%)
   carer_fee: number; // Amount carer pays (0% or 5%)
   stripe_transfer_id: string | null;
-  
+
   created_at: string;
 }
 

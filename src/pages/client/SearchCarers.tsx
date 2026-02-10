@@ -175,7 +175,7 @@ export default function SearchCarers() {
             <div className="flex-1 relative group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
-                placeholder="Search by name, expertise, or location..."
+                placeholder="Search by name, experience, or location..."
                 className="pl-11 h-11 rounded-xl border-black/5 bg-white/50 focus:bg-white transition-all text-sm font-medium"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -220,7 +220,7 @@ export default function SearchCarers() {
                     </div>
 
                     <div className="space-y-4">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Care Expertise</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Experience</Label>
                       <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide">
                         {careTypes.map(type => (
                           <div key={type}

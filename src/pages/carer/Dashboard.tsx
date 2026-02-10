@@ -580,7 +580,6 @@ const CarerDashboard = () => {
                 {[
                   "Set your own rates — earn £15-40/hour",
                   "Complete flexibility — work when you want",
-                  "Insurance & liability coverage included",
                   "Meaningful work with ongoing clients"
                 ].map((benefit, i) => (
                   <li key={i} className="flex gap-2 text-sm text-foreground">

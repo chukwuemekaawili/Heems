@@ -34,7 +34,7 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { MINIMUM_HOURLY_RATE, validateMinimumRate } from "@/lib/fees";
+import { MINIMUM_HOURLY_RATE, validateMinimumRate, calculateFees, formatCurrency } from "@/lib/fees";
 import { PostcodeAddressLookup } from "@/components/shared/PostcodeAddressLookup";
 import { CertificationSelect } from "@/components/carer/CertificationSelect";
 
@@ -108,7 +108,10 @@ export default function CarerProfile() {
     show_on_search: true,
     video_url: "",
     hobbies: "",
-    has_transportation: false
+    video_url: "",
+    hobbies: "",
+    has_transportation: false,
+    onboarded_at: null // For promo logic
   });
 
   // Video Upload State
@@ -416,7 +419,7 @@ export default function CarerProfile() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="personal">Personal Info</TabsTrigger>
           <TabsTrigger value="professional">Professional</TabsTrigger>
-          <TabsTrigger value="specialties">Expertise</TabsTrigger>
+          <TabsTrigger value="specialties">Experience</TabsTrigger>
           <TabsTrigger value="preferences">Preferences</TabsTrigger>
         </TabsList>
 
@@ -617,6 +620,8 @@ export default function CarerProfile() {
                       <SelectItem value="3">3 years</SelectItem>
                       <SelectItem value="5">5 years</SelectItem>
                       <SelectItem value="10">10+ years</SelectItem>
+                      <SelectItem value="15">15+ years</SelectItem>
+                      <SelectItem value="20">20+ years</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -634,6 +639,52 @@ export default function CarerProfile() {
                     <p className="text-xs text-red-500">Minimum rate is £{MINIMUM_HOURLY_RATE}/hour</p>
                   )}
                   <p className="text-xs text-muted-foreground">Platform minimum: £{MINIMUM_HOURLY_RATE}/hr</p>
+
+                  {/* Fee Preview */}
+                  {carerDetails.hourly_rate >= MINIMUM_HOURLY_RATE && (
+                    <div className="mt-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingUp className="h-4 w-4 text-emerald-600" />
+                        <span className="text-sm font-semibold">Your Earnings Preview</span>
+                      </div>
+
+                      {(() => {
+                        try {
+                          const fees = calculateFees(carerDetails.hourly_rate, 1, '1', carerDetails.onboarded_at);
+                          const isPromo = fees.carerFeePercentage === 0;
+
+                          return (
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Client pays:</span>
+                                <span className="font-medium">{formatCurrency(fees.subtotal)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">
+                                  Platform Fee {isPromo && <Badge variant="secondary" className="ml-1 h-5 text-[10px] bg-emerald-100 text-emerald-700">PROMO: 0%</Badge>}
+                                </span>
+                                <span className={`font-medium ${isPromo ? 'text-emerald-600' : ''}`}>
+                                  -{formatCurrency(fees.carerFee)}
+                                </span>
+                              </div>
+                              <div className="pt-2 mt-2 border-t flex justify-between">
+                                <span className="font-bold">You receive:</span>
+                                <span className="font-bold text-emerald-700">{formatCurrency(fees.carerEarnings)} / hr</span>
+                              </div>
+                              {isPromo && (
+                                <p className="text-xs text-emerald-600 mt-2 flex items-center gap-1">
+                                  <CheckCircle className="h-3 w-3" />
+                                  You are in your 6-month commission-free period!
+                                </p>
+                              )}
+                            </div>
+                          );
+                        } catch (e) {
+                          return null;
+                        }
+                      })()}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -775,7 +826,7 @@ export default function CarerProfile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Heart className="h-5 w-5 text-primary" />
-                Care Expertise
+                Experience
               </CardTitle>
               <CardDescription>Select the types of care you can provide</CardDescription>
             </CardHeader>
