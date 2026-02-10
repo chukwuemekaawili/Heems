@@ -97,6 +97,10 @@ export default function CarerProfile() {
     bio: "",
     specializations: [],
     languages: ["English"],
+    live_in_rate_weekly: null,
+    live_in_rate_daily: null,
+    overnight_sleeping_rate: null,
+    overnight_waking_rate: null,
     certifications: [],
     travel_radius: 10,
     min_booking_duration: 1,
@@ -205,7 +209,11 @@ export default function CarerProfile() {
         .from("carer_details")
         .upsert({
           id: user.id,
-          ...carerDetails
+          ...carerDetails,
+          live_in_rate_weekly: parseFloat(carerDetails.live_in_rate_weekly) || null,
+          live_in_rate_daily: parseFloat(carerDetails.live_in_rate_daily) || null,
+          overnight_sleeping_rate: parseFloat(carerDetails.overnight_sleeping_rate) || null,
+          overnight_waking_rate: parseFloat(carerDetails.overnight_waking_rate) || null,
         });
 
       if (carerError) throw carerError;
@@ -685,6 +693,77 @@ export default function CarerProfile() {
                       })()}
                     </div>
                   )}
+                </div>
+
+                {/* Additional Rates */}
+                <div className="space-y-4 pt-4 border-t border-slate-200">
+                  <h3 className="font-semibold text-lg">Specialised Service Rates</h3>
+
+                  {/* Live-in Rates */}
+                  <div className="space-y-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <User className="h-4 w-4 text-primary" />
+                      <span className="font-medium">Live-in Care</span>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Weekly Rate (£)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={carerDetails.live_in_rate_weekly || ""}
+                          placeholder="e.g. 1200"
+                          disabled={!isEditing}
+                          onChange={(e) => setCarerDetails((c: any) => ({ ...c, live_in_rate_weekly: e.target.value }))}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Daily Rate (£)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={carerDetails.live_in_rate_daily || ""}
+                          placeholder="e.g. 180"
+                          disabled={!isEditing}
+                          onChange={(e) => setCarerDetails((c: any) => ({ ...c, live_in_rate_daily: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Overnight Rates */}
+                  <div className="space-y-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="h-4 w-4 text-primary" />
+                      <span className="font-medium">Overnight Care</span>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Sleeping Night (Flat Rate £)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={carerDetails.overnight_sleeping_rate || ""}
+                          placeholder="e.g. 150"
+                          disabled={!isEditing}
+                          onChange={(e) => setCarerDetails((c: any) => ({ ...c, overnight_sleeping_rate: e.target.value }))}
+                        />
+                        <p className="text-xs text-muted-foreground">Flat rate per night (usually 10pm - 8am)</p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Waking Night (Hourly Rate £)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={carerDetails.overnight_waking_rate || ""}
+                          placeholder="e.g. 30"
+                          disabled={!isEditing}
+                          onChange={(e) => setCarerDetails((c: any) => ({ ...c, overnight_waking_rate: e.target.value }))}
+                        />
+                        <p className="text-xs text-muted-foreground">Hourly rate for active night support</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 

@@ -27,6 +27,10 @@ export interface CarerDetails {
   years_experience: number;
   skills: string[];
   hourly_rate: number;
+  live_in_rate_weekly?: number;
+  live_in_rate_daily?: number;
+  overnight_sleeping_rate?: number;
+  overnight_waking_rate?: number;
   verification_status: VerificationStatus;
   dbs_check_date: string | null;
   availability_status: AvailabilityStatus;

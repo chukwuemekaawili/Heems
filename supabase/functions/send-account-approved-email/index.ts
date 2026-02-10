@@ -47,21 +47,41 @@ const handler = async (req: Request): Promise<Response> => {
                 subject: "Your Heems Account has been Approved",
                 html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #111827;">Welcome to Heems, ${name || 'User'}!</h1>
+            <h1 style="color: #111827;">Welcome to Heems – Your Introductory Free Period</h1>
             <p style="font-size: 16px; color: #4b5563;">
-              We are pleased to inform you that your account has been verified and approved by our administration team.
+              Welcome to Heems — we’re really glad to have you on board.
             </p>
             <p style="font-size: 16px; color: #4b5563;">
-              You now have full access to the platform.
+              To help you get started, we’re offering carers an introductory promotional period with platform fees waived while you begin using Heems and connecting with clients.
             </p>
+            
+            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; margin: 24px 0;">
+                <h3 style="color: #166534; margin-top: 0;">What this means for you</h3>
+                <ul style="color: #166534; padding-left: 20px;">
+                    <li>You can accept and complete bookings without platform fees during this period</li>
+                    <li>The promotional period can last up to 6 months from your onboarding date</li>
+                    <li>We’ll always notify you in advance before standard platform fees apply</li>
+                </ul>
+            </div>
+
+            <p style="font-size: 16px; color: #4b5563;">
+              There’s nothing you need to do right now — just complete your profile, connect with clients, and use the platform as normal.
+            </p>
+            <p style="font-size: 16px; color: #4b5563;">
+              If you have any questions along the way, our support team is here to help.
+            </p>
+            <p style="font-size: 16px; color: #4b5563;">
+              Welcome again, and we wish you every success on Heems.
+            </p>
+
             <div style="margin-top: 32px; margin-bottom: 32px;">
               <a href="https://heartful-care-connect.vercel.app/login" 
                  style="background-color: #1a9e8c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-                Login to Dashboard
+                Go to Dashboard
               </a>
             </div>
             <p style="font-size: 14px; color: #9ca3af;">
-              If the button doesn't work, copy and paste this link into your browser: https://heartful-care-connect.vercel.app/login
+              Warm regards,<br/>The Heems Team
             </p>
           </div>
         `,

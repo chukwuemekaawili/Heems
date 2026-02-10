@@ -7,7 +7,7 @@ const steps = [
     number: "01",
     icon: Search,
     title: "Define Your Needs",
-    description: "Tell us about your requirements. Our system starts matching instantly based on care expertise and personality.",
+    description: "Tell us about your requirements. Our system starts matching instantly based on care experience and personality.",
   },
   {
     number: "02",

@@ -19,6 +19,7 @@ const PageLoader = () => null;
 // PUBLIC PAGES - Eagerly loaded for SEO/fast initial load
 // ============================================
 import Index from "./pages/Index";
+import PrivacyPolicy from "./pages/public/PrivacyPolicy";
 import Marketplace from "./pages/Marketplace";
 import ForCarers from "./pages/ForCarers";
 
@@ -173,8 +174,7 @@ const App = () => (
               {/* New Public Pages */}
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/types-of-care" element={<TypesOfCare />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/legal" element={<LegalPage />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/contact" element={<Contact />} />
 
               <Route path="/security" element={<Security />} />

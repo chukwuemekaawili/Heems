@@ -39,7 +39,10 @@ export default function CreateBooking() {
     // Selection State
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
     const [selectedTime, setSelectedTime] = useState("09:00");
-    const [duration, setDuration] = useState(2); // hours
+    // Service Selection
+    const [serviceType, setServiceType] = useState<'hourly' | 'live_in' | 'overnight'>('hourly');
+    const [serviceSubtype, setServiceSubtype] = useState<string>('hourly'); // 'hourly', 'daily', 'weekly', 'sleeping', 'waking'
+    const [duration, setDuration] = useState(2); // reused as quantity (hours/days/weeks/nights)
 
     useEffect(() => {
         fetchCarer();
@@ -63,6 +66,10 @@ export default function CreateBooking() {
           carer_details (
             bio,
             hourly_rate,
+            live_in_rate_weekly,
+            live_in_rate_daily,
+            overnight_sleeping_rate,
+            overnight_waking_rate,
             verification_status,
             onboarded_at
           )
@@ -111,9 +118,27 @@ export default function CreateBooking() {
 
     const calculateFeeBreakdown = () => {
         try {
-            const rate = carer?.carer_details?.hourly_rate || 25;
-            const rate = carer?.carer_details?.hourly_rate || 25;
-            const onboardedAt = carer?.carer_details?.onboarded_at;
+            if (!carer?.carer_details) return;
+
+            let rate = carer.carer_details.hourly_rate || 25;
+
+            // Determine rate based on service type
+            if (serviceType === 'live_in') {
+                if (serviceSubtype === 'weekly' && carer.carer_details.live_in_rate_weekly) {
+                    rate = carer.carer_details.live_in_rate_weekly;
+                } else if (serviceSubtype === 'daily' && carer.carer_details.live_in_rate_daily) {
+                    rate = carer.carer_details.live_in_rate_daily;
+                }
+            } else if (serviceType === 'overnight') {
+                if (serviceSubtype === 'sleeping' && carer.carer_details.overnight_sleeping_rate) {
+                    rate = carer.carer_details.overnight_sleeping_rate;
+                } else if (serviceSubtype === 'waking' && carer.carer_details.overnight_waking_rate) {
+                    rate = carer.carer_details.overnight_waking_rate;
+                }
+            }
+
+            const onboardedAt = carer.carer_details.onboarded_at;
+            // duration acts as quantity (hours, days, weeks, nights)
             const fees = calculateFees(rate, duration, currentPhase, onboardedAt);
             setFeeBreakdown(fees);
         } catch (error: any) {
@@ -213,11 +238,106 @@ export default function CreateBooking() {
 
                                 {step === 1 ? (
                                     <div className="p-6 space-y-6">
-                                        <h2 className="text-xl font-bold tracking-tight">Schedule your visit</h2>
+                                        <h2 className="text-xl font-bold tracking-tight">Configure Booking</h2>
 
-                                        <div className="grid md:grid-cols-2 gap-6">
+                                        {/* Service Type Selection */}
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Service Type</Label>
+                                            <div className="flex flex-wrap gap-2">
+                                                <Button
+                                                    variant={serviceType === 'hourly' ? 'default' : 'outline'}
+                                                    onClick={() => { setServiceType('hourly'); setServiceSubtype('hourly'); setDuration(2); }}
+                                                    className="h-9 text-xs"
+                                                >
+                                                    Hourly Care
+                                                </Button>
+
+                                                {(carer?.carer_details?.overnight_sleeping_rate || carer?.carer_details?.overnight_waking_rate) && (
+                                                    <Button
+                                                        variant={serviceType === 'overnight' ? 'default' : 'outline'}
+                                                        onClick={() => {
+                                                            setServiceType('overnight');
+                                                            setServiceSubtype(carer?.carer_details?.overnight_sleeping_rate ? 'sleeping' : 'waking');
+                                                            setDuration(1); // 1 night
+                                                        }}
+                                                        className="h-9 text-xs"
+                                                    >
+                                                        Overnight Care
+                                                    </Button>
+                                                )}
+
+                                                {(carer?.carer_details?.live_in_rate_daily || carer?.carer_details?.live_in_rate_weekly) && (
+                                                    <Button
+                                                        variant={serviceType === 'live_in' ? 'default' : 'outline'}
+                                                        onClick={() => {
+                                                            setServiceType('live_in');
+                                                            setServiceSubtype(carer?.carer_details?.live_in_rate_daily ? 'daily' : 'weekly');
+                                                            setDuration(1); // 1 day/week
+                                                        }}
+                                                        className="h-9 text-xs"
+                                                    >
+                                                        Live-in Care
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Subtype Selection (if applicable) */}
+                                        {serviceType === 'overnight' && (
+                                            <div className="space-y-3 animate-in fade-in">
+                                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Night Type</Label>
+                                                <div className="flex gap-2">
+                                                    {carer?.carer_details?.overnight_sleeping_rate && (
+                                                        <Button
+                                                            variant={serviceSubtype === 'sleeping' ? 'default' : 'outline'}
+                                                            onClick={() => setServiceSubtype('sleeping')}
+                                                            size="sm" className="h-8 text-xs"
+                                                        >
+                                                            Sleeping Night
+                                                        </Button>
+                                                    )}
+                                                    {carer?.carer_details?.overnight_waking_rate && (
+                                                        <Button
+                                                            variant={serviceSubtype === 'waking' ? 'default' : 'outline'}
+                                                            onClick={() => setServiceSubtype('waking')}
+                                                            size="sm" className="h-8 text-xs"
+                                                        >
+                                                            Waking Night
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {serviceType === 'live_in' && (
+                                            <div className="space-y-3 animate-in fade-in">
+                                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Duration Unit</Label>
+                                                <div className="flex gap-2">
+                                                    {carer?.carer_details?.live_in_rate_daily && (
+                                                        <Button
+                                                            variant={serviceSubtype === 'daily' ? 'default' : 'outline'}
+                                                            onClick={() => setServiceSubtype('daily')}
+                                                            size="sm" className="h-8 text-xs"
+                                                        >
+                                                            Daily Rate
+                                                        </Button>
+                                                    )}
+                                                    {carer?.carer_details?.live_in_rate_weekly && (
+                                                        <Button
+                                                            variant={serviceSubtype === 'weekly' ? 'default' : 'outline'}
+                                                            onClick={() => setServiceSubtype('weekly')}
+                                                            size="sm" className="h-8 text-xs"
+                                                        >
+                                                            Weekly Rate
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="grid md:grid-cols-2 gap-6 pt-4 border-t">
                                             <div className="space-y-3">
-                                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Date</Label>
+                                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Start Date</Label>
                                                 <div className="p-2 border border-black/5 rounded-2xl bg-slate-50/50">
                                                     <Calendar
                                                         mode="single"
@@ -229,27 +349,45 @@ export default function CreateBooking() {
                                             </div>
 
                                             <div className="space-y-6">
-                                                <div className="space-y-3">
-                                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Arrival Window</Label>
-                                                    <div className="grid grid-cols-3 gap-2">
-                                                        {["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map(t => (
-                                                            <Button
-                                                                key={t}
-                                                                variant={selectedTime === t ? "default" : "outline"}
-                                                                className={`rounded-lg font-bold h-10 text-xs transition-all ${selectedTime === t ? 'shadow-md shadow-primary/10' : 'border-black/5'}`}
-                                                                onClick={() => setSelectedTime(t)}
-                                                            >
-                                                                {t}
-                                                            </Button>
-                                                        ))}
+                                                {/* Time Selection - Only for Hourly or Overnight */}
+                                                {(serviceType === 'hourly' || serviceType === 'overnight') && (
+                                                    <div className="space-y-3">
+                                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                                            {serviceType === 'overnight' ? 'Start Time (Approx)' : 'Arrival Window'}
+                                                        </Label>
+                                                        <div className="grid grid-cols-3 gap-2">
+                                                            {(serviceType === 'overnight'
+                                                                ? ["20:00", "21:00", "22:00"]
+                                                                : ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
+                                                            ).map(t => (
+                                                                <Button
+                                                                    key={t}
+                                                                    variant={selectedTime === t ? "default" : "outline"}
+                                                                    className={`rounded-lg font-bold h-10 text-xs transition-all ${selectedTime === t ? 'shadow-md shadow-primary/10' : 'border-black/5'}`}
+                                                                    onClick={() => setSelectedTime(t)}
+                                                                >
+                                                                    {t}
+                                                                </Button>
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                )}
 
                                                 <div className="space-y-3">
-                                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Duration (Hours)</Label>
+                                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                                        {serviceType === 'hourly' ? 'Duration (Hours)' :
+                                                            serviceType === 'overnight' ? 'Duration (Nights)' :
+                                                                serviceSubtype === 'weekly' ? 'Duration (Weeks)' : 'Duration (Days)'}
+                                                    </Label>
                                                     <div className="flex items-center gap-3 p-3 border border-black/5 rounded-xl bg-slate-50/50">
                                                         <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setDuration(Math.max(1, duration - 1))}>-</Button>
-                                                        <span className="flex-1 text-center text-lg font-bold">{duration} <span className="text-xs font-semibold text-muted-foreground">hrs</span></span>
+                                                        <span className="flex-1 text-center text-lg font-bold">
+                                                            {duration} <span className="text-xs font-semibold text-muted-foreground">
+                                                                {serviceType === 'hourly' ? 'hrs' :
+                                                                    serviceType === 'overnight' ? 'nights' :
+                                                                        serviceSubtype === 'weekly' ? 'wks' : 'days'}
+                                                            </span>
+                                                        </span>
                                                         <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setDuration(duration + 1)}>+</Button>
                                                     </div>
                                                 </div>
@@ -274,7 +412,11 @@ export default function CreateBooking() {
                                                 </div>
                                                 <div className="flex justify-between items-center text-sm">
                                                     <span className="font-semibold text-muted-foreground">Duration</span>
-                                                    <span className="font-bold text-foreground">{duration} Hours</span>
+                                                    <span className="font-bold text-foreground">
+                                                        {duration} {serviceType === 'hourly' ? 'Hours' :
+                                                            serviceType === 'overnight' ? 'Nights' :
+                                                                serviceSubtype === 'weekly' ? 'Weeks' : 'Days'}
+                                                    </span>
                                                 </div>
                                             </div>
 
@@ -287,7 +429,13 @@ export default function CreateBooking() {
                                                     </div>
 
                                                     <div className="flex justify-between items-center text-sm">
-                                                        <span className="text-white/70">Base Rate ({duration} hrs × {formatCurrency(feeBreakdown.baseRate)}/hr)</span>
+                                                        <span className="text-white/70">
+                                                            Base Rate ({duration} {serviceType === 'hourly' ? 'hrs' :
+                                                                serviceType === 'overnight' ? 'nights' :
+                                                                    serviceSubtype === 'weekly' ? 'wks' : 'days'} × {formatCurrency(feeBreakdown.baseRate)}/{serviceType === 'hourly' ? 'hr' :
+                                                                        serviceType === 'overnight' ? 'night' :
+                                                                            serviceSubtype === 'weekly' ? 'wk' : 'day'})
+                                                        </span>
                                                         <span className="font-bold">{formatCurrency(feeBreakdown.subtotal)}</span>
                                                     </div>
 

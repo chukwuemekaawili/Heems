@@ -80,10 +80,13 @@ export default function PostJob() {
     const getRateHelperText = () => {
         if (formData.care_type === 'hourly') return "The average rate per hour is £22.50";
         if (formData.care_type === 'live_in') {
-            if (formData.care_subtype === 'part_time') return "The average daily rate is £160";
+            if (formData.care_subtype === 'part_time') return "The average daily rate (24h) is £160";
             if (formData.care_subtype === 'full_time') return "The average weekly rate is £1,120";
         }
-        if (formData.care_type === 'overnight') return "The average rate per hour is £22.50"; // Defaulting to hourly for overnight
+        if (formData.care_type === 'overnight') {
+            if (formData.care_subtype === 'sleeping') return "Average flat rate for sleeping night is £120";
+            if (formData.care_subtype === 'waking') return "Average hourly rate for waking night is £25";
+        }
         return "Enter your preferred rate.";
     };
 
@@ -580,6 +583,12 @@ export default function PostJob() {
                                             value={formData.preferred_rate}
                                             onChange={(e) => updateField('preferred_rate', e.target.value)}
                                         />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                                            {formData.care_type === 'live_in' && formData.care_subtype === 'full_time' ? '/ week' :
+                                                formData.care_type === 'live_in' && formData.care_subtype === 'part_time' ? '/ day' :
+                                                    formData.care_type === 'overnight' && formData.care_subtype === 'sleeping' ? '/ night' :
+                                                        '/ hour'}
+                                        </span>
                                     </div>
                                     <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2 bg-slate-50 p-2 rounded border text-slate-600">
                                         <Info className="h-4 w-4 text-blue-500" />
