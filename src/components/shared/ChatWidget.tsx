@@ -4,6 +4,8 @@ import { MessageCircle, X, Send, Minus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
