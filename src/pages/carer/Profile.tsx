@@ -112,8 +112,6 @@ export default function CarerProfile() {
     show_on_search: true,
     video_url: "",
     hobbies: "",
-    video_url: "",
-    hobbies: "",
     has_transportation: false,
     onboarded_at: null // For promo logic
   });
@@ -153,7 +151,15 @@ export default function CarerProfile() {
         .single();
 
       if (carerError && carerError.code !== "PGRST116") throw carerError;
-      if (carerData) setCarerDetails(carerData);
+      if (carerData) {
+        setCarerDetails({
+          ...carerData,
+          specializations: carerData.specializations || [],
+          languages: carerData.languages || ["English"],
+          certifications: carerData.certifications || [],
+          // Ensure other potentially null value types are handled if needed
+        });
+      }
 
     } catch (error: any) {
       console.error("Error fetching profile:", error);
