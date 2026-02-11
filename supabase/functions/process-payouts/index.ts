@@ -173,6 +173,24 @@ serve(async (req) => {
 
                 if (updateError) throw updateError;
 
+                // Send Payout Email
+                await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${supabaseServiceKey}`
+                    },
+                    body: JSON.stringify({
+                        type: "payout_notification",
+                        email: "carer_email_placeholder@example.com", // TODO: Need to fetch email from carer_details or profiles
+                        name: "Carer", // TODO: Need to fetch name
+                        data: {
+                            amount: (amountInPence / 100).toFixed(2),
+                            payoutId: transfer.id
+                        }
+                    })
+                });
+
                 stats.success++;
 
             } catch (err: any) {

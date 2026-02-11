@@ -2,8 +2,14 @@
 // Deploy with: supabase functions deploy send-contact-email
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import nodemailer from "npm:nodemailer@6.9.13";
+// @ts-ignore
+import { generateEmailHtml } from "../_shared/email-template.ts";
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const SMTP_HOST = Deno.env.get("SMTP_HOST");
+const SMTP_PORT = parseInt(Deno.env.get("SMTP_PORT") || "465");
+const SMTP_USER = Deno.env.get("SMTP_USER");
+const SMTP_PASS = Deno.env.get("SMTP_PASS");
 const ADMIN_EMAIL = Deno.env.get("ADMIN_EMAIL") || "support@heems.com";
 
 const corsHeaders = {
@@ -38,78 +44,59 @@ serve(async (req) => {
             throw new Error("Invalid email format");
         }
 
-        // If RESEND_API_KEY is configured, send via Resend
-        if (RESEND_API_KEY) {
-            const emailResponse = await fetch("https://api.resend.com/emails", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${RESEND_API_KEY}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    from: "Heems Contact Form <noreply@heems.com>",
-                    to: [ADMIN_EMAIL],
-                    reply_to: email,
-                    subject: `[Heems Contact] ${subject}`,
-                    html: `
-                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                            <div style="background: #111827; padding: 24px; text-align: center;">
-                                <h1 style="color: #1a9e8c; margin: 0;">New Contact Form Submission</h1>
-                            </div>
-                            <div style="padding: 24px; background: #f9fafb;">
-                                <p style="margin: 0 0 16px;"><strong>From:</strong> ${name}</p>
-                                <p style="margin: 0 0 16px;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-                                <p style="margin: 0 0 16px;"><strong>Subject:</strong> ${subject}</p>
-                                <div style="margin-top: 24px; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
-                                    <p style="margin: 0 0 8px;"><strong>Message:</strong></p>
-                                    <p style="margin: 0; white-space: pre-wrap;">${message}</p>
-                                </div>
-                            </div>
-                            <div style="padding: 16px; text-align: center; color: #6b7280; font-size: 12px;">
-                                <p>This email was sent from the Heems contact form.</p>
-                            </div>
-                        </div>
-                    `,
-                }),
-            });
-
-            if (!emailResponse.ok) {
-                const errorData = await emailResponse.json();
-                console.error("Resend API error:", errorData);
-                throw new Error("Failed to send email");
-            }
-
-            // Also send confirmation to the user
-            await fetch("https://api.resend.com/emails", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${RESEND_API_KEY}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    from: "Heems <noreply@heems.com>",
-                    to: [email],
-                    subject: "We've received your message - Heems",
-                    html: `
-                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                            <div style="background: #111827; padding: 24px; text-align: center;">
-                                <h1 style="color: #1a9e8c; margin: 0;">Thank You, ${name}!</h1>
-                            </div>
-                            <div style="padding: 24px;">
-                                <p>We've received your message and will get back to you within 24 hours.</p>
-                                <p><strong>Your message:</strong></p>
-                                <div style="padding: 16px; background: #f9fafb; border-radius: 8px; margin: 16px 0;">
-                                    <p style="margin: 0;"><strong>Subject:</strong> ${subject}</p>
-                                    <p style="margin: 8px 0 0; white-space: pre-wrap;">${message}</p>
-                                </div>
-                                <p>If you need immediate assistance, you can call us at <strong>07472414103</strong> (Mon-Fri, 9am-5pm).</p>
-                                <p style="margin-top: 24px;">Best regards,<br><strong>The Heems Team</strong></p>
-                            </div>
-                        </div>
-                    `,
-                }),
-            });
+        // Configure SMTP Transporter
+        // If credentials are missing, this will fail gracefully or we can fallback/log
+        if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+            console.error("Missing SMTP Configuration");
+            throw new Error("Server email configuration error");
         }
+
+        const transporter = nodemailer.createTransport({
+            host: SMTP_HOST,
+            port: SMTP_PORT,
+            secure: SMTP_PORT === 465, // true for 465, false for other ports
+            auth: {
+                user: SMTP_USER,
+                pass: SMTP_PASS,
+            },
+        });
+
+        // 1. Send Admin Notification
+        const adminContent = `
+            <p><strong>New Contact Form Submission</strong></p>
+            <p><strong>From:</strong> ${name} (<a href="mailto:${email}">${email}</a>)</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+            <hr />
+            <p><strong>Message:</strong></p>
+            <p style="white-space: pre-wrap;">${message}</p>
+        `;
+
+        await transporter.sendMail({
+            from: `"Heems System" <${SMTP_USER}>`, // Send from authenticated user
+            to: ADMIN_EMAIL,
+            replyTo: email,
+            subject: `[Heems Contact] ${subject}`,
+            html: generateEmailHtml(adminContent, "New Inquiry Received"),
+        });
+
+        // 2. Send User Confirmation
+        const userContent = `
+            <p>Dear ${name},</p>
+            <p>Thank you for contacting Heems. We have received your message regarding "<strong>${subject}</strong>".</p>
+            <p>Our team reviews every inquiry and will respond within 24 hours.</p>
+            <div style="background-color: #f3f4f6; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                <p><strong>Your Message:</strong></p>
+                <p style="font-style: italic;">"${message}"</p>
+            </div>
+            <p>If your matter is urgent, please reply to this email.</p>
+        `;
+
+        await transporter.sendMail({
+            from: `"Heems Support" <${SMTP_USER}>`,
+            to: email,
+            subject: "We've received your message - Heems",
+            html: generateEmailHtml(userContent, "Thank You for Contacting Us"),
+        });
 
         // Store in database for record keeping
         const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -141,7 +128,7 @@ serve(async (req) => {
                 status: 200,
             }
         );
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error sending contact email:", error);
         return new Response(
             JSON.stringify({ error: error.message }),

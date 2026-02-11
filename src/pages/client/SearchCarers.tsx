@@ -34,6 +34,9 @@ import { useToast } from "@/hooks/use-toast";
 import { PostcodeAddressLookup } from "@/components/shared/PostcodeAddressLookup";
 
 const careTypes = [
+  "Visiting Care",
+  "Overnight Care",
+  "Live-in Care",
   "Personal Care",
   "Dementia Care",
   "Palliative Care",
@@ -74,6 +77,20 @@ export default function SearchCarers() {
   const [savedCarers, setSavedCarers] = useState<string[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Handle URL query params for types
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const typeParam = params.get('type');
+    if (typeParam) {
+      // Decode and handle potentially different naming conventions
+      const decodedType = decodeURIComponent(typeParam);
+      // Map "visiting" to "Visiting Care", etc if needed, or just use as is if it matches
+      if (!selectedCareTypes.includes(decodedType)) {
+        setSelectedCareTypes(prev => [...prev, decodedType]);
+      }
+    }
+  }, []); // Run once on mount
 
   useEffect(() => {
     fetchCarers();

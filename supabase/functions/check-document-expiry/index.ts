@@ -18,10 +18,10 @@ serve(async (req) => {
         const thirtyDaysFromNow = new Date();
         thirtyDaysFromNow.setDate(today.getDate() + 30);
 
-        // Fetch all carer verifications
+        // Fetch all carer verifications with profile data
         const { data: verifications, error: fetchError } = await supabase
             .from('carer_verification')
-            .select('*')
+            .select('*, profiles:id(email, first_name)') // Assuming one-to-one on id
             .eq('overall_status', 'verified');
 
         if (fetchError) throw fetchError;
@@ -35,12 +35,13 @@ serve(async (req) => {
         for (const verification of verifications || []) {
             let hasExpired = false;
             let expiringSoon = false;
+            const profile = Array.isArray(verification.profiles) ? verification.profiles[0] : verification.profiles;
 
             // Check each document type - using correct column names from schema
             const documents = [
-                { type: 'dbs', expiry: verification.dbs_expiry },
-                { type: 'rtw', expiry: verification.rtw_expiry },
-                { type: 'insurance', expiry: verification.insurance_expiry },
+                { type: 'dbs', expiry: verification.dbs_expiry, niceName: 'DBS Certificate' },
+                { type: 'rtw', expiry: verification.rtw_expiry, niceName: 'Right to Work' },
+                { type: 'insurance', expiry: verification.insurance_expiry, niceName: 'Insurance' },
             ];
 
             for (const doc of documents) {
@@ -59,11 +60,39 @@ serve(async (req) => {
                         .from('carer_verification')
                         .update({ [statusField]: 'rejected' }) // Using 'rejected' as per schema constraint
                         .eq('id', verification.id);
+
+                    // Send Expired Email
+                    if (profile?.email) {
+                        await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${supabaseKey}` },
+                            body: JSON.stringify({
+                                type: "document_expired",
+                                email: profile.email,
+                                name: profile.first_name || "Carer",
+                                data: { documentType: doc.niceName }
+                            })
+                        });
+                    }
                 }
                 // Check if expiring soon (within 30 days)
                 else if (expiryDate <= thirtyDaysFromNow) {
                     console.log(`${doc.type} expiring soon for carer ${verification.id}`);
                     expiringSoon = true;
+
+                    // Send Expiring Soon Email (only if not already sent recently? - simplifying for now)
+                    if (profile?.email) {
+                        await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${supabaseKey}` },
+                            body: JSON.stringify({
+                                type: "document_expiring",
+                                email: profile.email,
+                                name: profile.first_name || "Carer",
+                                data: { documentType: doc.niceName }
+                            })
+                        });
+                    }
                 }
             }
 
@@ -79,15 +108,12 @@ serve(async (req) => {
 
                 deVerifiedCarers.push(verification.id);
                 expiredCount++;
-
-                // TODO: Send email notification to carer
                 console.log(`De-verified carer ${verification.id} due to expired documents`);
             }
 
             if (expiringSoon && !hasExpired) {
                 expiringSoonCount++;
-                // TODO: Send reminder email to carer
-                console.log(`Reminder needed for carer ${verification.id}`);
+                console.log(`Reminder sent for carer ${verification.id}`);
             }
         }
 
