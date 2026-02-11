@@ -94,7 +94,7 @@ serve(async (req) => {
             const errorData = await response.text();
             console.error('Groq API Error:', errorData);
             return new Response(JSON.stringify({
-                reply: `I am currently experiencing high traffic (Provider Error: ${response.status}). Please try again later.`
+                reply: `Debug: Groq returned ${response.status}. Error: ${errorData.substring(0, 200)}`
             }), {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             });
