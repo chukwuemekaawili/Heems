@@ -28,6 +28,7 @@ import NotFound from "./pages/NotFound";
 import HowItWorks from "./pages/public/HowItWorks";
 import TypesOfCare from "./pages/public/TypesOfCare";
 import About from "./pages/public/About";
+import Solutions from "./pages/Solutions";
 import Contact from "./pages/public/Contact";
 
 import Security from "./pages/public/Security";
@@ -111,8 +112,8 @@ const CarerEarnings = lazy(() => import("./pages/carer/Earnings"));
 const EarningsEnhanced = lazy(() => import("./pages/carer/EarningsEnhanced"));
 const CarerDocuments = lazy(() => import("./pages/carer/DocumentsNew")); // Renamed to use Enhanced Documents
 const DocumentsNew = lazy(() => import("./pages/carer/DocumentsNew"));
-const CarerProfile = lazy(() => import("./pages/carer/Profile"));
-const ProfileEnhanced = lazy(() => import("./pages/carer/ProfileEnhanced"));
+const CarerProfile = lazy(() => import("./pages/carer/ProfileEnhanced"));
+// const ProfileEnhanced = lazy(() => import("./pages/carer/ProfileEnhanced")); // Deprecated separate route
 
 // Organisation Pages
 const OrganisationDashboard = lazy(() => import("./pages/organisation/Dashboard"));
@@ -174,6 +175,7 @@ const App = () => (
               {/* New Public Pages */}
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/types-of-care" element={<TypesOfCare />} />
+              <Route path="/solutions" element={<Solutions />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/contact" element={<Contact />} />
 

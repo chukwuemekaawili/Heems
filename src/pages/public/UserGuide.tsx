@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Search, Play, Book, Lightbulb, CheckCircle2, ChevronRight } from "lucide-react";
 import { ChatWidget } from "@/components/shared/ChatWidget";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const UserGuide = () => {
     return (
@@ -18,8 +19,8 @@ const UserGuide = () => {
                         <div className="max-w-4xl">
                             <Badge className="mb-6 bg-[#1a9e8c]/10 text-[#1a9e8c] border-[#1a9e8c]/20 py-1 px-4 text-xs font-black uppercase tracking-widest">Mastering Heems</Badge>
                             <h1 className="text-6xl font-black text-[#111827] mb-8 leading-tight">Everything you need to <span className="text-[#1a9e8c]">get started</span>.</h1>
-                            <p className="text-xl text-slate-600 font-medium leading-relaxed max-w-2xl">
-                                From creating your first care plan to managing complex bookings, our guide covers everything you need to know.
+                            <p className="text-xl text-slate-600 font-medium leading-relaxed">
+                                From setting up your first booking to managing ongoing arrangements, our guide explains how to use the platform step by step.
                             </p>
                         </div>
                     </div>
@@ -89,14 +90,33 @@ const UserGuide = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="relative group cursor-pointer">
-                                <div className="aspect-video bg-white/5 rounded-[3rem] border border-white/10 flex items-center justify-center overflow-hidden">
-                                    <div className="h-20 w-20 rounded-full bg-[#1a9e8c] flex items-center justify-center shadow-2xl shadow-[#1a9e8c]/40 group-hover:scale-110 transition-transform">
-                                        <Play className="h-8 w-8 text-white fill-white ml-1" />
+
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <div className="relative group cursor-pointer">
+                                        <div className="aspect-video bg-white/5 rounded-[3rem] border border-white/10 flex items-center justify-center overflow-hidden">
+                                            <div className="h-20 w-20 rounded-full bg-[#1a9e8c] flex items-center justify-center shadow-2xl shadow-[#1a9e8c]/40 group-hover:scale-110 transition-transform">
+                                                <Play className="h-8 w-8 text-white fill-white ml-1" />
+                                            </div>
+                                            <img src="/dashboard-mockup.png" alt="Video Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay" />
+                                        </div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-60 rounded-[3rem]" />
                                     </div>
-                                </div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-60 rounded-[3rem]" />
-                            </div>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[800px] p-0 bg-black border-none overflow-hidden rounded-2xl">
+                                    <div className="aspect-video w-full">
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                                            title="A Day in the Life with Heems"
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        ></iframe>
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                     </div>
                 </section>
@@ -109,9 +129,9 @@ const UserGuide = () => {
                         </div>
                         <div className="space-y-4">
                             {[
-                                { q: "How do I update a care plan mid-session?", a: "You can update care notes in real-time through the dashboard. Carers will receive an instant notification on their mobile interface." },
-                                { q: "What happens if a carer needs to cancel?", a: "If a carer cancels, our automated priority system will notify other vetted carers in your area with similar skills immediately." },
-                                { q: "Managing multiple patients for one family?", a: "The 'Primary Client' account can manage multiple 'Members' profiles, each with an independent care plan and documentation." }
+                                { q: "How do I update support details during a booking?", a: "Clients can update booking notes and preferences through their dashboard at any time. Carers will be notified of any updates via the platform. Any changes to agreed support should be discussed directly between the client and carer." },
+                                { q: "What happens if a carer needs to cancel?", a: "If a carer cancels a confirmed booking, the client will be notified immediately. Clients may then search for and book another available carer through the platform." },
+                                { q: "Manage support for more than one person?", a: "A primary account holder can create and manage multiple member profiles, each with separate booking details and preferences." }
                             ].map((faq, i) => (
                                 <Card key={i} className="border-black/5 rounded-3xl hover:bg-slate-50 transition-colors">
                                     <CardContent className="p-8">

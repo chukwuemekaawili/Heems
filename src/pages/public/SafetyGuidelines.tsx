@@ -46,7 +46,7 @@ const SafetyGuidelines = () => {
                                 {
                                     icon: HeartPulse,
                                     title: "Reference Analysis",
-                                    desc: "Manual verification of at least three professional references with a focus on care performance."
+                                    desc: "Manual verification of at least two professional references with a focus on care performance."
                                 }
                             ].map((pillar, i) => (
                                 <div key={i} className="text-center space-y-6">

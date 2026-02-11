@@ -81,7 +81,7 @@ const ForOrganisationsSection = () => {
             </Link>
           </Button>
           <Button variant="outline" size="lg" className="h-16 px-12 rounded-2xl font-black text-lg text-[#111827] border-black/10 hover:bg-slate-50 transition-all" asChild>
-            <Link to="/signup/client">
+            <Link to="/solutions">
               View Solutions
             </Link>
           </Button>

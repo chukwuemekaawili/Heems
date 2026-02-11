@@ -13,35 +13,31 @@ export const ChatWidget = () => {
         { role: 'agent', text: 'Hello! How can we help you today?' }
     ]);
 
-    const getSmartResponse = (text: string) => {
-        const lower = text.toLowerCase();
-        if (lower.includes('price') || lower.includes('cost') || lower.includes('rate')) {
-            return "Our carers set their own rates, typically between £15-£35/hour depending on experience and care type.";
-        }
-        if (lower.includes('join') || lower.includes('job') || lower.includes('work')) {
-            return "We're always looking for great carers! You can apply directly through the 'For Carers' section.";
-        }
-        if (lower.includes('book') || lower.includes('schedule')) {
-            return "You can book a carer directly from their profile page. Just click 'Secure Profile' to get started.";
-        }
-        if (lower.includes('hello') || lower.includes('hi')) {
-            return "Hello! I'm the Heems AI assistant. How can I help you today?";
-        }
-        return "Thanks for reaching out! One of our Agents will be with you shortly to assist you further.";
-    };
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSendMessage = (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!message.trim()) return;
+        if (!message.trim() || isLoading) return;
 
-        setChatHistory([...chatHistory, { role: 'user', text: message }]);
-        const currentMessage = message;
+        const userMessage = message;
         setMessage("");
+        setChatHistory(prev => [...prev, { role: 'user', text: userMessage }]);
+        setIsLoading(true);
 
-        // Simulated intelligent response
-        setTimeout(() => {
-            setChatHistory(prev => [...prev, { role: 'agent', text: getSmartResponse(currentMessage) }]);
-        }, 1500);
+        try {
+            const { data, error } = await supabase.functions.invoke('chat-agent', {
+                body: { message: userMessage }
+            });
+
+            if (error) throw error;
+
+            setChatHistory(prev => [...prev, { role: 'agent', text: data.reply }]);
+        } catch (error) {
+            console.error('Chat error:', error);
+            setChatHistory(prev => [...prev, { role: 'agent', text: "I'm having trouble connecting right now. Please try again or email support@heemscare.com." }]);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     if (!isOpen) {
@@ -95,6 +91,17 @@ export const ChatWidget = () => {
                                     </div>
                                 </div>
                             ))}
+                            {isLoading && (
+                                <div className="flex justify-start">
+                                    <div className="bg-white text-slate-700 border border-slate-100 rounded-2xl rounded-tl-none p-3 shadow-sm">
+                                        <div className="flex gap-1">
+                                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                         <CardFooter className="p-4 bg-white border-t">
                             <form onSubmit={handleSendMessage} className="flex gap-2 w-full">
@@ -103,8 +110,9 @@ export const ChatWidget = () => {
                                     onChange={(e) => setMessage(e.target.value)}
                                     placeholder="Type a message..."
                                     className="h-11 bg-slate-50 border-slate-100 focus-visible:ring-[#1a9e8c] focus-visible:ring-offset-0 rounded-xl"
+                                    disabled={isLoading}
                                 />
-                                <Button type="submit" size="icon" className="h-11 w-11 rounded-xl bg-[#111827] hover:bg-[#1a9e8c] shrink-0">
+                                <Button type="submit" size="icon" className="h-11 w-11 rounded-xl bg-[#111827] hover:bg-[#1a9e8c] shrink-0" disabled={isLoading}>
                                     <Send className="h-4 w-4" />
                                 </Button>
                             </form>

@@ -70,7 +70,7 @@ const getDefaultNavItems = (role: string): NavItem[] => {
         { name: "Routines", href: "/client/care-plans", icon: ClipboardList },
         { name: "Messages", href: "/client/messages", icon: MessageSquare },
         { name: "Payments", href: "/client/payments", icon: CreditCard },
-        { name: "Settings", href: "/client/settings", icon: Settings },
+        { name: "Settings", href: "/client/profile", icon: Settings },
       ];
     case "carer":
       return [
@@ -316,7 +316,7 @@ const DashboardLayout = ({
         {/* Sidebar */}
         <aside
           className={cn(
-            "fixed top-0 left-0 z-50 h-full w-64 bg-sidebar text-sidebar-foreground transition-transform duration-300 lg:translate-x-0",
+            "fixed top-0 left-0 z-[60] h-full w-64 bg-sidebar text-sidebar-foreground transition-transform duration-300 lg:translate-x-0 lg:z-30",
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >

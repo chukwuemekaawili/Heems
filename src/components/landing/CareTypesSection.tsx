@@ -29,9 +29,15 @@ const CareTypesSection: FC = () => {
     const handleCardClick = async (title: string) => {
         // Remove trailing dot if present
         const cleanTitle = title.replace(/\.$/, "");
-        // Map to search filter values if needed, but currently they align (case sensitive check might be needed)
-        // Ensure first letter of each word is capitalized for the filter
-        const filterValue = cleanTitle;
+
+        // Map titles to filter values
+        const filterMap: Record<string, string> = {
+            "Visiting care": "Visiting Care",
+            "Overnight care": "Overnight Care",
+            "Live-in care": "Live-in Care"
+        };
+
+        const filterValue = filterMap[cleanTitle] || cleanTitle;
 
         const { data: { session } } = await supabase.auth.getSession();
 

@@ -374,7 +374,7 @@ const ClientProfile = () => {
             {/* Medical Notes */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Medical Notes</CardTitle>
+                    <CardTitle>Care note</CardTitle>
                     <CardDescription>Important medical information for carers</CardDescription>
                 </CardHeader>
                 <CardContent>

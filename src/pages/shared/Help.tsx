@@ -48,7 +48,7 @@ const faqs = [
         questions: [
             {
                 q: "How do payments work?",
-                a: "Payments are processed securely through Stripe. You'll be charged after the care session is completed. A 10% platform fee is added to the carer's hourly rate.",
+                a: "Payments are processed securely through Stripe. For clients, the total cost (the carer’s agreed rate plus a clearly displayed platform service fee) is shown before confirming a booking. For carers, payments are released after a booking is completed. During any active promotional free period, no platform fee is deducted. After the promotional period ends, the applicable platform service fee is automatically deducted from completed bookings.",
             },
             {
                 q: "What payment methods are accepted?",

@@ -25,7 +25,9 @@ import {
     AlertCircle,
     CheckCircle,
     TrendingUp,
-    Info
+    Info,
+    Moon,
+    Home
 } from "lucide-react";
 import { MINIMUM_HOURLY_RATE, validateMinimumRate, calculateFees, formatCurrency } from "@/lib/fees";
 import type { PricingPhase } from "@/types/database";
@@ -33,6 +35,10 @@ import type { PricingPhase } from "@/types/database";
 export default function CarerProfileEnhanced() {
     const [isEditing, setIsEditing] = useState(false);
     const [hourlyRate, setHourlyRate] = useState(25);
+    const [liveInWeekly, setLiveInWeekly] = useState(1200);
+    const [liveInDaily, setLiveInDaily] = useState(180);
+    const [overnightSleeping, setOvernightSleeping] = useState(150);
+    const [overnightWaking, setOvernightWaking] = useState(20);
     const [rateError, setRateError] = useState("");
     const currentPhase: PricingPhase = '1'; // TODO: Fetch from system_config
 
@@ -233,6 +239,84 @@ export default function CarerProfileEnhanced() {
                             <div className="flex justify-between">
                                 <span className="text-slate-600">10+ years:</span>
                                 <span className="font-bold">£35-50/hr</span>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Specialized Rates Card */}
+            <Card className="border-2 border-primary/20">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Moon className="h-5 w-5 text-primary" />
+                        Specialized Care Rates
+                    </CardTitle>
+                    <CardDescription>Set your rates for live-in and overnight care</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg flex items-center gap-2">
+                                <Home className="h-4 w-4" /> Live-in Care
+                            </h3>
+                            <div className="space-y-2">
+                                <Label>Weekly Rate (£)</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3 text-muted-foreground">£</span>
+                                    <Input
+                                        type="number"
+                                        value={liveInWeekly}
+                                        onChange={(e) => setLiveInWeekly(Number(e.target.value))}
+                                        disabled={!isEditing}
+                                        className="pl-8"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Daily Rate (£)</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3 text-muted-foreground">£</span>
+                                    <Input
+                                        type="number"
+                                        value={liveInDaily}
+                                        onChange={(e) => setLiveInDaily(Number(e.target.value))}
+                                        disabled={!isEditing}
+                                        className="pl-8"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg flex items-center gap-2">
+                                <Moon className="h-4 w-4" /> Overnight Care
+                            </h3>
+                            <div className="space-y-2">
+                                <Label>Sleeping Night (Flat Rate £)</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3 text-muted-foreground">£</span>
+                                    <Input
+                                        type="number"
+                                        value={overnightSleeping}
+                                        onChange={(e) => setOvernightSleeping(Number(e.target.value))}
+                                        disabled={!isEditing}
+                                        className="pl-8"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Waking Night (Hourly Rate £)</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3 text-muted-foreground">£</span>
+                                    <Input
+                                        type="number"
+                                        value={overnightWaking}
+                                        onChange={(e) => setOvernightWaking(Number(e.target.value))}
+                                        disabled={!isEditing}
+                                        className="pl-8"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

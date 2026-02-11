@@ -43,6 +43,8 @@ interface Booking {
   };
 }
 
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
+
 interface StripeStatus {
   stripe_account_id: string | null;
   stripe_onboarding_complete: boolean;
@@ -264,325 +266,327 @@ export default function CarerEarnings() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Earnings</h1>
-          <p className="text-muted-foreground">Track your income and payment history</p>
+    <ErrorBoundary name="CarerEarnings">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Earnings</h1>
+            <p className="text-muted-foreground">Track your income and payment history</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Select value={period} onValueChange={setPeriod}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7days">Last 7 days</SelectItem>
+                <SelectItem value="30days">Last 30 days</SelectItem>
+                <SelectItem value="6months">Last 6 months</SelectItem>
+                <SelectItem value="year">Last year</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline" onClick={handleExport}>
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7days">Last 7 days</SelectItem>
-              <SelectItem value="30days">Last 30 days</SelectItem>
-              <SelectItem value="6months">Last 6 months</SelectItem>
-              <SelectItem value="year">Last year</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline" onClick={handleExport}>
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-        </div>
-      </div>
 
-      {/* Stripe Connect Status Card */}
-      <Card className={stripeStatus.stripe_payouts_enabled ? "border-emerald-200 bg-emerald-50/50" : "border-amber-200 bg-amber-50/50"}>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <div className={`h-12 w-12 rounded-full flex items-center justify-center ${stripeStatus.stripe_payouts_enabled
+        {/* Stripe Connect Status Card */}
+        <Card className={stripeStatus.stripe_payouts_enabled ? "border-emerald-200 bg-emerald-50/50" : "border-amber-200 bg-amber-50/50"}>
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className={`h-12 w-12 rounded-full flex items-center justify-center ${stripeStatus.stripe_payouts_enabled
                   ? "bg-emerald-100 text-emerald-600"
                   : "bg-amber-100 text-amber-600"
-                }`}>
-                {stripeStatus.stripe_payouts_enabled ? (
-                  <CheckCircle className="h-6 w-6" />
-                ) : (
-                  <CreditCard className="h-6 w-6" />
-                )}
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">
-                  {stripeStatus.stripe_payouts_enabled
-                    ? "Payments Enabled"
-                    : stripeStatus.stripe_account_id
-                      ? "Complete Your Payment Setup"
-                      : "Set Up Payments"
-                  }
-                </h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  {stripeStatus.stripe_payouts_enabled
-                    ? "Your Stripe account is fully set up. Earnings from completed bookings will be transferred to your bank account."
-                    : stripeStatus.stripe_account_id
-                      ? "Your Stripe account is pending verification. Please complete the onboarding process to receive payouts."
-                      : "Connect your bank account via Stripe to receive payments from clients. This is a one-time setup."
-                  }
-                </p>
-              </div>
-            </div>
-            {!stripeStatus.stripe_payouts_enabled && (
-              <Button
-                onClick={handleStripeOnboarding}
-                disabled={stripeLoading}
-                className="gap-2"
-              >
-                {stripeLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Connecting...
-                  </>
-                ) : (
-                  <>
-                    <ExternalLink className="h-4 w-4" />
-                    {stripeStatus.stripe_account_id ? "Continue Setup" : "Connect Stripe"}
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats Cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Earned</p>
-                <p className="text-2xl font-bold">£{stats.availableBalance.toFixed(2)}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Wallet className="h-6 w-6 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">This Month</p>
-                <p className="text-2xl font-bold">£{stats.monthlyEarnings.toFixed(2)}</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="h-4 w-4 text-emerald-500" />
-                  <span className="text-sm text-emerald-500">{completedBookings.length} completed</span>
+                  }`}>
+                  {stripeStatus.stripe_payouts_enabled ? (
+                    <CheckCircle className="h-6 w-6" />
+                  ) : (
+                    <CreditCard className="h-6 w-6" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">
+                    {stripeStatus.stripe_payouts_enabled
+                      ? "Payments Enabled"
+                      : stripeStatus.stripe_account_id
+                        ? "Complete Your Payment Setup"
+                        : "Set Up Payments"
+                    }
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-md">
+                    {stripeStatus.stripe_payouts_enabled
+                      ? "Your Stripe account is fully set up. Earnings from completed bookings will be transferred to your bank account."
+                      : stripeStatus.stripe_account_id
+                        ? "Your Stripe account is pending verification. Please complete the onboarding process to receive payouts."
+                        : "Connect your bank account via Stripe to receive payments from clients. This is a one-time setup."
+                    }
+                  </p>
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-emerald-500" />
-              </div>
+              {!stripeStatus.stripe_payouts_enabled && (
+                <Button
+                  onClick={handleStripeOnboarding}
+                  disabled={stripeLoading}
+                  className="gap-2"
+                >
+                  {stripeLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Connecting...
+                    </>
+                  ) : (
+                    <>
+                      <ExternalLink className="h-4 w-4" />
+                      {stripeStatus.stripe_account_id ? "Continue Setup" : "Connect Stripe"}
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Hours This Month</p>
-                <p className="text-2xl font-bold">{stats.monthlyHours}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <Clock className="h-6 w-6 text-blue-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Avg. Hourly Rate</p>
-                <p className="text-2xl font-bold">£{stats.avgHourlyRate.toFixed(2)}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <PoundSterling className="h-6 w-6 text-amber-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabs for Transactions */}
-      <Tabs defaultValue="completed">
-        <TabsList>
-          <TabsTrigger value="completed">Completed ({completedBookings.length})</TabsTrigger>
-          <TabsTrigger value="pending">Upcoming ({pendingBookings.length})</TabsTrigger>
-          <TabsTrigger value="calculator">Calculator</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="completed">
+        {/* Stats Cards */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Completed Bookings</CardTitle>
-              <CardDescription>Earnings from completed care sessions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {completedBookings.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <PoundSterling className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No completed bookings yet</p>
-                  <p className="text-sm">Complete bookings to start earning</p>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Earned</p>
+                  <p className="text-2xl font-bold">£{stats.availableBalance.toFixed(2)}</p>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {completedBookings.map((booking) => (
-                    <div
-                      key={booking.id}
-                      className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <PoundSterling className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {booking.service_type || 'Care Service'} • {booking.duration_hours}h
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">£{booking.total_price?.toFixed(2)}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {booking.start_time ? format(new Date(booking.start_time), 'dd MMM yyyy') : 'N/A'}
-                        </p>
-                      </div>
-                      <Badge
-                        variant={booking.payment_status === 'paid' ? "default" : "secondary"}
-                        className={booking.payment_status === 'paid' ? "bg-emerald-500" : ""}
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Wallet className="h-6 w-6 text-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">This Month</p>
+                  <p className="text-2xl font-bold">£{stats.monthlyEarnings.toFixed(2)}</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <ArrowUpRight className="h-4 w-4 text-emerald-500" />
+                    <span className="text-sm text-emerald-500">{completedBookings.length} completed</span>
+                  </div>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-emerald-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Hours This Month</p>
+                  <p className="text-2xl font-bold">{stats.monthlyHours}</p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-blue-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Avg. Hourly Rate</p>
+                  <p className="text-2xl font-bold">£{stats.avgHourlyRate.toFixed(2)}</p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
+                  <PoundSterling className="h-6 w-6 text-amber-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tabs for Transactions */}
+        <Tabs defaultValue="completed">
+          <TabsList>
+            <TabsTrigger value="completed">Completed ({completedBookings.length})</TabsTrigger>
+            <TabsTrigger value="pending">Upcoming ({pendingBookings.length})</TabsTrigger>
+            <TabsTrigger value="calculator">Calculator</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="completed">
+            <Card>
+              <CardHeader>
+                <CardTitle>Completed Bookings</CardTitle>
+                <CardDescription>Earnings from completed care sessions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {completedBookings.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <PoundSterling className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No completed bookings yet</p>
+                    <p className="text-sm">Complete bookings to start earning</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {completedBookings.map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
                       >
-                        {booking.payment_status === 'paid' ? 'Paid' : 'Pending'}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="pending">
-          <Card>
-            <CardHeader>
-              <CardTitle>Upcoming Bookings</CardTitle>
-              <CardDescription>Future earnings from confirmed bookings</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {pendingBookings.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No upcoming bookings</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {pendingBookings.map((booking) => (
-                    <div
-                      key={booking.id}
-                      className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                          <Calendar className="h-5 w-5 text-blue-500" />
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <PoundSterling className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {booking.service_type || 'Care Service'} • {booking.duration_hours}h
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
+                        <div className="text-right">
+                          <p className="font-medium">£{booking.total_price?.toFixed(2)}</p>
                           <p className="text-sm text-muted-foreground">
-                            {booking.service_type || 'Care Service'} • {booking.duration_hours}h
+                            {booking.start_time ? format(new Date(booking.start_time), 'dd MMM yyyy') : 'N/A'}
                           </p>
                         </div>
+                        <Badge
+                          variant={booking.payment_status === 'paid' ? "default" : "secondary"}
+                          className={booking.payment_status === 'paid' ? "bg-emerald-500" : ""}
+                        >
+                          {booking.payment_status === 'paid' ? 'Paid' : 'Pending'}
+                        </Badge>
                       </div>
-                      <div className="text-right">
-                        <p className="font-medium">£{booking.total_price?.toFixed(2)}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {booking.start_time ? format(new Date(booking.start_time), 'dd MMM yyyy') : 'N/A'}
-                        </p>
-                      </div>
-                      <Badge variant="secondary">
-                        {booking.status}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="calculator">
-          <Card>
-            <CardHeader>
-              <CardTitle>Earnings Calculator</CardTitle>
-              <CardDescription>Estimate your potential income based on your rate and availability</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <Label>Hourly Rate (£)</Label>
-                    <div className="relative">
-                      <PoundSterling className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="number"
-                        value={calcRate}
-                        onChange={(e) => setCalcRate(Number(e.target.value))}
-                        className="pl-9"
+          <TabsContent value="pending">
+            <Card>
+              <CardHeader>
+                <CardTitle>Upcoming Bookings</CardTitle>
+                <CardDescription>Future earnings from confirmed bookings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {pendingBookings.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No upcoming bookings</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingBookings.map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                            <Calendar className="h-5 w-5 text-blue-500" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {booking.service_type || 'Care Service'} • {booking.duration_hours}h
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">£{booking.total_price?.toFixed(2)}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {booking.start_time ? format(new Date(booking.start_time), 'dd MMM yyyy') : 'N/A'}
+                          </p>
+                        </div>
+                        <Badge variant="secondary">
+                          {booking.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="calculator">
+            <Card>
+              <CardHeader>
+                <CardTitle>Earnings Calculator</CardTitle>
+                <CardDescription>Estimate your potential income based on your rate and availability</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label>Hourly Rate (£)</Label>
+                      <div className="relative">
+                        <PoundSterling className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          type="number"
+                          value={calcRate}
+                          onChange={(e) => setCalcRate(Number(e.target.value))}
+                          className="pl-9"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <Label>Hours per Week</Label>
+                        <span className="text-muted-foreground font-medium">{calcHours}h</span>
+                      </div>
+                      <Slider
+                        value={[calcHours]}
+                        onValueChange={(vals) => setCalcHours(vals[0])}
+                        max={80}
+                        step={1}
+                        className="py-4"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <Label>Hours per Week</Label>
-                      <span className="text-muted-foreground font-medium">{calcHours}h</span>
+                  <div className="space-y-4 bg-muted/50 p-6 rounded-xl">
+                    <h3 className="font-semibold text-lg">Potential Earnings</h3>
+
+                    <div className="flex justify-between items-center p-3 bg-background rounded-lg border">
+                      <span className="text-muted-foreground">Weekly</span>
+                      <span className="font-bold text-xl">£{(calcRate * calcHours).toLocaleString()}</span>
                     </div>
-                    <Slider
-                      value={[calcHours]}
-                      onValueChange={(vals) => setCalcHours(vals[0])}
-                      max={80}
-                      step={1}
-                      className="py-4"
-                    />
+
+                    <div className="flex justify-between items-center p-3 bg-background rounded-lg border">
+                      <span className="text-muted-foreground">Monthly</span>
+                      <span className="font-bold text-xl">£{(calcRate * calcHours * 4).toLocaleString()}</span>
+                    </div>
+
+                    <div className="flex justify-between items-center p-3 bg-background rounded-lg border">
+                      <span className="text-muted-foreground">Yearly</span>
+                      <span className="font-bold text-xl text-primary">£{(calcRate * calcHours * 52).toLocaleString()}</span>
+                    </div>
+
+                    <Alert className="mt-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        Note: Platform fees (10% in Phase 1) will be deducted from client payments. Your net earnings may vary.
+                      </AlertDescription>
+                    </Alert>
                   </div>
                 </div>
-
-                <div className="space-y-4 bg-muted/50 p-6 rounded-xl">
-                  <h3 className="font-semibold text-lg">Potential Earnings</h3>
-
-                  <div className="flex justify-between items-center p-3 bg-background rounded-lg border">
-                    <span className="text-muted-foreground">Weekly</span>
-                    <span className="font-bold text-xl">£{(calcRate * calcHours).toLocaleString()}</span>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-background rounded-lg border">
-                    <span className="text-muted-foreground">Monthly</span>
-                    <span className="font-bold text-xl">£{(calcRate * calcHours * 4).toLocaleString()}</span>
-                  </div>
-
-                  <div className="flex justify-between items-center p-3 bg-background rounded-lg border">
-                    <span className="text-muted-foreground">Yearly</span>
-                    <span className="font-bold text-xl text-primary">£{(calcRate * calcHours * 52).toLocaleString()}</span>
-                  </div>
-
-                  <Alert className="mt-4">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      Note: Platform fees (10% in Phase 1) will be deducted from client payments. Your net earnings may vary.
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </ErrorBoundary>
   );
 }
