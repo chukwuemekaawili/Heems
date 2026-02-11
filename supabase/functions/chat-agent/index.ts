@@ -1,14 +1,10 @@
 
-// Deployment Trigger: Auto-deploy request (v2)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY');
 
 const SYSTEM_PROMPT = `
 You are the Heems AI Assistant, a helpful and professional support agent for the Heems Care Platform.
@@ -58,16 +54,21 @@ Your goal is to assist users (Clients and Carers) with their questions about the
 `;
 
 serve(async (req) => {
+    // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders });
     }
 
     try {
-        const { message } = await req.json();
+        const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY');
 
         if (!GROQ_API_KEY) {
-            throw new Error('GROQ_API_KEY is not set');
+            console.error('GROQ_API_KEY is missing');
+            // Allow the request to fail gracefully to the client so they see the error message
+            throw new Error('Server misconfiguration: API Key missing');
         }
+
+        const { message } = await req.json();
 
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -86,6 +87,12 @@ serve(async (req) => {
             }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Groq API Error:', errorData);
+            throw new Error(`Groq API Error: ${response.status} ${response.statusText}`);
+        }
+
         const data = await response.json();
         const reply = data.choices[0].message.content;
 
@@ -93,8 +100,8 @@ serve(async (req) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
     } catch (error) {
-        console.error('Error:', error);
-        return new Response(JSON.stringify({ error: error.message }), {
+        console.error('Error handling request:', error);
+        return new Response(JSON.stringify({ error: error.message || 'Internal Server Error' }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
