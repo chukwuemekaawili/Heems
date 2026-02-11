@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Play, Book, Lightbulb, CheckCircle2, ChevronRight } from "lucide-react";
 import { ChatWidget } from "@/components/shared/ChatWidget";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const UserGuide = () => {
     return (
@@ -108,7 +109,7 @@ const UserGuide = () => {
                                         <iframe
                                             width="100%"
                                             height="100%"
-                                            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                                            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
                                             title="A Day in the Life with Heems"
                                             frameBorder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -127,19 +128,23 @@ const UserGuide = () => {
                         <div className="text-center mb-16">
                             <h2 className="text-4xl font-black text-[#111827] mb-4">Common Scenarios</h2>
                         </div>
-                        <div className="space-y-4">
-                            {[
-                                { q: "How do I update support details during a booking?", a: "Clients can update booking notes and preferences through their dashboard at any time. Carers will be notified of any updates via the platform. Any changes to agreed support should be discussed directly between the client and carer." },
-                                { q: "What happens if a carer needs to cancel?", a: "If a carer cancels a confirmed booking, the client will be notified immediately. Clients may then search for and book another available carer through the platform." },
-                                { q: "Manage support for more than one person?", a: "A primary account holder can create and manage multiple member profiles, each with separate booking details and preferences." }
-                            ].map((faq, i) => (
-                                <Card key={i} className="border-black/5 rounded-3xl hover:bg-slate-50 transition-colors">
-                                    <CardContent className="p-8">
-                                        <h3 className="text-xl font-black text-[#111827] mb-4">{faq.q}</h3>
-                                        <p className="text-slate-500 font-medium leading-relaxed">{faq.a}</p>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                        <div className="max-w-3xl mx-auto">
+                            <Accordion type="single" collapsible className="w-full">
+                                {[
+                                    { q: "How do I update support details during a booking?", a: "Clients can update booking notes and preferences through their dashboard at any time. Carers will be notified of any updates via the platform. Any changes to agreed support should be discussed directly between the client and carer." },
+                                    { q: "What happens if a carer needs to cancel?", a: "If a carer cancels a confirmed booking, the client will be notified immediately. Clients may then search for and book another available carer through the platform." },
+                                    { q: "Manage support for more than one person?", a: "A primary account holder can create and manage multiple member profiles, each with separate booking details and preferences." }
+                                ].map((faq, i) => (
+                                    <AccordionItem key={i} value={`item-${i}`} className="border-b border-black/10 last:border-0 px-6 py-2">
+                                        <AccordionTrigger className="text-xl font-bold text-[#111827] hover:text-[#1a9e8c] text-left">
+                                            {faq.q}
+                                        </AccordionTrigger>
+                                        <AccordionContent className="text-lg text-slate-600 font-medium leading-relaxed">
+                                            {faq.a}
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
                         </div>
                     </div>
                 </section>
