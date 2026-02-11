@@ -155,6 +155,10 @@ const queryClient = new QueryClient({
   },
 });
 
+import { ChatWidget } from "@/components/shared/ChatWidget";
+
+// ... existing code ...
+
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
@@ -165,8 +169,9 @@ const App = () => (
           <ScrollToTop />
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              {/* Public Routes */}
+              {/* ... routes ... */}
               <Route path="/" element={<Index />} />
+              {/* ... other routes ... */}
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/carers" element={<ForCarers />} />
 
@@ -282,6 +287,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
+          <ChatWidget />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

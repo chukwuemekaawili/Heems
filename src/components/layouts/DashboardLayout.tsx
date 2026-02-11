@@ -458,7 +458,6 @@ const DashboardLayout = ({
           {/* Page Content */}
           <div className="p-4 lg:p-6">{children}</div>
         </main>
-        <ChatWidget />
       </div>
     </>
   );

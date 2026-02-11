@@ -150,9 +150,8 @@ const UserGuide = () => {
                 </section>
             </main>
 
-            <ChatWidget />
             <Footer />
-        </div>
+        </div >
     );
 };
 
