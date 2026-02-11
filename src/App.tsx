@@ -233,7 +233,7 @@ const App = () => (
                 <Route path="/carer/documents" element={<CarerDocuments />} />
                 <Route path="/carer/verification" element={<DocumentsNew />} />
                 <Route path="/carer/profile" element={<CarerProfile />} />
-                <Route path="/carer/profile-enhanced" element={<ProfileEnhanced />} />
+                <Route path="/carer/profile-enhanced" element={<CarerProfile />} />
                 <Route path="/carer/messages" element={<MessagesPage role="carer" />} />
                 <Route path="/carer/settings" element={<CarerProfile />} />
               </Route>
