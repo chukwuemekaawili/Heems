@@ -1,5 +1,7 @@
 // Enhanced Carer Profile with Rate Validation (PRD v2.3.2 Compliant)
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,20 +29,118 @@ import {
     TrendingUp,
     Info,
     Moon,
-    Home
+    Home,
+    Loader2
 } from "lucide-react";
 import { MINIMUM_HOURLY_RATE, validateMinimumRate, calculateFees, formatCurrency } from "@/lib/fees";
 import type { PricingPhase } from "@/types/database";
 
 export default function CarerProfileEnhanced() {
     const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const { toast } = useToast();
+
+    // Profile Data
+    const [profileData, setProfileData] = useState<any>(null);
+
+    // Rate States
     const [hourlyRate, setHourlyRate] = useState(25);
     const [liveInWeekly, setLiveInWeekly] = useState(1200);
     const [liveInDaily, setLiveInDaily] = useState(180);
     const [overnightSleeping, setOvernightSleeping] = useState(150);
     const [overnightWaking, setOvernightWaking] = useState(20);
     const [rateError, setRateError] = useState("");
+
     const currentPhase: PricingPhase = '1'; // TODO: Fetch from system_config
+
+    useEffect(() => {
+        fetchCarerData();
+    }, []);
+
+    const fetchCarerData = async () => {
+        try {
+            setLoading(true);
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (!user) return;
+
+            // Fetch Profile and Carer Details
+            const { data: profile, error: profileError } = await supabase
+                .from('profiles')
+                .select(`
+                    *,
+                    carer_details(*)
+                `)
+                .eq('id', user.id)
+                .single();
+
+            if (profileError) throw profileError;
+
+            if (profile) {
+                setProfileData(profile);
+                if (profile.carer_details) {
+                    // Load rates from DB
+                    setHourlyRate(profile.carer_details.hourly_rate || 25);
+                    setLiveInWeekly(profile.carer_details.live_in_rate_weekly || 1200);
+                    setLiveInDaily(profile.carer_details.live_in_rate_daily || 180);
+                    setOvernightSleeping(profile.carer_details.overnight_sleeping_rate || 150);
+                    setOvernightWaking(profile.carer_details.overnight_waking_rate || 20);
+                }
+            }
+        } catch (error: any) {
+            console.error('Error fetching profile:', error);
+            toast({
+                title: "Error loading profile",
+                description: "Could not load your profile data. Please try refresh.",
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        if (!validateMinimumRate(hourlyRate)) {
+            setRateError(`Rate must be at least £${MINIMUM_HOURLY_RATE}/hour`);
+            return;
+        }
+
+        try {
+            setSaving(true);
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("No user found");
+
+            // Update Carer Details
+            const { error } = await supabase
+                .from('carer_details')
+                .update({
+                    hourly_rate: hourlyRate,
+                    live_in_rate_weekly: liveInWeekly,
+                    live_in_rate_daily: liveInDaily,
+                    overnight_sleeping_rate: overnightSleeping,
+                    overnight_waking_rate: overnightWaking
+                })
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            setIsEditing(false);
+            toast({
+                title: "Profile Updated",
+                description: "Your rates have been successfully saved.",
+            });
+        } catch (error: any) {
+            console.error('Error saving profile:', error);
+            toast({
+                title: "Save Failed",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setSaving(false);
+        }
+    };
 
     const handleRateChange = (value: string) => {
         const rate = parseFloat(value);
@@ -72,6 +172,14 @@ export default function CarerProfileEnhanced() {
     const feePreview = getFeePreview();
     const isRateValid = validateMinimumRate(hourlyRate);
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6 max-w-4xl mx-auto">
             {/* Header */}
@@ -85,16 +193,21 @@ export default function CarerProfileEnhanced() {
                         <Eye className="h-4 w-4 mr-2" />
                         Preview Profile
                     </Button>
-                    <Button onClick={() => setIsEditing(!isEditing)} disabled={!isRateValid && isEditing}>
-                        {isEditing ? (
-                            <>
-                                <Save className="h-4 w-4 mr-2" />
+                    {isEditing ? (
+                        <div className="flex gap-2">
+                            <Button variant="ghost" onClick={() => setIsEditing(false)} disabled={saving}>
+                                Cancel
+                            </Button>
+                            <Button onClick={handleSave} disabled={!isRateValid || saving}>
+                                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                                 Save Changes
-                            </>
-                        ) : (
-                            "Edit Profile"
-                        )}
-                    </Button>
+                            </Button>
+                        </div>
+                    ) : (
+                        <Button onClick={() => setIsEditing(true)}>
+                            Edit Profile
+                        </Button>
+                    )}
                 </div>
             </div>
 
@@ -104,8 +217,10 @@ export default function CarerProfileEnhanced() {
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                         <div className="relative">
                             <Avatar className="h-24 w-24">
-                                <AvatarImage src="/placeholder.svg" />
-                                <AvatarFallback className="text-2xl">SK</AvatarFallback>
+                                <AvatarImage src={profileData?.avatar_url || "/placeholder.svg"} />
+                                <AvatarFallback className="text-2xl">
+                                    {profileData?.full_name?.substring(0, 2).toUpperCase() || 'CH'}
+                                </AvatarFallback>
                             </Avatar>
                             {isEditing && (
                                 <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
@@ -115,7 +230,7 @@ export default function CarerProfileEnhanced() {
                         </div>
                         <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                                <h2 className="text-2xl font-bold">Sarah Khan</h2>
+                                <h2 className="text-2xl font-bold">{profileData?.full_name || 'Carer Profile'}</h2>
                                 <Badge className="bg-emerald-500">
                                     <Shield className="h-3 w-3 mr-1" />
                                     Verified
@@ -124,7 +239,7 @@ export default function CarerProfileEnhanced() {
                             <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                     <MapPin className="h-4 w-4" />
-                                    Manchester, M1
+                                    {profileData?.address || 'Location not set'}
                                 </span>
                                 <span className="flex items-center gap-1">
                                     <Star className="h-4 w-4 text-amber-500" />
@@ -132,7 +247,7 @@ export default function CarerProfileEnhanced() {
                                 </span>
                                 <span className="flex items-center gap-1">
                                     <Clock className="h-4 w-4" />
-                                    5 years experience
+                                    {profileData?.carer_details?.years_experience || 0} years experience
                                 </span>
                             </div>
                         </div>
@@ -219,29 +334,6 @@ export default function CarerProfileEnhanced() {
                             </div>
                         </div>
                     )}
-
-                    {/* Rate Recommendations */}
-                    <div className="p-4 bg-slate-50 rounded-lg space-y-2">
-                        <p className="text-sm font-bold text-slate-700">Recommended Rates by Experience:</p>
-                        <div className="grid grid-cols-2 gap-2 text-sm">
-                            <div className="flex justify-between">
-                                <span className="text-slate-600">1-2 years:</span>
-                                <span className="font-bold">£15-18/hr</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-slate-600">3-5 years:</span>
-                                <span className="font-bold">£18-25/hr</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-slate-600">5-10 years:</span>
-                                <span className="font-bold">£25-35/hr</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-slate-600">10+ years:</span>
-                                <span className="font-bold">£35-50/hr</span>
-                            </div>
-                        </div>
-                    </div>
                 </CardContent>
             </Card>
 
@@ -336,14 +428,14 @@ export default function CarerProfileEnhanced() {
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label>Years of Experience</Label>
-                            <Input type="number" defaultValue="5" disabled={!isEditing} />
+                            <Input type="number" defaultValue={profileData?.carer_details?.years_experience || 0} disabled={!isEditing} />
                         </div>
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2">
                                 <User className="h-4 w-4" />
                                 Full Name
                             </Label>
-                            <Input defaultValue="Sarah Khan" disabled={!isEditing} />
+                            <Input defaultValue={profileData?.full_name || ''} disabled={!isEditing} />
                         </div>
                     </div>
 
@@ -352,7 +444,7 @@ export default function CarerProfileEnhanced() {
                         <Textarea
                             className="min-h-[150px]"
                             disabled={!isEditing}
-                            defaultValue="I am a dedicated and compassionate carer with over 5 years of experience in providing high-quality personal care and support. I focus on elderly care and have extensive experience working with clients who have dementia."
+                            defaultValue={profileData?.carer_details?.bio || ''}
                         />
                     </div>
 
@@ -361,7 +453,7 @@ export default function CarerProfileEnhanced() {
                             <Mail className="h-4 w-4" />
                             Email Address
                         </Label>
-                        <Input type="email" defaultValue="sarah.khan@email.com" disabled={!isEditing} />
+                        <Input type="email" defaultValue={profileData?.email || 'email@example.com'} disabled={!isEditing} readOnly />
                     </div>
 
                     <div className="space-y-2">
@@ -369,7 +461,7 @@ export default function CarerProfileEnhanced() {
                             <Phone className="h-4 w-4" />
                             Phone Number
                         </Label>
-                        <Input type="tel" defaultValue="+44 7700 900123" disabled={!isEditing} />
+                        <Input type="tel" defaultValue={profileData?.phone || ''} disabled={!isEditing} />
                     </div>
 
                     <div className="space-y-2">
@@ -377,7 +469,7 @@ export default function CarerProfileEnhanced() {
                             <MapPin className="h-4 w-4" />
                             Address
                         </Label>
-                        <Input defaultValue="123 High Street, Manchester, M1 1AB" disabled={!isEditing} />
+                        <Input defaultValue={profileData?.address || ''} disabled={!isEditing} />
                     </div>
                 </CardContent>
             </Card>
