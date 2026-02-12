@@ -354,12 +354,13 @@ export default function CarerDocuments() {
                       >
                         <option value="">Select type...</option>
                         <option value="passport_uk_irish">UK or Irish Passport</option>
+                        <option value="passport_other">Passport (Other Countries)</option>
                         <option value="share_code">Share Code (Time Limited Visa)</option>
                         <option value="indefinite_leave">Share Code (Indefinite Leave to Remain)</option>
                       </select>
                     </div>
 
-                    {rtwType === 'passport_uk_irish' && (
+                    {(rtwType === 'passport_uk_irish' || rtwType === 'passport_other') && (
                       <div className="space-y-2">
                         <Label>Upload Passport Page</Label>
                         <Input

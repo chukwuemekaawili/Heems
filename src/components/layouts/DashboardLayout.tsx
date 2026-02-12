@@ -431,7 +431,7 @@ const DashboardLayout = ({
         </aside>
 
         {/* Main Content */}
-        <main className="xl:ml-64 min-h-screen pt-16 xl:pt-0">
+        <main className="xl:ml-64 min-h-screen pt-16 xl:pt-20">
           {/* Desktop Header */}
           <header className="hidden xl:flex items-center justify-between h-16 px-6 border-b border-border bg-card">
             <div className="flex items-center gap-4 flex-1">
