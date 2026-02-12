@@ -28,7 +28,9 @@ import {
   Trash2,
   Upload,
   Video,
-  Play
+  Play,
+  TrendingUp,
+  CheckCircle
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
