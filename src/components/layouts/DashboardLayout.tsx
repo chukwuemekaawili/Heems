@@ -275,9 +275,7 @@ const DashboardLayout = ({
   return (
     <>
       {/* Public Header Navigation */}
-      <Header />
-
-      <div className="min-h-screen bg-background pt-20">
+      <div className="min-h-screen bg-background">
         {/* Mobile Header */}
         <header className="xl:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border h-16">
           <div className="flex items-center justify-between h-full px-4">

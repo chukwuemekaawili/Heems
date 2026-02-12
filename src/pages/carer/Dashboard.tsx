@@ -326,8 +326,8 @@ const CarerDashboard = () => {
             </p>
             <div className="grid sm:grid-cols-2 gap-2 mb-4">
               {missingRequirements.map((req, i) => (
-                <div key={i} className="flex items-center gap-2 text-amber-800 text-sm font-medium bg-amber-100/50 px-3 py-1.5 rounded-lg border border-amber-200/50">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                <div key={i} className="flex items-start gap-2 text-amber-800 text-sm font-medium bg-amber-100/50 px-3 py-1.5 rounded-lg border border-amber-200/50">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5" />
                   {req}
                 </div>
               ))}

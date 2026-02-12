@@ -112,8 +112,7 @@ const CarerEarnings = lazy(() => import("./pages/carer/Earnings"));
 const EarningsEnhanced = lazy(() => import("./pages/carer/EarningsEnhanced"));
 const CarerDocuments = lazy(() => import("./pages/carer/DocumentsNew")); // Renamed to use Enhanced Documents
 const DocumentsNew = lazy(() => import("./pages/carer/DocumentsNew"));
-const CarerProfile = lazy(() => import("./pages/carer/ProfileEnhanced"));
-// const ProfileEnhanced = lazy(() => import("./pages/carer/ProfileEnhanced")); // Deprecated separate route
+const CarerProfile = lazy(() => import("./pages/carer/Profile"));
 
 // Organisation Pages
 const OrganisationDashboard = lazy(() => import("./pages/organisation/Dashboard"));
