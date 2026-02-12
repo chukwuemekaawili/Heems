@@ -279,7 +279,7 @@ const DashboardLayout = ({
 
       <div className="min-h-screen bg-background pt-20">
         {/* Mobile Header */}
-        <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border h-16">
+        <header className="xl:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border h-16">
           <div className="flex items-center justify-between h-full px-4">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -308,7 +308,7 @@ const DashboardLayout = ({
         {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
           <div
-            className="lg:hidden fixed inset-0 z-50 bg-foreground/50"
+            className="xl:hidden fixed inset-0 z-50 bg-foreground/50"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -316,7 +316,7 @@ const DashboardLayout = ({
         {/* Sidebar */}
         <aside
           className={cn(
-            "fixed top-0 left-0 z-[60] h-full w-64 bg-sidebar text-sidebar-foreground transition-transform duration-300 lg:translate-x-0 lg:z-30",
+            "fixed top-0 left-0 z-[60] h-full w-64 bg-sidebar text-sidebar-foreground transition-transform duration-300 xl:translate-x-0 xl:z-30",
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
@@ -332,7 +332,7 @@ const DashboardLayout = ({
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-2 text-sidebar-foreground"
+                className="xl:hidden p-2 text-sidebar-foreground"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -433,9 +433,9 @@ const DashboardLayout = ({
         </aside>
 
         {/* Main Content */}
-        <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
+        <main className="xl:ml-64 min-h-screen pt-16 xl:pt-0">
           {/* Desktop Header */}
-          <header className="hidden lg:flex items-center justify-between h-16 px-6 border-b border-border bg-card">
+          <header className="hidden xl:flex items-center justify-between h-16 px-6 border-b border-border bg-card">
             <div className="flex items-center gap-4 flex-1">
               <div className="relative w-72">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

@@ -353,7 +353,7 @@ export default function CarerAvailability() {
             <CardContent>
               <div className="space-y-3">
                 {weekDays.map(day => (
-                  <div key={day} className="flex items-center justify-between py-2 border-b last:border-0">
+                  <div key={day} className="flex flex-col sm:flex-row sm:items-center justify-between py-4 sm:py-2 border-b last:border-0 gap-3 sm:gap-0">
                     <div className="flex items-center gap-3">
                       <Switch
                         checked={weeklySchedule[day as keyof typeof weeklySchedule].enabled}
@@ -362,7 +362,7 @@ export default function CarerAvailability() {
                       <span className="text-sm font-medium w-24">{day}</span>
                     </div>
                     {weeklySchedule[day as keyof typeof weeklySchedule].enabled ? (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 pl-12 sm:pl-0">
                         <Select
                           value={weeklySchedule[day as keyof typeof weeklySchedule].start}
                           onValueChange={(v) => updateDayTime(day, 'start', v)}
@@ -388,7 +388,7 @@ export default function CarerAvailability() {
                         </Select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground pl-12 sm:pl-0">
                         <XCircle className="h-3 w-3" />
                         Unavailable
                       </div>
