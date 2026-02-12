@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from 'react-markdown';
 import { Button } from "@/components/ui/button";
 import { MessageCircle, X, Send, Minus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -89,7 +90,13 @@ export const ChatWidget = () => {
                                         ? 'bg-[#1a9e8c] text-white rounded-tr-none'
                                         : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none'
                                         }`}>
-                                        {chat.text}
+                                        <div className="prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
+                                            {chat.role === 'agent' ? (
+                                                <ReactMarkdown>{chat.text}</ReactMarkdown>
+                                            ) : (
+                                                chat.text
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
