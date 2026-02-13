@@ -5,12 +5,12 @@ import Footer from "@/components/landing/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search, ArrowRight, User, Calendar, BookOpen } from "lucide-react";
+import { Search, ArrowRight, User, Calendar, BookOpen, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ChatWidget } from "@/components/shared/ChatWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { IndustryNews } from "@/components/blog/IndustryNews";
+import { IndustryNews, newsData } from "@/components/blog/IndustryNews";
 
 const Blog = () => {
     const [posts, setPosts] = useState<any[]>([]);
@@ -80,27 +80,14 @@ const Blog = () => {
                     </div>
                 </section>
 
-                {/* Industry Monitor Section */}
-                <section className="py-12 -mt-12 relative z-20">
-                    <div className="container mx-auto px-6">
-                        <div className="mb-10 text-center lg:text-left">
-                            <h2 className="text-3xl lg:text-5xl font-black text-[#111827] tracking-tighter mb-4">Latest Industry Updates</h2>
-                            <p className="text-lg text-slate-500 font-medium">Real-time intelligence from the UK's leading care authorities.</p>
-                        </div>
-                        <IndustryNews />
-                    </div>
-                </section>
-
-                {/* Grid Section */}
+                {/* Main Content Feed */}
                 <section className="py-24 bg-slate-50">
                     <div className="container mx-auto px-6">
-                        {!searchTerm && selectedCategory === "All" && posts.length > 0 && (
-                            <div className="flex items-center justify-between mb-16">
-                                <h2 className="text-3xl font-black text-[#111827]">
-                                    {searchTerm ? `Search Results for "${searchTerm}"` : 'Heems Insights'}
-                                </h2>
+                        <div className="max-w-4xl mx-auto">
+                            <div className="mb-16 flex items-center justify-between">
+                                <h2 className="text-3xl font-black text-[#111827]">Latest Insights</h2>
                                 <div className="flex gap-2">
-                                    {["All", "Operations", "Care", "Product"].map((tag, i) => (
+                                    {["All", "Market Outlook", "Innovation", "Workforce", "Regulation"].map((tag, i) => (
                                         <Badge
                                             key={i}
                                             variant="outline"
@@ -115,60 +102,70 @@ const Blog = () => {
                                     ))}
                                 </div>
                             </div>
-                        )}
 
-                        {loading ? (
-                            <div className="text-center py-12">Loading insights...</div>
-                        ) : filteredPosts.length === 0 && posts.length > 0 ? (
-                            <div className="text-center py-12 text-slate-500">No matching insights found.</div>
-                        ) : filteredPosts.length > 0 ? (
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
-                                {filteredPosts.map((post, i) => (
-                                    <Link to={`/blog/${post.id}`} key={post.id} className="block group h-full">
-                                        <Card className="h-full border-black/5 hover:border-[#1a9e8c]/30 hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-white flex flex-col">
-                                            <CardContent className="p-0 flex flex-col h-full">
-                                                {post.image_url ? (
-                                                    <div className="h-48 w-full overflow-hidden shrink-0">
-                                                        <img
-                                                            src={post.image_url}
-                                                            alt={post.title}
-                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    <div className={`h-48 bg-[#1a9e8c] opacity-80 group-hover:opacity-100 transition-opacity flex items-center justify-center shrink-0`}>
-                                                        <BookOpen className="h-12 w-12 text-white/50" />
-                                                    </div>
-                                                )}
-                                                <div className="p-8 flex-grow flex flex-col">
-                                                    <div className="flex items-center justify-between mb-4">
-                                                        <Badge className="bg-[#1a9e8c]/10 text-[#1a9e8c] border-none text-[10px] font-black uppercase tracking-widest">{post.category}</Badge>
-                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{post.reading_time || '5 min read'}</span>
-                                                    </div>
-                                                    <h3 className="text-2xl font-black text-[#111827] mb-4 group-hover:text-[#1a9e8c] transition-colors leading-tight line-clamp-2">{post.title}</h3>
-                                                    <p className="text-slate-500 font-medium leading-relaxed mb-8 line-clamp-3 flex-grow">{post.excerpt}</p>
-                                                    <div className="flex items-center justify-between pt-6 border-t border-black/5 mt-auto">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center border border-black/5"><User className="h-4 w-4 text-slate-400" /></div>
-                                                            <span className="text-xs font-bold text-[#111827]">{post.author}</span>
+                            {/* Unified Feed of Industry News + Internal Posts */}
+                            <div className="space-y-16">
+                                {/* Map over newsData directly since database posts are empty/secondary for now */}
+                                {newsData
+                                    .filter(item => selectedCategory === "All" || item.category === selectedCategory)
+                                    .map((item) => (
+                                        <div key={item.id} className="group block">
+                                            <Card className="border-black/5 hover:border-[#1a9e8c]/30 hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-white">
+                                                <CardContent className="p-0 flex flex-col md:flex-row">
+                                                    {/* Image Section */}
+                                                    <div className="md:w-1/3 bg-slate-100 relative min-h-[300px] md:min-h-0">
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-[#1a9e8c]/5 group-hover:bg-[#1a9e8c]/10 transition-colors">
+                                                            <BookOpen className="h-16 w-16 text-[#1a9e8c]/30 group-hover:scale-110 transition-transform duration-500" />
                                                         </div>
-                                                        <div className="h-10 w-10 rounded-full border border-black/5 flex items-center justify-center group-hover:bg-[#111827] group-hover:text-white transition-all">
-                                                            <ArrowRight className="h-4 w-4" />
+                                                        <div className="absolute top-6 left-6">
+                                                            <Badge className="bg-white/90 backdrop-blur text-[#111827] border-none text-[10px] font-black uppercase tracking-widest shadow-sm">
+                                                                {item.source}
+                                                            </Badge>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </Link>
-                                ))}
-                            </div>
-                        ) : null}
 
-                        {(posts.length > 0 || featured) && (
-                            <div className="mt-20 text-center">
-                                <Button variant="outline" className="h-14 px-12 border-black/10 rounded-2xl font-black text-sm uppercase tracking-[0.2em] hover:bg-[#111827] hover:text-white transition-all">Load More Insights</Button>
+                                                    {/* Content Section */}
+                                                    <div className="md:w-2/3 p-8 lg:p-12 flex flex-col">
+                                                        <div className="flex items-center justify-between mb-6">
+                                                            <Badge className="bg-[#1a9e8c]/10 text-[#1a9e8c] border-none text-[10px] font-black uppercase tracking-widest">
+                                                                {item.category}
+                                                            </Badge>
+                                                            <div className="flex items-center gap-2 text-slate-400">
+                                                                <Calendar className="h-3 w-3" />
+                                                                <span className="text-[10px] font-bold uppercase tracking-widest">{item.date}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <h3 className="text-3xl font-black text-[#111827] mb-6 group-hover:text-[#1a9e8c] transition-colors leading-tight">
+                                                            {item.title}
+                                                        </h3>
+
+                                                        <div className="prose prose-slate mb-8 line-clamp-4 text-slate-500 font-medium leading-relaxed">
+                                                            {item.content?.split('\n').map((paragraph, idx) => (
+                                                                <p key={idx} className="mb-2">{paragraph}</p>
+                                                            ))}
+                                                        </div>
+
+                                                        <div className="mt-auto pt-8 border-t border-black/5 flex items-center justify-between">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center border border-black/5">
+                                                                    <User className="h-4 w-4 text-slate-400" />
+                                                                </div>
+                                                                <span className="text-xs font-bold text-[#111827]">Heems Editorial</span>
+                                                            </div>
+                                                            <Button asChild variant="outline" className="rounded-full font-bold hover:bg-[#111827] hover:text-white border-black/10 transition-all">
+                                                                <a href={item.link} target="_blank" rel="noopener noreferrer">
+                                                                    Read Full Article <ArrowUpRight className="ml-2 h-3 w-3" />
+                                                                </a>
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    ))}
                             </div>
-                        )}
+                        </div>
                     </div>
                 </section>
 

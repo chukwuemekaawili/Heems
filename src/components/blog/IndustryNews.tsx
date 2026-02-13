@@ -3,63 +3,71 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Newspaper, Loader2, Radio } from "lucide-react";
 
-interface NewsItem {
+export interface NewsItem {
+    id: string; // Added for list keys
     title: string;
     source: string;
     date: string;
     link: string;
     category: string;
-    snippet?: string;
+    content: string; // changed from snippet to content
+    image?: string;
 }
 
-const newsData: NewsItem[] = [
+export const newsData: NewsItem[] = [
     {
+        id: "age-uk-2026",
         title: "Supporting older people's health in 2026",
         source: "Age UK",
         date: "Jan 23, 2026",
         link: "https://www.ageuk.org.uk/discover/2026/january/supporting-older-peoples-health-in-2026/",
         category: "Market Outlook",
-        snippet: "A deep dive into the NHS 10 Year Plan updates and what families should expect regarding the future of social care and independence in later life."
+        content: "Age UK has released a comprehensive analysis of the NHS 10 Year Plan updates, providing a critical look at what families can expect regarding the future of social care. The report highlights a shift towards 'prevention first' strategies, aiming to keep older adults independent in their own homes for longer. This aligns with broader government initiatives but raises questions about funding and workforce availability.\n\nThe analysis digs deep into the proposed digital integration of health records, which promises to streamline communication between hospitals and home care providers. However, Age UK warns that without significant investment in digital literacy for older people, these advancements could inadvertently widen the health inequality gap. The charity is calling for a 'guarantee of human contact' alongside these digital improvements.\n\nFamilies are urged to start planning for care earlier, with the report suggesting that the 'crisis management' approach to social care is no longer sustainable. Instead, a proactive model—utilizing home adaptations, remote monitoring, and community support networks—is presented as the gold standard for 2026 and beyond."
     },
     {
+        id: "nhs-ai-2026",
         title: "NHS backs AI notetaking to free up more face-to-face care",
         source: "NHS England",
         date: "Jan 15, 2026",
         link: "https://www.england.nhs.uk/2026/01/nhs-backs-ai-notetaking-free-up-more-face-to-face-care/",
         category: "Innovation",
-        snippet: "New AI tools are helping clinicians spend up to 25% more time with their patients by automating the capture of patient conversations into real-time transcriptions."
+        content: "In a major push to reduce clinician burnout and improve patient experience, NHS England is rolling out AI-powered notetaking tools across trusts nationwide. Early pilots have shown that these tools can save doctors and nurses up to 25% of their administrative time—hours that can now be redirected back to face-to-face patient care.\n\nThe technology works by securely listening to patient consultations and automatically generating accurate, structured medical notes in real-time. This eliminates the need for clinicians to type during appointments, allowing them to maintain eye contact and build better rapport with those they are treating. Privacy safeguards are strictly enforced, with patient consent required for all AI-assisted sessions.\n\nThis initiative is part of the wider NHS Digital Transformation strategy, which seeks to modernize the health service's infrastructure. By automating routine tasks, the NHS aims to tackle the backlog of elective care and improve waiting times, proving that technology can be a compassionate partner in healthcare delivery."
     },
     {
+        id: "skills-care-2026",
         title: "Supporting care staff to keep learning in 2026",
         source: "Skills for Care",
         date: "Jan 12, 2026",
         link: "https://www.skillsforcare.org.uk/news-and-events/news/skills-for-care-is-supporting-care-staff-to-keep-learning-in-2026",
         category: "Workforce",
-        snippet: "Skills for Care kicks off 2026 with a spotlight on professional development as a critical pillar for retaining the quality care workforce England needs."
+        content: "Skills for Care has kicked off 2026 with a renewed spotlight on professional development, identifying it as the critical pillar for retaining England's quality care workforce. The organization has launched a new framework of 'learning pathways' designed to give care workers clear routes for career progression, from entry-level positions to specialized clinical roles.\n\nThe initiative addresses a long-standing issue in the sector: the perception of care work as a 'dead-end job'. By formalizing training for complex needs—such as dementia care, palliative support, and autism awareness—Skills for Care aims to professionalize the workforce and drive up wages. The new resources include funding guides for employers to access government training grants.\n\nFor independent carers and agency staff alike, this focus on continuous learning is a game-changer. It empowers individuals to take ownership of their skills, ensuring that the care provided in homes across the country is not just compassionate, but also clinically informed and safety-conscious."
     },
     {
+        id: "cqc-corridor-care",
         title: "Guidance for Assessing Hospital Care in Non-Clinical Spaces",
         source: "CQC",
         date: "Feb 12, 2026",
         link: "https://www.cqc.org.uk/news/updated-guidance-specialist-inspectors-assessing-hospital-care-provided-non-clinical-spaces",
         category: "Regulation",
-        snippet: "Updated safety guidance addresses the growing concern of 'corridor care', emphasizing that professional environments are essential for dignity and quality."
+        content: "The Care Quality Commission (CQC) has issued urgent updated guidance for inspectors regarding the safety of hospital care provided in non-clinical spaces, such as corridors. This move comes in response to the growing prevalence of 'corridor care' during periods of extreme winter pressure, emphasizing that such environments must not become the norm.\n\nThe guidance instructs inspectors to rigorously assess how trusts are mitigating risks in these overflow areas. Key focus points include patient privacy, dignity, and the availability of essential equipment like oxygen and call bells. The CQC has made it clear that while they understand system pressures, the compromise of patient safety will not be tolerated.\n\nThis regulatory update reinforces the vital importance of effective discharge planning and home care capacity. By ensuring patients can be safely discharged to their own homes with appropriate support, the strain on hospital capacity can be alleviated. It underscores the interconnectedness of the health and social care systems, where high-quality home care is a direct solution to hospital overcrowding."
     },
     {
+        id: "cb-insights-2026",
         title: "Budgets are up, confidence isn't: 2026 tech investment insights",
         source: "CB Insights",
         date: "Feb 11, 2026",
         link: "https://www.cbinsights.com/research/report/tech-investment-insights-2026/",
         category: "Strategy",
-        snippet: "While 74% of leaders report increased software investment, many struggle to translate this into tangible business ROI amid fragmented insights."
+        content: "A new report from CB Insights reveals a paradox in the 2026 global tech landscape: while 74% of enterprise leaders report increased IT and software budgets, confidence in Return on Investment (ROI) is faltering. The study suggests that the rapid pace of AI adoption has left many organizations 'rich in tools but poor in strategy'.\n\nThe 'Tech Investment Insights 2026' report highlights that decision-making is slowing down as leaders grapple with fragmented data and unproven use cases. In the healthcare sector specifically, there is a rush to adopt generative AI, but a struggle to integrate it meaningfully into existing clinical workflows without causing disruption.\n\nFor the care/tech market, this signals a shift towards 'proven value' over 'hype'. Investors and buyers are increasingly looking for platforms that solve tangible problems—like staffing shortages or care coordination—rather than experimental technologies. Companies that can demonstrate clear, measurable outcomes for patients and providers are poised to capture the bulk of this increased spending."
     },
     {
+        id: "age-uk-intimacy",
         title: "The making of Age UK's intimacy and relationships guide",
         source: "Age UK",
         date: "Feb 11, 2026",
         link: "https://www.ageuk.org.uk/discover/2026/february/the-making-of-age-uks-sex-relationships-and-intimacy-information-guide/",
         category: "Dignity",
-        snippet: "A groundbreaking guide focusing on the often-overlooked importance of sex, intimacy, and meaningful human connection in later life."
+        content: "Age UK has launched a groundbreaking new guide focusing on an often-overlooked aspect of aging: sex, intimacy, and meaningful relationships. The guide challenges deep-seated societal taboos that desexualize older adults, affirming that the need for connection and intimacy remains vital throughout the entire lifespan.\n\nCreated in consultation with older people and clinical experts, the resource offers practical advice on navigating relationship changes due to health conditions, bereavement, or cognitive decline. It covers topics ranging from dating in later life to maintaining intimacy when one partner acts as a carer for the other. The guide is being hailed as a crucial step in recognizing the 'whole person' in geriatric care.\n\nHeems champions this holistic approach. Recognizing that care is not just about medication and meals, but also about supporting the emotional and social lives of individuals, resonates deeply with our mission. This guide is a must-read for families and carers looking to support the full dignity and well-being of their loved ones."
     }
 ];
 
