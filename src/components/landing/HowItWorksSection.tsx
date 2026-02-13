@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, UserCheck, Calendar, Heart, Sparkles } from "lucide-react";
+import { ArrowRight, Search, UserCheck, Calendar, Heart, Sparkles, User, Lock, LayoutDashboard } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const steps = [
   {
@@ -29,13 +31,128 @@ const steps = [
   },
 ];
 
-const carerImages = [
-  { src: "/carer_casual_female_1.png", name: "Sarah", role: "Nurse" },
-  { src: "/carer_black_male_1.png", name: "David", role: "Senior Carer" },
-  { src: "/carer_casual_female_2.png", name: "Elizabeth", role: "Companion Care" },
-  { src: "/carer_black_female_1.png", name: "Sophie", role: "Dementia Care" },
-  { src: "/carer_casual_male_1.png", name: "Marcus", role: "Night Support" },
-];
+const PhoneScreen = () => {
+  const [screen, setScreen] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setScreen((prev) => (prev + 1) % 3);
+    }, 4000); // Change screen every 4 seconds
+    return () => clearInterval(timer);
+  }, []);
+
+  const variants = {
+    enter: { opacity: 0, x: 20 },
+    center: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -20 },
+  };
+
+  return (
+    <div className="relative w-[300px] h-[600px] bg-[#111827] rounded-[3rem] border-8 border-[#1a1f2e] shadow-2xl overflow-hidden mx-auto">
+      {/* Notch */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#1a1f2e] rounded-b-2xl z-20" />
+
+      {/* Screen Content */}
+      <div className="w-full h-full bg-slate-50 relative pt-12 p-6 flex flex-col">
+        <AnimatePresence mode="wait">
+          {screen === 0 && (
+            <motion.div
+              key="register"
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5 }}
+              className="flex flex-col h-full"
+            >
+              <div className="flex items-center justify-center mb-8">
+                <div className="w-12 h-12 rounded-xl bg-[#1a9e8c] flex items-center justify-center">
+                  <Sparkles className="text-white w-6 h-6" />
+                </div>
+              </div>
+              <h3 className="text-xl font-black text-[#111827] text-center mb-6">Create Account</h3>
+              <div className="space-y-3">
+                <div className="h-10 bg-white rounded-lg border border-slate-200" />
+                <div className="h-10 bg-white rounded-lg border border-slate-200" />
+                <div className="h-10 bg-[#111827] rounded-lg mt-4" />
+              </div>
+            </motion.div>
+          )}
+
+          {screen === 1 && (
+            <motion.div
+              key="login"
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5 }}
+              className="flex flex-col h-full"
+            >
+              <div className="flex items-center justify-center mb-8">
+                <div className="w-12 h-12 rounded-xl bg-[#111827] flex items-center justify-center">
+                  <Lock className="text-white w-6 h-6" />
+                </div>
+              </div>
+              <h3 className="text-xl font-black text-[#111827] text-center mb-6">Welcome Back</h3>
+              <div className="space-y-3">
+                <div className="h-10 bg-white rounded-lg border border-slate-200" />
+                <div className="h-10 bg-[#1a9e8c] rounded-lg mt-4 shadow-lg shadow-[#1a9e8c]/20" />
+              </div>
+            </motion.div>
+          )}
+
+          {screen === 2 && (
+            <motion.div
+              key="dashboard"
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5 }}
+              className="flex flex-col h-full"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-slate-200" />
+                  <div className="h-3 w-20 bg-slate-200 rounded" />
+                </div>
+                <LayoutDashboard className="text-slate-300 w-5 h-5" />
+              </div>
+
+              <h3 className="text-lg font-black text-[#111827] mb-4">Find Care</h3>
+
+              <div className="space-y-3 flex-grow">
+                {/* Carer Card 1 */}
+                <div className="p-3 bg-white rounded-xl border border-black/5 flex gap-3 shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-slate-100" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 w-24 bg-slate-100 rounded" />
+                    <div className="h-2 w-16 bg-slate-100 rounded" />
+                  </div>
+                </div>
+                {/* Carer Card 2 */}
+                <div className="p-3 bg-white rounded-xl border border-black/5 flex gap-3 shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-slate-100" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 w-24 bg-slate-100 rounded" />
+                    <div className="h-2 w-16 bg-slate-100 rounded" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-auto">
+                <div className="h-12 bg-[#1a9e8c] rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-xl shadow-[#1a9e8c]/20">
+                  Connect Now
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
 
 const HowItWorksSection = () => {
   return (
@@ -45,7 +162,7 @@ const HowItWorksSection = () => {
       <div className="absolute bottom-20 left-0 w-96 h-96 bg-[#111827]/5 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        {/* Section Header with Circular Carer Cluster */}
+        {/* Section Header with Phone Animation */}
         <div className="grid lg:grid-cols-2 gap-16 items-center mb-24 lg:mb-32">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a9e8c]/10 border border-[#1a9e8c]/20 text-[#1a9e8c] text-xs font-black uppercase tracking-[0.25em] mb-8">
@@ -61,62 +178,10 @@ const HowItWorksSection = () => {
             </p>
           </div>
 
-          {/* Circular Carer Photo Cluster */}
-          <div className="relative h-[500px] flex items-center justify-center">
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Center Circle - Heems Logo/Badge */}
-              <div className="relative z-20 w-40 h-40 rounded-full bg-gradient-to-br from-[#111827] to-[#1a9e8c] flex items-center justify-center shadow-2xl border-4 border-white overflow-hidden">
-                <img
-                  src="/heems-logo.png"
-                  alt="Heems"
-                  className="h-16 w-auto brightness-0 invert"
-                />
-              </div>
-
-              {/* Orbiting Carer Photos */}
-              {carerImages.map((carer, index) => {
-                const angle = (index * 360) / carerImages.length;
-                const radius = 180;
-                const x = Math.cos((angle * Math.PI) / 180) * radius;
-                const y = Math.sin((angle * Math.PI) / 180) * radius;
-
-                return (
-                  <div
-                    key={index}
-                    className="absolute group animate-float"
-                    style={{
-                      left: `calc(50% + ${x}px)`,
-                      top: `calc(50% + ${y}px)`,
-                      transform: 'translate(-50%, -50%)',
-                      animationDelay: `${index * 0.2}s`,
-                    }}
-                  >
-                    <div className="relative">
-                      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-xl group-hover:scale-110 transition-transform duration-500">
-                        <img
-                          src={carer.src}
-                          alt={carer.name}
-                          className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all"
-                        />
-                      </div>
-                      {/* Verification Badge */}
-                      <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#1a9e8c] border-2 border-white flex items-center justify-center shadow-lg">
-                        <UserCheck className="w-3.5 h-3.5 text-white" />
-                      </div>
-                      {/* Tooltip on Hover */}
-                      <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[#111827] text-white px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shadow-xl">
-                        {carer.name} - {carer.role}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Connecting Lines (Decorative) */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-10">
-                <circle cx="50%" cy="50%" r="180" fill="none" stroke="#1a9e8c" strokeWidth="2" strokeDasharray="5,5" />
-              </svg>
-            </div>
+          {/* Animated Phone */}
+          <div className="relative h-[600px] flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1a9e8c]/20 to-transparent rounded-full blur-3xl opacity-30 animate-pulse" />
+            <PhoneScreen />
           </div>
         </div>
 

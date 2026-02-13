@@ -7,14 +7,6 @@ import {
     Home, Brain, Heart, Coffee, Moon, User,
     ArrowRight, ShieldCheck, CheckCircle2, Users
 } from "lucide-react";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 
 const careTypes = [
     {
@@ -163,67 +155,11 @@ const TypesOfCare = () => {
                                         {type.description}
                                     </p>
 
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <button className="inline-flex items-center text-sm font-bold text-[#111827] hover:text-[#1a9e8c] transition-colors cursor-pointer outline-none">
-                                                Learn More <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                                            </button>
-                                        </DialogTrigger>
-                                        <DialogContent className="max-w-3xl rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
-                                            <div className="grid md:grid-cols-2">
-                                                <div className="h-64 md:h-full relative">
-                                                    <img
-                                                        src={type.image}
-                                                        alt={type.title}
-                                                        className="absolute inset-0 w-full h-full object-cover"
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/20" />
-                                                </div>
-                                                <div className="p-8 md:p-12 bg-white">
-                                                    <DialogHeader className="mb-8">
-                                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${type.color}`}>
-                                                            <type.icon className="w-6 h-6" />
-                                                        </div>
-                                                        <DialogTitle className="text-3xl font-black text-[#111827] tracking-tight mb-4">
-                                                            {type.title}
-                                                        </DialogTitle>
-                                                        <DialogDescription className="text-lg text-[#4B5563] font-medium leading-relaxed">
-                                                            {type.summary}
-                                                        </DialogDescription>
-                                                    </DialogHeader>
-
-                                                    <div className="space-y-8 mb-10">
-                                                        <div>
-                                                            <h4 className="text-xs font-black text-[#1a9e8c] uppercase tracking-widest mb-4">Key Benefits</h4>
-                                                            <ul className="space-y-3">
-                                                                {type.benefits.map((benefit, i) => (
-                                                                    <li key={i} className="flex gap-3 text-sm font-bold text-[#111827]">
-                                                                        <CheckCircle2 className="w-5 h-5 text-[#1a9e8c] flex-shrink-0" />
-                                                                        {benefit}
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                        <div>
-                                                            <h4 className="text-xs font-black text-[#1a9e8c] uppercase tracking-widest mb-4">Who is it for?</h4>
-                                                            <ul className="space-y-3">
-                                                                {type.whoIsItFor.map((item, i) => (
-                                                                    <li key={i} className="flex gap-3 text-sm font-bold text-[#111827]">
-                                                                        <Users className="w-5 h-5 text-[#1a9e8c] flex-shrink-0" />
-                                                                        {item}
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-
-                                                    <Button className="w-full h-14 rounded-2xl bg-[#111827] text-white font-black hover:bg-black transition-all text-base" asChild>
-                                                        <Link to="/marketplace">Find a Carer Now</Link>
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
+                                    <Button asChild variant="link" className="p-0 h-auto font-bold text-[#111827] hover:text-[#1a9e8c] transition-colors">
+                                        <Link to={`/types-of-care/${type.id}`}>
+                                            Learn More <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                        </Link>
+                                    </Button>
                                 </div>
                             ))}
                         </div>

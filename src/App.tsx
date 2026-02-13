@@ -28,6 +28,7 @@ import NotFound from "./pages/NotFound";
 import HowItWorks from "./pages/public/HowItWorks";
 import TypesOfCare from "./pages/public/TypesOfCare";
 import About from "./pages/public/About";
+import CareTypeDetail from "./pages/public/CareTypeDetail";
 import Solutions from "./pages/Solutions";
 import Contact from "./pages/public/Contact";
 
@@ -181,6 +182,7 @@ const App = () => (
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/about" element={<About />} />
               <Route path="/types-of-care" element={<TypesOfCare />} />
+              <Route path="/types-of-care/:typeId" element={<CareTypeDetail />} />
               <Route path="/solutions" element={<Solutions />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/contact" element={<Contact />} />

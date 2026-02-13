@@ -8,25 +8,31 @@ import { Calculator, Zap } from "lucide-react";
 
 const PricingEstimator = () => {
     const [careType, setCareType] = useState("visiting");
-    const [overnightType, setOvernightType] = useState("sleeping");
+    const [overnightType, setOvernightType] = useState("sleeping"); // sleeping | waking
+    const [liveInType, setLiveInType] = useState("full-time"); // full-time | part-time
     const [duration, setDuration] = useState(1);
 
     const calculateCosts = () => {
-        let baseRate = 0;
+        let subtotal = 0;
         let unit = "hours";
 
         if (careType === "visiting") {
-            baseRate = 25;
+            subtotal = 25 * duration;
             unit = "hours";
         } else if (careType === "live-in") {
-            baseRate = 1200;
-            unit = "weeks";
+            if (liveInType === "full-time") {
+                subtotal = 1200 * duration;
+                unit = "weeks";
+            } else {
+                subtotal = 160 * duration;
+                unit = "days";
+            }
         } else if (careType === "overnight") {
-            baseRate = overnightType === "sleeping" ? 120 : 200;
+            const nightlyRate = overnightType === "sleeping" ? 120 : 200;
+            subtotal = nightlyRate * duration;
             unit = "nights";
         }
 
-        const subtotal = baseRate * duration;
         const serviceFee = subtotal * 0.10;
         const total = subtotal + serviceFee;
 
@@ -53,17 +59,41 @@ const PricingEstimator = () => {
                     {/* Care Type */}
                     <div className="space-y-3">
                         <Label className="text-sm font-bold uppercase tracking-wider text-slate-500">Select Care Type</Label>
-                        <Select value={careType} onValueChange={setCareType}>
+                        <Select value={careType} onValueChange={(val) => {
+                            setCareType(val);
+                            // Reset duration defaults when switching types for better UX
+                            if (val === "visiting") setDuration(2);
+                            else setDuration(1);
+                        }}>
                             <SelectTrigger className="h-14 rounded-2xl border-black/5 bg-slate-50 text-lg font-bold">
                                 <SelectValue placeholder="Select care type" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="visiting">Visiting Care (£25/hr)</SelectItem>
-                                <SelectItem value="live-in">Live-in Care (£1,200/wk)</SelectItem>
+                                <SelectItem value="visiting">Visiting Care (Avg £25/hr)</SelectItem>
+                                <SelectItem value="live-in">Live-in Care</SelectItem>
                                 <SelectItem value="overnight">Overnight Care</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
+
+                    {/* Sub-Option for Live-in */}
+                    {careType === "live-in" && (
+                        <div className="flex items-center justify-between p-6 rounded-2xl bg-slate-50 border border-black/5">
+                            <div className="space-y-1">
+                                <Label className="text-lg font-bold text-[#111827]">
+                                    {liveInType === "full-time" ? "Full-Time (Weekly)" : "Part-Time (Daily)"}
+                                </Label>
+                                <p className="text-sm font-medium text-slate-500">
+                                    {liveInType === "full-time" ? "£1,200 per week" : "£160 per day"}
+                                </p>
+                            </div>
+                            <Switch
+                                checked={liveInType === "part-time"}
+                                onCheckedChange={(checked) => setLiveInType(checked ? "part-time" : "full-time")}
+                                className="data-[state=checked]:bg-[#1a9e8c]"
+                            />
+                        </div>
+                    )}
 
                     {/* Sub-Option for Overnight */}
                     {careType === "overnight" && (
@@ -127,6 +157,16 @@ const PricingEstimator = () => {
                             <Zap className="w-3 h-3 text-[#1a9e8c]" />
                             Support Fee (Carer): 0%
                         </div>
+                    </div>
+
+                    {/* Disclaimer */}
+                    <div className="mt-8 text-xs text-slate-400 font-medium leading-relaxed space-y-2 text-center">
+                        <p>
+                            The Care Cost Estimator is provided as a guidance tool to help families understand potential care costs based on typical usage and current platform averages. It is not a fixed quote or contractual offer.
+                        </p>
+                        <p>
+                            Carers on Heems are independent professionals who set their own hourly, daily, or weekly rates. Actual costs may vary depending on the carer selected, level of support required, location, scheduling needs, and any additional agreed services.
+                        </p>
                     </div>
                 </div>
             </CardContent>

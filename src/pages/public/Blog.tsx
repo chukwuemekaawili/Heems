@@ -106,17 +106,35 @@ const Blog = () => {
                             {/* Unified Feed of Industry News + Internal Posts */}
                             <div className="space-y-16">
                                 {/* Map over newsData directly since database posts are empty/secondary for now */}
-                                {newsData
-                                    .filter(item => selectedCategory === "All" || item.category === selectedCategory)
-                                    .map((item) => {
-                                        // Dynamic Read Time Calculation
-                                        const wordCount = item.content.split(/\s+/).length;
-                                        const readTime = Math.ceil(wordCount / 200);
+                                {
+                                    // Combine DB posts and static news
+                                    [
+                                        ...posts.map(post => ({
+                                            id: post.id,
+                                            title: post.title,
+                                            source: post.author || 'Heems Team',
+                                            date: format(new Date(post.created_at), 'MMM d, yyyy'),
+                                            link: `/blog/${post.id}`, // Internal link
+                                            category: post.category,
+                                            content: post.excerpt || post.content?.substring(0, 200) + "...",
+                                            image: post.image_url,
+                                            isInternal: true
+                                        })),
+                                        ...newsData
+                                    ]
+                                        .filter(item => {
+                                            const matchesSearch = (item.title?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+                                                (item.content?.toLowerCase() || "").includes(searchTerm.toLowerCase());
+                                            const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+                                            return matchesSearch && matchesCategory;
+                                        })
+                                        .map((item) => {
+                                            // Dynamic Read Time Calculation
+                                            const wordCount = (item.content || "").split(/\s+/).length;
+                                            const readTime = Math.ceil(wordCount / 200);
 
-                                        return (
-                                            <div key={item.id} className="group block h-full">
-                                                <Card className="h-full border-black/5 hover:border-[#1a9e8c]/30 hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-white flex flex-col md:flex-row">
-
+                                            const CardContent = (
+                                                <Card className="h-full border-black/5 hover:border-[#1a9e8c]/30 hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-white flex flex-col md:flex-row cursor-pointer">
                                                     {/* Image Section - Fixed Aspect Ratio / Width */}
                                                     <div className="md:w-[35%] bg-slate-100 relative min-h-[250px] md:min-h-full shrink-0 overflow-hidden">
                                                         {item.image ? (
@@ -157,7 +175,7 @@ const Blog = () => {
                                                         </h3>
 
                                                         <div className="prose prose-slate mb-8 line-clamp-4 text-slate-500 font-medium leading-relaxed flex-grow">
-                                                            {item.content?.split('\n').map((paragraph, idx) => (
+                                                            {(item.content || "").split('\n').map((paragraph: string, idx: number) => (
                                                                 <p key={idx} className="mb-2 last:mb-0">{paragraph}</p>
                                                             ))}
                                                         </div>
@@ -169,17 +187,26 @@ const Blog = () => {
                                                                 </div>
                                                                 <span className="text-xs font-bold text-[#111827]">Heems Editorial</span>
                                                             </div>
-                                                            <Button asChild variant="outline" className="rounded-full font-bold hover:bg-[#111827] hover:text-white border-black/10 transition-all">
-                                                                <a href={item.link} target="_blank" rel="noopener noreferrer">
-                                                                    Read Report <ArrowUpRight className="ml-2 h-3 w-3" />
-                                                                </a>
-                                                            </Button>
+                                                            <div className="rounded-full font-bold bg-transparent hover:bg-[#111827] text-[#111827] hover:text-white border border-black/10 px-4 py-2 flex items-center gap-2 transition-all">
+                                                                Read Post <ArrowUpRight className="ml-2 h-3 w-3" />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </Card>
-                                            </div>
-                                        );
-                                    })}
+                                            );
+
+                                            return (
+                                                <div key={item.id} className="group block h-full">
+                                                    {/* @ts-ignore - isInternal check */}
+                                                    {item.isInternal ? (
+                                                        <Link to={item.link}>{CardContent}</Link>
+                                                    ) : (
+                                                        <a href={item.link} target="_blank" rel="noopener noreferrer">{CardContent}</a>
+                                                    )}
+                                                </div>
+                                            );
+                                        })
+                                }
                             </div>
                         </div>
                     </div>
