@@ -2,6 +2,7 @@ import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Shield, AlertTriangle, CheckCircle2, Heart, HeartPulse, UserCheck, ShieldAlert, ShieldCheck } from "lucide-react";
 import { ChatWidget } from "@/components/shared/ChatWidget";
 
@@ -12,12 +13,19 @@ const SafetyGuidelines = () => {
 
             <main className="pt-24">
                 {/* Hero Section */}
-                <section className="py-24 bg-rose-50/30 relative overflow-hidden">
+                <section className="py-32 bg-[#111827] relative overflow-hidden">
+                    {/* Abstract Background */}
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#1a9e8c]/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
+
                     <div className="container mx-auto px-6 relative z-10 text-center">
-                        <div className="max-w-3xl mx-auto">
-                            <Badge className="mb-6 bg-rose-500 text-white border-none py-1 px-4 text-xs font-black uppercase tracking-widest">Safety First</Badge>
-                            <h1 className="text-6xl font-black text-[#111827] mb-8 leading-tight">Your safety is our <span className="text-rose-600">non-negotiable</span>.</h1>
-                            <p className="text-xl text-slate-600 font-medium leading-relaxed">
+                        <div className="max-w-4xl mx-auto">
+                            <Badge className="mb-8 bg-rose-500/10 text-rose-500 border-rose-500/20 py-1.5 px-4 text-sm font-black uppercase tracking-widest backdrop-blur-sm">Safety First</Badge>
+                            <h1 className="text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight">
+                                Your safety is our <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-rose-300">non-negotiable</span>.
+                            </h1>
+                            <p className="text-xl lg:text-2xl text-slate-400 font-medium leading-relaxed max-w-2xl mx-auto">
                                 We've established the most rigorous safety protocols in the care industry. This guide outlines our standards and how you can ensure a safe care environment.
                             </p>
                         </div>
@@ -70,7 +78,12 @@ const SafetyGuidelines = () => {
                                     <AlertTriangle className="h-10 w-10 text-rose-500" />
                                     <h2 className="text-4xl font-black">Safety Red Flags</h2>
                                 </div>
-                                <p className="text-white/60 text-lg font-medium mb-12">Contact Heems support immediately if you notice any of the following behavior from any participant in the care circle.</p>
+                                <p className="text-white/60 text-lg font-medium mb-12">
+                                    Contact Heems support immediately if you notice any of the following behavior from any participant in the care circle.
+                                </p>
+                                <Button className="mb-12 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl px-8 py-6 text-lg shadow-lg shadow-rose-600/20">
+                                    Report a Concern
+                                </Button>
 
                                 <div className="space-y-4">
                                     {[

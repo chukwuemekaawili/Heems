@@ -62,8 +62,10 @@ const UserGuide = () => {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <Button variant="ghost" className="p-0 hover:bg-transparent text-[#111827] hover:text-[#1a9e8c] font-black group">
-                                            READ CHAPTER <ChevronRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                        <Button asChild variant="ghost" className="p-0 hover:bg-transparent text-[#111827] hover:text-[#1a9e8c] font-black group">
+                                            <a href="#faq-section">
+                                                READ CHAPTER <ChevronRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                            </a>
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -92,32 +94,19 @@ const UserGuide = () => {
                                 </div>
                             </div>
 
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <div className="relative group cursor-pointer">
-                                        <div className="aspect-video bg-white/5 rounded-[3rem] border border-white/10 flex items-center justify-center overflow-hidden">
-                                            <div className="h-20 w-20 rounded-full bg-[#1a9e8c] flex items-center justify-center shadow-2xl shadow-[#1a9e8c]/40 group-hover:scale-110 transition-transform">
-                                                <Play className="h-8 w-8 text-white fill-white ml-1" />
-                                            </div>
-                                            <img src="/dashboard-mockup.png" alt="Video Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay" />
+                            <div className="relative group cursor-default">
+                                <div className="aspect-video bg-white/5 rounded-[3rem] border border-white/10 flex items-center justify-center overflow-hidden">
+                                    <div className="text-center">
+                                        <div className="h-20 w-20 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-6 backdrop-blur-sm">
+                                            <Play className="h-8 w-8 text-white/50 ml-1" />
                                         </div>
-                                        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-60 rounded-[3rem]" />
+                                        <h3 className="text-2xl font-black text-white mb-2">Video Guide Coming Soon</h3>
+                                        <p className="text-white/50 font-medium">We're filming a comprehensive walkthrough.</p>
                                     </div>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-[800px] p-0 bg-black border-none overflow-hidden rounded-2xl">
-                                    <div className="aspect-video w-full">
-                                        <iframe
-                                            width="100%"
-                                            height="100%"
-                                            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                                            title="A Day in the Life with Heems"
-                                            frameBorder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
-                                        ></iframe>
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
+                                    {/* Abstract decorative background */}
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-[#1a9e8c]/20 via-transparent to-rose-500/20 opacity-50" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

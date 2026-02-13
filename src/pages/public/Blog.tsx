@@ -108,41 +108,57 @@ const Blog = () => {
                                 {/* Map over newsData directly since database posts are empty/secondary for now */}
                                 {newsData
                                     .filter(item => selectedCategory === "All" || item.category === selectedCategory)
-                                    .map((item) => (
-                                        <div key={item.id} className="group block">
-                                            <Card className="border-black/5 hover:border-[#1a9e8c]/30 hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-white">
-                                                <CardContent className="p-0 flex flex-col md:flex-row">
-                                                    {/* Image Section */}
-                                                    <div className="md:w-1/3 bg-slate-100 relative min-h-[300px] md:min-h-0">
-                                                        <div className="absolute inset-0 flex items-center justify-center bg-[#1a9e8c]/5 group-hover:bg-[#1a9e8c]/10 transition-colors">
-                                                            <BookOpen className="h-16 w-16 text-[#1a9e8c]/30 group-hover:scale-110 transition-transform duration-500" />
-                                                        </div>
-                                                        <div className="absolute top-6 left-6">
+                                    .map((item) => {
+                                        // Dynamic Read Time Calculation
+                                        const wordCount = item.content.split(/\s+/).length;
+                                        const readTime = Math.ceil(wordCount / 200);
+
+                                        return (
+                                            <div key={item.id} className="group block h-full">
+                                                <Card className="h-full border-black/5 hover:border-[#1a9e8c]/30 hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-white flex flex-col md:flex-row">
+
+                                                    {/* Image Section - Fixed Aspect Ratio / Width */}
+                                                    <div className="md:w-[35%] bg-slate-100 relative min-h-[250px] md:min-h-full shrink-0 overflow-hidden">
+                                                        {item.image ? (
+                                                            <>
+                                                                <img
+                                                                    src={item.image}
+                                                                    alt={item.title}
+                                                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                                />
+                                                                <div className="absolute inset-0 bg-[#1a9e8c]/10 group-hover:bg-transparent transition-colors duration-500" />
+                                                            </>
+                                                        ) : (
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-[#1a9e8c]/5 group-hover:bg-[#1a9e8c]/10 transition-colors">
+                                                                <BookOpen className="h-16 w-16 text-[#1a9e8c]/30 group-hover:scale-110 transition-transform duration-500" />
+                                                            </div>
+                                                        )}
+                                                        <div className="absolute top-6 left-6 z-10">
                                                             <Badge className="bg-white/90 backdrop-blur text-[#111827] border-none text-[10px] font-black uppercase tracking-widest shadow-sm">
                                                                 {item.source}
                                                             </Badge>
                                                         </div>
                                                     </div>
 
-                                                    {/* Content Section */}
-                                                    <div className="md:w-2/3 p-8 lg:p-12 flex flex-col">
+                                                    {/* Content Section - Responsive Padding */}
+                                                    <div className="flex-grow p-8 md:p-10 lg:p-12 flex flex-col">
                                                         <div className="flex items-center justify-between mb-6">
                                                             <Badge className="bg-[#1a9e8c]/10 text-[#1a9e8c] border-none text-[10px] font-black uppercase tracking-widest">
                                                                 {item.category}
                                                             </Badge>
                                                             <div className="flex items-center gap-2 text-slate-400">
                                                                 <Calendar className="h-3 w-3" />
-                                                                <span className="text-[10px] font-bold uppercase tracking-widest">{item.date}</span>
+                                                                <span className="text-[10px] font-bold uppercase tracking-widest">{item.date} • {readTime} min read</span>
                                                             </div>
                                                         </div>
 
-                                                        <h3 className="text-3xl font-black text-[#111827] mb-6 group-hover:text-[#1a9e8c] transition-colors leading-tight">
+                                                        <h3 className="text-2xl lg:text-3xl font-black text-[#111827] mb-6 group-hover:text-[#1a9e8c] transition-colors leading-tight">
                                                             {item.title}
                                                         </h3>
 
-                                                        <div className="prose prose-slate mb-8 line-clamp-4 text-slate-500 font-medium leading-relaxed">
+                                                        <div className="prose prose-slate mb-8 line-clamp-4 text-slate-500 font-medium leading-relaxed flex-grow">
                                                             {item.content?.split('\n').map((paragraph, idx) => (
-                                                                <p key={idx} className="mb-2">{paragraph}</p>
+                                                                <p key={idx} className="mb-2 last:mb-0">{paragraph}</p>
                                                             ))}
                                                         </div>
 
@@ -155,15 +171,15 @@ const Blog = () => {
                                                             </div>
                                                             <Button asChild variant="outline" className="rounded-full font-bold hover:bg-[#111827] hover:text-white border-black/10 transition-all">
                                                                 <a href={item.link} target="_blank" rel="noopener noreferrer">
-                                                                    Read Full Article <ArrowUpRight className="ml-2 h-3 w-3" />
+                                                                    Read Report <ArrowUpRight className="ml-2 h-3 w-3" />
                                                                 </a>
                                                             </Button>
                                                         </div>
                                                     </div>
-                                                </CardContent>
-                                            </Card>
-                                        </div>
-                                    ))}
+                                                </Card>
+                                            </div>
+                                        );
+                                    })}
                             </div>
                         </div>
                     </div>
