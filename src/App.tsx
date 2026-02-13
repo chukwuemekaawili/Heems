@@ -179,6 +179,7 @@ const App = () => (
 
               {/* New Public Pages */}
               <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/about" element={<About />} />
               <Route path="/types-of-care" element={<TypesOfCare />} />
               <Route path="/solutions" element={<Solutions />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
