@@ -131,7 +131,13 @@ const PricingEstimator = () => {
                                 {unit}
                             </span>
                         </div>
+                        {careType === "visiting" && (
+                            <p className="text-xs font-bold text-[#1a9e8c] mt-2">
+                                Average Rate: £25.00/hr
+                            </p>
+                        )}
                     </div>
+
                 </div>
 
                 {/* Results Area */}
