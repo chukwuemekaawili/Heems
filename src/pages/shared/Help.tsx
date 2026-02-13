@@ -88,7 +88,7 @@ const faqs = [
             },
             {
                 q: "What if I'm not satisfied with the care?",
-                a: "Contact our support team within 24 hours of the appointment. We take all complaints seriously and will work to resolve any issues.",
+                a: "Care arrangements are agreed directly between you and the carer. If you’re unhappy, we recommend discussing this with the carer first. You can cancel future bookings in line with the booking terms, leave a review, or report concerns to Heems if they relate to safety or policy breaches. For urgent or serious issues, contact emergency services or the relevant safeguarding authority.",
             },
             {
                 q: "How is my data protected?",
