@@ -89,13 +89,14 @@ const SafetyGuidelines = () => {
                             </div>
                             <div className="relative">
                                 <Card className="bg-white rounded-[3rem] p-12 lg:p-16 border-none shadow-3xl text-[#111827]">
-                                    <h3 className="text-3xl font-black mb-8 leading-tight italic">Our Safety Promise</h3>
-                                    <p className="text-slate-600 text-lg font-medium mb-10 leading-relaxed italic">\"If at any point you feel unsafe or uncomfortable, we provide immediate mediation and replacement services. Your physical and emotional well-being is our primary metric of success.\"</p>
+                                    <h3 className="text-3xl font-black mb-8 leading-tight">Your safety and comfort matter.</h3>
+                                    <p className="text-slate-600 text-lg font-medium mb-10 leading-relaxed">
+                                        If you ever feel unsafe or uncomfortable, you can report concerns immediately through your dashboard. We review all platform-related issues promptly and may take appropriate action in line with our policies.
+                                    </p>
                                     <div className="flex items-center gap-4">
-                                        <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center font-black">JH</div>
+                                        <div className="h-12 w-12 rounded-full bg-[#1a9e8c]/10 flex items-center justify-center font-black text-[#1a9e8c]">HM</div>
                                         <div>
-                                            <p className="font-black text-[#111827]">James Heems</p>
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Founder & CEO</p>
+                                            <p className="font-black text-[#111827]">Heems Management</p>
                                         </div>
                                     </div>
                                 </Card>
