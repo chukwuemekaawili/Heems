@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, UserCheck, Calendar, Heart, Sparkles, User, Lock, LayoutDashboard } from "lucide-react";
+import { ArrowRight, Search, UserCheck, Calendar, Heart, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+
 
 const steps = [
   {
@@ -216,27 +216,19 @@ const HowItWorksSection = () => {
       <div className="absolute bottom-20 left-0 w-96 h-96 bg-[#111827]/5 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        {/* Section Header with Phone Animation */}
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-24 lg:mb-32">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a9e8c]/10 border border-[#1a9e8c]/20 text-[#1a9e8c] text-xs font-black uppercase tracking-[0.25em] mb-8">
-              <Sparkles className="w-3.5 h-3.5" />
-              How It Works
-            </div>
-            <h2 className="text-5xl lg:text-8xl font-black text-[#111827] leading-[0.95] tracking-tighter mb-10">
-              A Better Path <br />
-              <span className="text-[#1a9e8c]">to Quality Care.</span>
-            </h2>
-            <p className="text-xl text-[#4B5563] font-medium leading-relaxed max-w-xl">
-              We've combined rigorous vetting with advanced matching algorithms to create the UK's most efficient care path.
-            </p>
+        {/* Section Header - Centered */}
+        <div className="max-w-4xl mx-auto text-center mb-24 lg:mb-32">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a9e8c]/10 border border-[#1a9e8c]/20 text-[#1a9e8c] text-xs font-black uppercase tracking-[0.25em] mb-8">
+            <Sparkles className="w-3.5 h-3.5" />
+            How It Works
           </div>
-
-          {/* Animated Phone */}
-          <div className="relative h-[600px] flex items-center justify-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1a9e8c]/20 to-transparent rounded-full blur-3xl opacity-30 animate-pulse" />
-            <PhoneScreen />
-          </div>
+          <h2 className="text-5xl lg:text-8xl font-black text-[#111827] leading-[0.95] tracking-tighter mb-10">
+            A Better Path <br />
+            <span className="text-[#1a9e8c]">to Quality Care.</span>
+          </h2>
+          <p className="text-xl text-[#4B5563] font-medium leading-relaxed max-w-2xl mx-auto">
+            We've combined rigorous vetting with advanced matching algorithms to create the UK's most efficient care path.
+          </p>
         </div>
 
         {/* Steps with Modern Card Design */}

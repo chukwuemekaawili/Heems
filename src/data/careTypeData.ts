@@ -84,6 +84,9 @@ Overnight care may be arranged in two common formats:
         ],
         color: "bg-indigo-100 text-indigo-700",
         accentColor: "#4338ca", // indigo-700
+        gallery: ["/overnight_care.png", "/overnight_care_hero.png", "/carer_male_1.png", "/moon_night_care.png"]
+        // Note: moon_night_care.png might not exist, using placeholder logic in component or ensure valid path. 
+        // fallback to existing:
         gallery: ["/overnight_care.png", "/overnight_care_hero.png", "/carer_male_1.png", "/about-care.png"]
     },
     "dementia": {
