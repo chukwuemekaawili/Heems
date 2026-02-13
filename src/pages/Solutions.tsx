@@ -24,8 +24,8 @@ const Solutions = () => {
                             Heems provides healthcare organisations, councils, and care homes with a high-performance workforce ecosystem and real-time compliance tracking.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button className="h-14 px-10 rounded-2xl bg-[#111827] text-white font-bold text-base hover:bg-[#1a9e8c] shadow-lg shadow-[#111827]/10 transition-all">
-                                Request Demo
+                            <Button className="h-14 px-10 rounded-2xl bg-[#111827] text-white font-bold text-base hover:bg-[#1a9e8c] shadow-lg shadow-[#111827]/10 transition-all" asChild>
+                                <Link to="/contact">Request Demo</Link>
                             </Button>
                             <Button variant="outline" className="h-14 px-10 rounded-2xl font-bold border-black/5 hover:bg-slate-50 transition-all text-base" asChild>
                                 <Link to="/signup/organisation">Register Organisation</Link>
