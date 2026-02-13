@@ -9,43 +9,57 @@ interface NewsItem {
     date: string;
     link: string;
     category: string;
+    snippet?: string;
 }
 
 const newsData: NewsItem[] = [
     {
-        title: "New CQC Inspection Framework: What Care Providers Need to Know",
-        source: "CQC",
-        date: "2 hours ago",
-        link: "https://www.cqc.org.uk/news",
-        category: "Regulation"
-    },
-    {
-        title: "NHS England Announces £200m Fund for Social Care Tech Implementation",
-        source: "NHS England",
-        date: "5 hours ago",
-        link: "https://www.england.nhs.uk/news/",
-        category: "Funding"
-    },
-    {
-        title: "Skills for Care: Annual Report Highlights Workforce Growth Trends",
-        source: "Skills for Care",
-        date: "1 day ago",
-        link: "https://www.skillsforcare.org.uk/About/News/News.aspx",
-        category: "Workforce"
-    },
-    {
-        title: "Age UK Response to Proposed Social Care Reform Bill",
+        title: "Supporting older people's health in 2026",
         source: "Age UK",
-        date: "1 day ago",
-        link: "https://www.ageuk.org.uk/about-us/news/",
-        category: "Advocacy"
+        date: "Jan 23, 2026",
+        link: "https://www.ageuk.org.uk/discover/2026/january/supporting-older-peoples-health-in-2026/",
+        category: "Market Outlook",
+        snippet: "A deep dive into the NHS 10 Year Plan updates and what families should expect regarding the future of social care and independence in later life."
     },
     {
-        title: "CB Insights: The 2026 State of Care-Tech Funding",
+        title: "NHS backs AI notetaking to free up more face-to-face care",
+        source: "NHS England",
+        date: "Jan 15, 2026",
+        link: "https://www.england.nhs.uk/2026/01/nhs-backs-ai-notetaking-free-up-more-face-to-face-care/",
+        category: "Innovation",
+        snippet: "New AI tools are helping clinicians spend up to 25% more time with their patients by automating the capture of patient conversations into real-time transcriptions."
+    },
+    {
+        title: "Supporting care staff to keep learning in 2026",
+        source: "Skills for Care",
+        date: "Jan 12, 2026",
+        link: "https://www.skillsforcare.org.uk/news-and-events/news/skills-for-care-is-supporting-care-staff-to-keep-learning-in-2026",
+        category: "Workforce",
+        snippet: "Skills for Care kicks off 2026 with a spotlight on professional development as a critical pillar for retaining the quality care workforce England needs."
+    },
+    {
+        title: "Guidance for Assessing Hospital Care in Non-Clinical Spaces",
+        source: "CQC",
+        date: "Feb 12, 2026",
+        link: "https://www.cqc.org.uk/news/updated-guidance-specialist-inspectors-assessing-hospital-care-provided-non-clinical-spaces",
+        category: "Regulation",
+        snippet: "Updated safety guidance addresses the growing concern of 'corridor care', emphasizing that professional environments are essential for dignity and quality."
+    },
+    {
+        title: "Budgets are up, confidence isn't: 2026 tech investment insights",
         source: "CB Insights",
-        date: "2 days ago",
-        link: "https://www.cbinsights.com",
-        category: "Tech"
+        date: "Feb 11, 2026",
+        link: "https://www.cbinsights.com/research/report/tech-investment-insights-2026/",
+        category: "Strategy",
+        snippet: "While 74% of leaders report increased software investment, many struggle to translate this into tangible business ROI amid fragmented insights."
+    },
+    {
+        title: "The making of Age UK's intimacy and relationships guide",
+        source: "Age UK",
+        date: "Feb 11, 2026",
+        link: "https://www.ageuk.org.uk/discover/2026/february/the-making-of-age-uks-sex-relationships-and-intimacy-information-guide/",
+        category: "Dignity",
+        snippet: "A groundbreaking guide focusing on the often-overlooked importance of sex, intimacy, and meaningful human connection in later life."
     }
 ];
 
@@ -105,8 +119,11 @@ export const IndustryNews = () => {
                                     <h4 className="text-lg font-bold text-[#111827] leading-tight mb-2 group-hover:text-[#1a9e8c] transition-colors">
                                         {item.title}
                                     </h4>
+                                    <p className="text-sm text-slate-500 font-medium leading-relaxed mb-4">
+                                        {item.snippet}
+                                    </p>
                                     <div className="flex items-center gap-2 text-[10px] font-black text-[#1a9e8c] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                                        Read Official Source <ArrowUpRight className="w-3 h-3" />
+                                        Read Full Insight on {item.source} <ArrowUpRight className="w-3 h-3" />
                                     </div>
                                 </div>
                             </a>
