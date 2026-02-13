@@ -38,6 +38,7 @@ import UserGuide from "./pages/public/UserGuide";
 import SafetyGuidelines from "./pages/public/SafetyGuidelines";
 import Blog from "./pages/public/Blog";
 import BlogPost from "./pages/public/BlogPost";
+import Cookies from "./pages/public/Cookies";
 
 // AUTH PAGES - Eagerly loaded for fast login experience
 import Login from "./pages/auth/Login";
@@ -190,6 +191,7 @@ const App = () => (
               <Route path="/safety-guidelines" element={<SafetyGuidelines />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogPost />} />
+              <Route path="/cookies" element={<Cookies />} />
 
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />
