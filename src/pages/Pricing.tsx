@@ -1,6 +1,7 @@
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { ShieldCheck, Zap, Heart } from "lucide-react";
+import PricingEstimator from "@/components/pricing/PricingEstimator";
 
 const Pricing = () => {
     return (
@@ -22,6 +23,11 @@ const Pricing = () => {
                             Heems replaces expensive agency fees with a simple, transactional service fee.
                             No subscriptions. No paywalls to search. Pay only for care delivered.
                         </p>
+                    </div>
+
+                    {/* Care Cost Estimator */}
+                    <div className="mb-32">
+                        <PricingEstimator />
                     </div>
 
                     {/* Explainer Section */}
@@ -66,6 +72,11 @@ const Pricing = () => {
                     </div>
                 </div>
             </main>
+            <div className="container mx-auto px-6 lg:px-12 pb-12">
+                <p className="text-xs text-[#4B5563] font-medium opacity-50 italic">
+                    Heems acts as an introductory agency. Carers are independent professionals and not employees of Heems.
+                </p>
+            </div>
             <Footer />
         </div>
     );

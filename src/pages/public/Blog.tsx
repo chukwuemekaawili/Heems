@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ChatWidget } from "@/components/shared/ChatWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { IndustryNews } from "@/components/blog/IndustryNews";
 
 const Blog = () => {
     const [posts, setPosts] = useState<any[]>([]);
@@ -76,6 +77,13 @@ const Blog = () => {
                                 </Card>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                {/* Industry Monitor Section */}
+                <section className="py-12 -mt-12 relative z-20">
+                    <div className="container mx-auto px-6">
+                        <IndustryNews />
                     </div>
                 </section>
 

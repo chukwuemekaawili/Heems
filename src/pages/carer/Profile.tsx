@@ -470,14 +470,16 @@ export default function CarerProfile() {
                       value={profile.first_name || ""}
                       disabled={!isEditing}
                       onChange={(e) => setProfile((p: any) => ({ ...p, first_name: e.target.value }))}
+                      placeholder="e.g. Jane"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Last Name</Label>
+                    <Label>Surname</Label>
                     <Input
                       value={profile.last_name || ""}
                       disabled={!isEditing}
                       onChange={(e) => setProfile((p: any) => ({ ...p, last_name: e.target.value }))}
+                      placeholder="e.g. Smith"
                     />
                   </div>
                   <div className="space-y-2">

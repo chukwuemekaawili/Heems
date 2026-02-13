@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const footerLinks = {
   product: [
-    { name: "How It Works", href: "#how-it-works" },
+    { name: "About Us", href: "/about" },
     { name: "Features", href: "#features" },
     { name: "Pricing", href: "#pricing" },
     { name: "For Carers", href: "#for-carers" },
@@ -70,7 +70,7 @@ const Footer = () => {
                 <li><Link to="/marketplace" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Find a Carer</Link></li>
                 <li><Link to="/carers" className="text-sm font-bold text-white/60 hover:text-white transition-colors">For Carers</Link></li>
                 <li><Link to="/types-of-care" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Types of Care</Link></li>
-                <li><Link to="/how-it-works" className="text-sm font-bold text-white/60 hover:text-white transition-colors">How it Works</Link></li>
+                <li><Link to="/about" className="text-sm font-bold text-white/60 hover:text-white transition-colors">About Us</Link></li>
 
                 <li><Link to="/pricing" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Pricing</Link></li>
               </ul>

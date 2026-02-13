@@ -1,45 +1,129 @@
+import { useState } from "react";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Home, Brain, Heart, Coffee, Moon, User, ArrowRight, ShieldCheck } from "lucide-react";
+import {
+    Home, Brain, Heart, Coffee, Moon, User,
+    ArrowRight, ShieldCheck, CheckCircle2, Users
+} from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 const careTypes = [
     {
+        id: "visiting",
+        title: "Visiting Care",
+        icon: User,
+        image: "/visiting_care.png",
+        description: "Flexible support from one hour per visit, tailored to your schedule and personal needs.",
+        summary: "Visiting care (also referred to as visiting support) involves a carer attending the client’s home for pre-arranged visits to provide practical assistance and social companionship.",
+        benefits: [
+            "Supporting independence and maintaining daily routines.",
+            "Flexible scheduling to suit changing needs and preferences.",
+            "Reducing feelings of loneliness and social isolation."
+        ],
+        whoIsItFor: [
+            "Older adults who wish to remain living independently.",
+            "People who need occasional or regular help with everyday routines."
+        ],
+        color: "bg-blue-100 text-blue-700"
+    },
+    {
+        id: "live-in",
         title: "Live-in Care",
         icon: Home,
-        description: "24/7 support from a dedicated carer who lives with you, providing constant companionship and assistance.",
+        image: "/live_in_care.png",
+        description: "Permanent 24/7 support from a dedicated professional who lives with you in your home.",
+        summary: "Live-in care involves a carer staying in the client’s home for an agreed period—typically several days or weeks at a time—to provide ongoing, personal support, practical assistance, and companionship.",
+        benefits: [
+            "Continuity of support from one consistent carer.",
+            "One-to-one attention tailored to personal routines.",
+            "The comfort and familiarity of remaining at home."
+        ],
+        whoIsItFor: [
+            "Individuals requiring regular daily assistance and supervision.",
+            "Couples or households seeking shared, consistent support."
+        ],
         color: "bg-emerald-100 text-emerald-700"
     },
     {
-        title: "Dementia Care",
-        icon: Brain,
-        description: "Support for those living with dementia, focused on maintaining routine, safety, and dignity.",
-        color: "bg-purple-100 text-purple-700"
-    },
-    {
-        title: "Palliative Care",
-        icon: Heart,
-        description: "Compassionate end-of-life care that prioritizes comfort, pain management, and emotional support for the whole family.",
-        color: "bg-rose-100 text-rose-700"
-    },
-    {
-        title: "Respite Care",
-        icon: Coffee,
-        description: "Short-term relief for primary caregivers. Take a break knowing your loved one is in safe, professional hands.",
-        color: "bg-amber-100 text-amber-700"
-    },
-    {
+        id: "overnight",
         title: "Overnight Care",
         icon: Moon,
-        description: "Reassurance through the night. Whether it's waking support or just someone being there, we have you covered.",
+        image: "/overnight_care.png",
+        description: "Peace of mind through the night, whether for waking support or a reassuring presence.",
+        summary: "Overnight care involves a carer staying in the client’s home during nighttime hours to provide reassurance, presence, and support as needed.",
+        benefits: [
+            "Increased safety and reduced risk of falls or incidents at night.",
+            "Reassurance for individuals who feel anxious, disoriented, or unsettled.",
+            "Peace of mind for families knowing someone is present."
+        ],
+        whoIsItFor: [
+            "Individuals who are at higher risk of falls during the night.",
+            "People experiencing confusion, restlessness, or disrupted sleep."
+        ],
         color: "bg-indigo-100 text-indigo-700"
     },
     {
-        title: "Visiting Care",
-        icon: User,
-        description: "Flexible visits from as little as one hour. Perfect for medication prompts, meal prep, or simply a friendly chat.",
-        color: "bg-blue-100 text-blue-700"
+        id: "dementia",
+        title: "Dementia Support",
+        icon: Brain,
+        image: "/about-care.png",
+        description: "Expert care focused on routine, safety, and maintaining the highest quality of life.",
+        summary: "Dementia support focuses on creating a stable, familiar, and reassuring environment for individuals living with memory loss or cognitive decline.",
+        benefits: [
+            "Maintaining routine and structure, which can reduce distress and confusion.",
+            "Reducing anxiety through familiar faces and environments.",
+            "Encouraging independence in daily activities."
+        ],
+        whoIsItFor: [
+            "Individuals in the early to moderate stages of dementia.",
+            "People who benefit from consistent routines and familiar support."
+        ],
+        color: "bg-purple-100 text-purple-700"
+    },
+    {
+        id: "palliative",
+        title: "Palliative Support",
+        icon: Heart,
+        image: "/carer_client_home.png",
+        description: "Compassionate end-of-life care prioritizing dignity, comfort, and family support.",
+        summary: "Palliative support focuses on comfort, dignity, emotional reassurance, and everyday support for individuals living with life-limiting or serious health conditions.",
+        benefits: [
+            "Emotional reassurance and calm presence.",
+            "Compassionate companionship to reduce isolation.",
+            "Reduced stress for families, allowing them to focus on meaningful time together."
+        ],
+        whoIsItFor: [
+            "Individuals receiving medical palliative care who need additional home support.",
+            "People living with serious conditions who wish to remain in familiar surroundings."
+        ],
+        color: "bg-rose-100 text-rose-700"
+    },
+    {
+        id: "respite",
+        title: "Respite Care",
+        icon: Coffee,
+        image: "/about-team.png",
+        description: "Short-term relief for family carers, ensuring your loved one is in safe, professional hands.",
+        summary: "Respite care provides short-term, flexible support designed to give family members or informal carers a break from their ongoing caring responsibilities.",
+        benefits: [
+            "Prevention of carer fatigue and burnout.",
+            "Peace of mind knowing a trusted carer is present.",
+            "Flexibility for short-term absences or holidays."
+        ],
+        whoIsItFor: [
+            "Family members or informal carers who need a temporary break.",
+            "Individuals whose usual carer is unavailable."
+        ],
+        color: "bg-amber-100 text-amber-700"
     }
 ];
 
@@ -75,12 +159,71 @@ const TypesOfCare = () => {
                                         <type.icon className="w-7 h-7" />
                                     </div>
                                     <h3 className="text-2xl font-black text-[#111827] mb-4 group-hover:text-[#1a9e8c] transition-colors">{type.title}</h3>
-                                    <p className="text-lg text-[#4B5563] font-medium leading-relaxed mb-8">
+                                    <p className="text-lg text-[#4B5563] font-medium leading-relaxed mb-8 h-20 overflow-hidden line-clamp-3">
                                         {type.description}
                                     </p>
-                                    <Link to="/marketplace" className="inline-flex items-center text-sm font-bold text-[#111827] group-hover:text-[#1a9e8c] transition-colors cursor-pointer">
-                                        Find {type.title} <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                                    </Link>
+
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <button className="inline-flex items-center text-sm font-bold text-[#111827] hover:text-[#1a9e8c] transition-colors cursor-pointer outline-none">
+                                                Learn More <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                            </button>
+                                        </DialogTrigger>
+                                        <DialogContent className="max-w-3xl rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+                                            <div className="grid md:grid-cols-2">
+                                                <div className="h-64 md:h-full relative">
+                                                    <img
+                                                        src={type.image}
+                                                        alt={type.title}
+                                                        className="absolute inset-0 w-full h-full object-cover"
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/20" />
+                                                </div>
+                                                <div className="p-8 md:p-12 bg-white">
+                                                    <DialogHeader className="mb-8">
+                                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${type.color}`}>
+                                                            <type.icon className="w-6 h-6" />
+                                                        </div>
+                                                        <DialogTitle className="text-3xl font-black text-[#111827] tracking-tight mb-4">
+                                                            {type.title}
+                                                        </DialogTitle>
+                                                        <DialogDescription className="text-lg text-[#4B5563] font-medium leading-relaxed">
+                                                            {type.summary}
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+
+                                                    <div className="space-y-8 mb-10">
+                                                        <div>
+                                                            <h4 className="text-xs font-black text-[#1a9e8c] uppercase tracking-widest mb-4">Key Benefits</h4>
+                                                            <ul className="space-y-3">
+                                                                {type.benefits.map((benefit, i) => (
+                                                                    <li key={i} className="flex gap-3 text-sm font-bold text-[#111827]">
+                                                                        <CheckCircle2 className="w-5 h-5 text-[#1a9e8c] flex-shrink-0" />
+                                                                        {benefit}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-xs font-black text-[#1a9e8c] uppercase tracking-widest mb-4">Who is it for?</h4>
+                                                            <ul className="space-y-3">
+                                                                {type.whoIsItFor.map((item, i) => (
+                                                                    <li key={i} className="flex gap-3 text-sm font-bold text-[#111827]">
+                                                                        <Users className="w-5 h-5 text-[#1a9e8c] flex-shrink-0" />
+                                                                        {item}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+
+                                                    <Button className="w-full h-14 rounded-2xl bg-[#111827] text-white font-black hover:bg-black transition-all text-base" asChild>
+                                                        <Link to="/marketplace">Find a Carer Now</Link>
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
                             ))}
                         </div>
@@ -107,6 +250,11 @@ const TypesOfCare = () => {
                     </div>
                 </section>
             </main>
+            <div className="container mx-auto px-6 lg:px-12 pb-12">
+                <p className="text-xs text-[#4B5563] font-medium opacity-50 italic">
+                    Heems acts as an introductory agency. Carers are independent professionals and not employees of Heems.
+                </p>
+            </div>
             <Footer />
         </div>
     );
