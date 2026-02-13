@@ -40,6 +40,8 @@ export function DocumentUpload({
 }: DocumentUploadProps) {
     const [file, setFile] = useState<File | null>(null);
     const [expiryDate, setExpiryDate] = useState<string>('');
+    const [rtwType, setRtwType] = useState<string>('');
+    const [shareCode, setShareCode] = useState<string>('');
     const [uploading, setUploading] = useState(false);
     const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const { toast } = useToast();
@@ -74,7 +76,25 @@ export function DocumentUpload({
     };
 
     const handleUpload = async () => {
-        if (!file) {
+        // Validation logic
+        if (documentType === 'rtw') {
+            if (!rtwType) {
+                toast({ title: 'RTW Type Required', description: 'Please select your right to work type', variant: 'destructive' });
+                return;
+            }
+            if (rtwType === 'passport' && !file) {
+                toast({ title: 'Passport Required', description: 'Please upload your passport document', variant: 'destructive' });
+                return;
+            }
+            if ((rtwType === 'visa' || rtwType === 'indefinite') && !shareCode) {
+                toast({ title: 'Share Code Required', description: 'Please enter your share code', variant: 'destructive' });
+                return;
+            }
+            if (rtwType === 'visa' && !expiryDate) {
+                toast({ title: 'Expiry Date Required', description: 'Please enter your visa expiry date', variant: 'destructive' });
+                return;
+            }
+        } else if (!file) {
             toast({
                 title: 'No file selected',
                 description: 'Please select a file to upload',
@@ -83,7 +103,7 @@ export function DocumentUpload({
             return;
         }
 
-        if (requiresExpiry && !expiryDate) {
+        if (requiresExpiry && !expiryDate && documentType !== 'rtw') {
             toast({
                 title: 'Expiry date required',
                 description: 'Please enter the document expiry date',
@@ -95,31 +115,44 @@ export function DocumentUpload({
         setUploading(true);
 
         try {
-            // Upload file to Supabase Storage
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${carerId}/${documentType}_${Date.now()}.${fileExt}`;
+            let publicUrl = '';
 
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('verification-documents')
-                .upload(fileName, file, {
-                    cacheControl: '3600',
-                    upsert: false,
-                });
+            if (file) {
+                // Upload file to Supabase Storage
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${carerId}/${documentType}_${Date.now()}.${fileExt}`;
 
-            if (uploadError) throw uploadError;
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('verification-documents')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false,
+                    });
 
-            // Get public URL
-            const { data: { publicUrl } } = supabase.storage
-                .from('verification-documents')
-                .getPublicUrl(fileName);
+                if (uploadError) throw uploadError;
+
+                // Get public URL
+                const { data: { publicUrl: url } } = supabase.storage
+                    .from('verification-documents')
+                    .getPublicUrl(fileName);
+
+                publicUrl = url;
+            }
 
             // Update carer_verification table
             const updateData: any = {
-                [`${documentType}_document_url`]: publicUrl,
                 [`${documentType}_status`]: 'pending',
             };
 
-            if (requiresExpiry && expiryDate) {
+            if (publicUrl) {
+                updateData[`${documentType}_document_url`] = publicUrl;
+            }
+
+            if (documentType === 'rtw') {
+                updateData.rtw_type = rtwType;
+                if (shareCode) updateData.rtw_share_code = shareCode;
+                if (rtwType === 'visa' && expiryDate) updateData.rtw_expiry = expiryDate;
+            } else if (requiresExpiry && expiryDate) {
                 updateData[`${documentType}_expiry`] = expiryDate;
             }
 
@@ -162,8 +195,42 @@ export function DocumentUpload({
                 <CardDescription>{DOCUMENT_DESCRIPTIONS[documentType]}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+                {documentType === 'rtw' && (
+                    <div className="space-y-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                        <div className="space-y-2">
+                            <Label>Right to Work Type</Label>
+                            <select
+                                className="w-full h-10 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a9e8c]/20"
+                                value={rtwType}
+                                onChange={(e) => setRtwType(e.target.value)}
+                            >
+                                <option value="">Select type...</option>
+                                <option value="passport">UK or Irish Passport</option>
+                                <option value="visa">Leave to Remain (Visa)</option>
+                                <option value="indefinite">Indefinite Leave to Remain</option>
+                            </select>
+                        </div>
+
+                        {(rtwType === 'visa' || rtwType === 'indefinite') && (
+                            <div className="space-y-2">
+                                <Label htmlFor="share-code">Share Code</Label>
+                                <Input
+                                    id="share-code"
+                                    placeholder="Enter your 9-digit share code"
+                                    value={shareCode}
+                                    onChange={(e) => setShareCode(e.target.value)}
+                                />
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 <div className="space-y-2">
-                    <Label htmlFor={`file-${documentType}`}>Upload Document</Label>
+                    <Label htmlFor={`file-${documentType}`}>
+                        {documentType === 'rtw' && (rtwType === 'visa' || rtwType === 'indefinite')
+                            ? 'Upload Proof Document (Optional)'
+                            : 'Upload Document'}
+                    </Label>
                     <Input
                         id={`file-${documentType}`}
                         type="file"
@@ -178,7 +245,7 @@ export function DocumentUpload({
                     )}
                 </div>
 
-                {requiresExpiry && (
+                {(requiresExpiry || (documentType === 'rtw' && rtwType === 'visa')) && (
                     <div className="space-y-2">
                         <Label htmlFor={`expiry-${documentType}`}>Expiry Date</Label>
                         <Input
@@ -194,8 +261,8 @@ export function DocumentUpload({
 
                 <Button
                     onClick={handleUpload}
-                    disabled={!file || uploading}
-                    className="w-full"
+                    disabled={uploading}
+                    className="w-full bg-[#1a9e8c] hover:bg-[#1a9e8c]/90"
                 >
                     {uploading ? (
                         <>
@@ -205,7 +272,7 @@ export function DocumentUpload({
                     ) : (
                         <>
                             <Upload className="mr-2 h-4 w-4" />
-                            Upload Document
+                            {documentType === 'rtw' ? 'Save RTW Details' : 'Upload Document'}
                         </>
                     )}
                 </Button>
