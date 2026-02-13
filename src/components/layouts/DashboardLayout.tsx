@@ -286,7 +286,7 @@ const DashboardLayout = ({
               <Menu className="w-6 h-6" />
             </button>
 
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center" onClick={() => setSidebarOpen(false)}>
               <img
                 src="/heems-logo.png"
                 alt="Heems"
@@ -321,7 +321,7 @@ const DashboardLayout = ({
           <div className="flex flex-col h-full">
             {/* Sidebar Header */}
             <div className="flex items-center justify-between h-16 px-4 border-b border-sidebar-border">
-              <Link to="/" className="flex items-center">
+              <Link to="/" className="flex items-center" onClick={() => setSidebarOpen(false)}>
                 <img
                   src="/heems-logo.png"
                   alt="Heems"
@@ -396,20 +396,20 @@ const DashboardLayout = ({
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild onClick={() => setSidebarOpen(false)}>
                     <Link to={`/${role}/profile`}>
                       <User className="w-4 h-4 mr-2" />
                       Profile
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild onClick={() => setSidebarOpen(false)}>
                     <Link to={`/${role}/settings`}>
                       <Settings className="w-4 h-4 mr-2" />
                       Settings
                     </Link>
                   </DropdownMenuItem>
                   {role !== "admin" && (
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild onClick={() => setSidebarOpen(false)}>
                       <Link to="/help">
                         <HelpCircle className="w-4 w-4 mr-2" />
                         Help & Support

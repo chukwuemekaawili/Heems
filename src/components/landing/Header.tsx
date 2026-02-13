@@ -113,7 +113,7 @@ const Header = () => {
       <nav className="container mx-auto px-6 lg:px-12">
         <div className="flex items-center justify-between h-14 lg:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center group">
+          <Link to="/" className="flex items-center group" onClick={() => setMobileMenuOpen(false)}>
             <img
               src="/heems-logo.png"
               alt="Heems"
@@ -265,10 +265,10 @@ const Header = () => {
                 </>
               ) : (
                 <div className="grid grid-cols-2 gap-2 mt-2 p-2 pt-3 border-t border-black/5">
-                  <Button variant="outline" className="h-11 rounded-xl font-bold text-xs border-black/5" asChild>
+                  <Button variant="outline" className="h-11 rounded-xl font-bold text-xs border-black/5" asChild onClick={() => setMobileMenuOpen(false)}>
                     <Link to="/login">Sign In</Link>
                   </Button>
-                  <Button className="h-11 rounded-xl font-bold text-xs bg-[#1a9e8c] hover:bg-[#15806c] text-white" asChild>
+                  <Button className="h-11 rounded-xl font-bold text-xs bg-[#1a9e8c] hover:bg-[#15806c] text-white" asChild onClick={() => setMobileMenuOpen(false)}>
                     <Link to="/signup">Get Started</Link>
                   </Button>
                 </div>

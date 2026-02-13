@@ -142,6 +142,10 @@
     scroll-behavior: smooth;
   }
 
+  [id] {
+    scroll-margin-top: 100px;
+  }
+
   body {
     @apply bg-white text-foreground font-sans antialiased;
     font-family: 'Outfit', sans-serif;
