@@ -27,7 +27,8 @@ The purpose of visiting care is to help individuals maintain independence, digni
             "Families seeking additional or supplementary home support"
         ],
         color: "bg-blue-100 text-blue-700",
-        accentColor: "#1d4ed8" // blue-700
+        accentColor: "#1d4ed8", // blue-700
+        gallery: ["/visiting_care.png", "/visiting_care_hero.png", "/carer_female_1.png", "/carer_client_home.png"]
     },
     "live-in": {
         title: "Live-in Care",
@@ -52,7 +53,8 @@ The purpose of visiting care is to help individuals maintain independence, digni
             "Families seeking continuity of care without rotating carers"
         ],
         color: "bg-emerald-100 text-emerald-700",
-        accentColor: "#047857" // emerald-700
+        accentColor: "#047857", // emerald-700
+        gallery: ["/live_in_care.png", "/live_in_care_hero.png", "/modern_home_care_hero.png", "/carer_female_2.png"]
     },
     "overnight": {
         title: "Overnight Care",
@@ -81,7 +83,11 @@ Overnight care may be arranged in two common formats:
             "Families who need night-time support without committing to full live-in care"
         ],
         color: "bg-indigo-100 text-indigo-700",
-        accentColor: "#4338ca" // indigo-700
+        accentColor: "#4338ca", // indigo-700
+        gallery: ["/overnight_care.png", "/overnight_care_hero.png", "/carer_male_1.png", "/moon_night_care.png"]
+        // Note: moon_night_care.png might not exist, using placeholder logic in component or ensure valid path. 
+        // fallback to existing:
+        gallery: ["/overnight_care.png", "/overnight_care_hero.png", "/carer_male_1.png", "/about-care.png"]
     },
     "dementia": {
         title: "Dementia Support",
@@ -103,7 +109,8 @@ Overnight care may be arranged in two common formats:
             "Those living at home who require non-clinical assistance and companionship"
         ],
         color: "bg-purple-100 text-purple-700",
-        accentColor: "#7e22ce" // purple-700
+        accentColor: "#7e22ce", // purple-700
+        gallery: ["/about-care.png", "/dementia_care_hero.png", "/carer_casual_female_1.png", "/professional_carers_team.png"]
     },
     "palliative": {
         title: "Palliative Support",
@@ -125,7 +132,8 @@ Overnight care may be arranged in two common formats:
             "Families seeking extra practical and emotional support alongside existing healthcare provision"
         ],
         color: "bg-rose-100 text-rose-700",
-        accentColor: "#be123c" // rose-700
+        accentColor: "#be123c", // rose-700
+        gallery: ["/palliative_care.png", "/palliative_care_hero.png", "/carer_casual_female_2.png", "/carer_client_home.png"]
     },
     "respite": {
         title: "Respite Care",
@@ -147,6 +155,7 @@ Overnight care may be arranged in two common formats:
             "Planned holidays, short-term absences, or regular scheduled breaks"
         ],
         color: "bg-amber-100 text-amber-700",
-        accentColor: "#b45309" // amber-700
+        accentColor: "#b45309", // amber-700
+        gallery: ["/respite_care.png", "/respite_care_hero.png", "/carer_client_home.png", "/about-team.png"]
     }
 };

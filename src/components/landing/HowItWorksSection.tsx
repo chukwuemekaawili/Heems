@@ -37,7 +37,7 @@ const PhoneScreen = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setScreen((prev) => (prev + 1) % 3);
-    }, 4000); // Change screen every 4 seconds
+    }, 5000); // Change screen every 5 seconds
     return () => clearInterval(timer);
   }, []);
 
@@ -53,7 +53,7 @@ const PhoneScreen = () => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#1a1f2e] rounded-b-2xl z-20" />
 
       {/* Screen Content */}
-      <div className="w-full h-full bg-slate-50 relative pt-12 p-6 flex flex-col">
+      <div className="w-full h-full bg-white relative pt-12 p-6 flex flex-col font-sans">
         <AnimatePresence mode="wait">
           {screen === 0 && (
             <motion.div
@@ -65,16 +65,32 @@ const PhoneScreen = () => {
               transition={{ duration: 0.5 }}
               className="flex flex-col h-full"
             >
-              <div className="flex items-center justify-center mb-8">
-                <div className="w-12 h-12 rounded-xl bg-[#1a9e8c] flex items-center justify-center">
-                  <Sparkles className="text-white w-6 h-6" />
+              <div className="flex-1 flex flex-col justify-center">
+                <div className="flex items-center justify-center mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-[#1a9e8c] flex items-center justify-center shadow-lg">
+                    <Sparkles className="text-white w-6 h-6" />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-xl font-black text-[#111827] text-center mb-6">Create Account</h3>
-              <div className="space-y-3">
-                <div className="h-10 bg-white rounded-lg border border-slate-200" />
-                <div className="h-10 bg-white rounded-lg border border-slate-200" />
-                <div className="h-10 bg-[#111827] rounded-lg mt-4" />
+                <h3 className="text-xl font-black text-[#111827] text-center mb-2">Create Account</h3>
+                <p className="text-xs text-slate-500 text-center mb-8">Join thousands of families finding care.</p>
+
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Full Name</label>
+                    <div className="h-10 bg-slate-50 rounded-lg border border-slate-200 flex items-center px-4 text-sm text-[#111827] font-medium shadow-sm">
+                      Sarah Williams
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Email Address</label>
+                    <div className="h-10 bg-slate-50 rounded-lg border border-slate-200 flex items-center px-4 text-sm text-[#111827] font-medium shadow-sm">
+                      sarah@example.com
+                    </div>
+                  </div>
+                  <div className="h-12 bg-[#111827] rounded-xl mt-6 flex items-center justify-center text-white font-bold text-sm shadow-xl">
+                    Create Account
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
@@ -89,15 +105,33 @@ const PhoneScreen = () => {
               transition={{ duration: 0.5 }}
               className="flex flex-col h-full"
             >
-              <div className="flex items-center justify-center mb-8">
-                <div className="w-12 h-12 rounded-xl bg-[#111827] flex items-center justify-center">
-                  <Lock className="text-white w-6 h-6" />
+              <div className="flex-1 flex flex-col justify-center">
+                <div className="flex items-center justify-center mb-8">
+                  <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100">
+                    <User className="text-slate-400 w-8 h-8" />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-xl font-black text-[#111827] text-center mb-6">Welcome Back</h3>
-              <div className="space-y-3">
-                <div className="h-10 bg-white rounded-lg border border-slate-200" />
-                <div className="h-10 bg-[#1a9e8c] rounded-lg mt-4 shadow-lg shadow-[#1a9e8c]/20" />
+                <h3 className="text-xl font-black text-[#111827] text-center mb-8">Welcome Back</h3>
+
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Email</label>
+                    <div className="h-10 bg-slate-50 rounded-lg border border-slate-200 flex items-center px-4 text-xs text-[#111827]">
+                      sarah@example.com
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Password</label>
+                    <div className="h-10 bg-slate-50 rounded-lg border border-slate-200 flex items-center px-4 text-xs text-[#111827] justify-between">
+                      <span>••••••••</span>
+                      <Lock className="w-3 h-3 text-slate-400" />
+                    </div>
+                  </div>
+
+                  <div className="h-12 bg-[#1a9e8c] rounded-xl mt-6 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-[#1a9e8c]/20">
+                    Sign In
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
@@ -112,38 +146,58 @@ const PhoneScreen = () => {
               transition={{ duration: 0.5 }}
               className="flex flex-col h-full"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 pt-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-slate-200" />
-                  <div className="h-3 w-20 bg-slate-200 rounded" />
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-xs">SW</div>
+                  <div>
+                    <p className="text-xs font-bold text-[#111827]">Hello, Sarah</p>
+                    <p className="text-[10px] text-slate-500">London, UK</p>
+                  </div>
                 </div>
-                <LayoutDashboard className="text-slate-300 w-5 h-5" />
+                <div className="p-2 rounded-full bg-slate-50">
+                  <Search className="text-slate-400 w-4 h-4" />
+                </div>
               </div>
 
-              <h3 className="text-lg font-black text-[#111827] mb-4">Find Care</h3>
+              <h3 className="text-lg font-black text-[#111827] mb-4">Recommended</h3>
 
-              <div className="space-y-3 flex-grow">
+              <div className="space-y-3 flex-grow overflow-hidden">
                 {/* Carer Card 1 */}
-                <div className="p-3 bg-white rounded-xl border border-black/5 flex gap-3 shadow-sm">
-                  <div className="w-10 h-10 rounded-full bg-slate-100" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3 w-24 bg-slate-100 rounded" />
-                    <div className="h-2 w-16 bg-slate-100 rounded" />
+                <div className="p-3 bg-white rounded-2xl border border-black/5 flex gap-3 shadow-md hover:shadow-lg transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 shrink-0 overflow-hidden">
+                    <img src="/carer_female_1.png" alt="Carer" className="w-full h-full object-cover opacity-80" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-bold text-sm text-[#111827]">Maria G.</h4>
+                      <span className="text-[10px] font-bold text-[#1a9e8c] bg-[#1a9e8c]/10 px-1.5 py-0.5 rounded">£25/hr</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 mt-1 truncate">Expert in Dementia Care • 5y Exp</p>
+                    <div className="flex gap-1 mt-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div>
+                      <span className="text-[9px] text-slate-400 font-medium">Available today</span>
+                    </div>
                   </div>
                 </div>
+
                 {/* Carer Card 2 */}
-                <div className="p-3 bg-white rounded-xl border border-black/5 flex gap-3 shadow-sm">
-                  <div className="w-10 h-10 rounded-full bg-slate-100" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3 w-24 bg-slate-100 rounded" />
-                    <div className="h-2 w-16 bg-slate-100 rounded" />
+                <div className="p-3 bg-white rounded-2xl border border-black/5 flex gap-3 shadow-sm opacity-80">
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 shrink-0 overflow-hidden">
+                    <img src="/carer_male_1.png" alt="Carer" className="w-full h-full object-cover opacity-80" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-bold text-sm text-[#111827]">James T.</h4>
+                      <span className="text-[10px] font-bold text-[#1a9e8c] bg-[#1a9e8c]/10 px-1.5 py-0.5 rounded">£28/hr</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 mt-1 truncate">Mobility Support • 8y Exp</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-auto">
-                <div className="h-12 bg-[#1a9e8c] rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-xl shadow-[#1a9e8c]/20">
-                  Connect Now
+              <div className="mt-auto pt-4">
+                <div className="h-12 bg-[#111827] rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-xl">
+                  View All Carers
                 </div>
               </div>
             </motion.div>
