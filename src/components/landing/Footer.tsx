@@ -15,7 +15,7 @@ const footerLinks = {
     { name: "About Us", href: "/about" },
     { name: "Press", href: "/press" },
     { name: "Blog", href: "/blog" },
-    { name: "Contact", href: "/contact" },
+    { name: "Contact Us", href: "/contact" },
   ],
   legal: [
     { name: "Privacy Policy", href: "/privacy" },
@@ -91,7 +91,7 @@ const Footer = () => {
                 <li><Link to="/blog" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Blog</Link></li>
                 <li><Link to="/privacy" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Privacy Policy</Link></li>
                 <li><Link to="/terms" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Terms & Conditions</Link></li>
-                <li><Link to="/contact" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Contact</Link></li>
+                <li><Link to="/contact" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Contact Us</Link></li>
               </ul>
             </div>
             <div>
