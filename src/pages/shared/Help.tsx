@@ -34,7 +34,7 @@ const faqs = [
             },
             {
                 q: "What information do I need to provide?",
-                a: "You'll need to provide basic contact information, the type of care needed, preferred dates and times, and any special requirements or medical notes.",
+                a: "You’ll be asked to provide basic contact details, the type of support you’re looking for, preferred dates and times, and any relevant information needed to help arrange the booking.",
             },
             {
                 q: "How long does it take to get matched with a carer?",
