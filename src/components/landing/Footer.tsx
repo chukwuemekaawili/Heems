@@ -51,15 +51,15 @@ const Footer = () => {
               <p>For carers, it’s independence, dignity, and choice. For everyone, it’s care built on trust.</p>
             </div>
             <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 cursor-pointer transition-all">
+              <Link to="/contact" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 cursor-pointer transition-all">
                 <Mail className="w-4 h-4 text-white/40" />
-              </div>
-              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 cursor-pointer transition-all">
+              </Link>
+              <Link to="/contact" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 cursor-pointer transition-all">
                 <Phone className="w-4 h-4 text-white/40" />
-              </div>
-              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 cursor-pointer transition-all">
+              </Link>
+              <Link to="/contact" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 cursor-pointer transition-all">
                 <MapPin className="w-4 h-4 text-white/40" />
-              </div>
+              </Link>
             </div>
           </div>
 
