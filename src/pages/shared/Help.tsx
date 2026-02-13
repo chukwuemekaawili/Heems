@@ -48,7 +48,7 @@ const faqs = [
         questions: [
             {
                 q: "How do payments work?",
-                a: "Payments are processed securely through Stripe. For clients, the total cost (the carer’s agreed rate plus a clearly displayed platform service fee) is shown before confirming a booking. For carers, payments are released after a booking is completed. During any active promotional free period, no platform fee is deducted. After the promotional period ends, the applicable platform service fee is automatically deducted from completed bookings.",
+                a: "Payments are processed securely through Stripe.\n\nFor clients, the total cost (the carer’s agreed rate plus a clearly displayed platform service fee) is shown before confirming a booking.\n\nFor carers, payments are released after a booking is completed. During any active promotional free period, no platform fee is deducted. After the promotional period ends, the applicable platform service fee is automatically deducted from completed bookings.",
             },
             {
                 q: "What payment methods are accepted?",
@@ -220,7 +220,7 @@ const Help = () => {
                                         <AccordionTrigger className="text-left">
                                             {item.q}
                                         </AccordionTrigger>
-                                        <AccordionContent className="text-muted-foreground">
+                                        <AccordionContent className="text-muted-foreground whitespace-pre-wrap">
                                             {item.a}
                                         </AccordionContent>
                                     </AccordionItem>
