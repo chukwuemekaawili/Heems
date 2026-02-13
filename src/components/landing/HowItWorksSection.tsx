@@ -1,7 +1,9 @@
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Search, UserCheck, Calendar, Heart, Sparkles, User, Lock, LayoutDashboard } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 const steps = [
