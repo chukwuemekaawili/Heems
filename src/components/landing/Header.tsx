@@ -103,7 +103,6 @@ const Header = () => {
     { name: "Find a Carer", href: "/marketplace" },
     { name: "For Carers", href: "/carers" },
     { name: "Types of Care", href: "/types-of-care" },
-    { name: "How It Works", href: "/how-it-works" },
     { name: "About Us", href: "/about" },
     { name: "Blog", href: "/blog" },
     { name: "Pricing", href: "/pricing" },
