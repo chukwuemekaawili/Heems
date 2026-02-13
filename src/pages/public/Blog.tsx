@@ -162,7 +162,7 @@ const Blog = () => {
                                     </Link>
                                 ))}
                             </div>
-                        )}
+                        ) : null}
 
                         {(posts.length > 0 || featured) && (
                             <div className="mt-20 text-center">
