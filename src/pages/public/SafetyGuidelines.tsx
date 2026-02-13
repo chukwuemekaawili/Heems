@@ -107,7 +107,7 @@ const SafetyGuidelines = () => {
                 {/* Reporting Infrastructure */}
                 <section className="py-32">
                     <div className="container mx-auto px-6 text-center">
-                        <h2 className="text-4xl font-black text-[#111827] mb-16">Integrated Safeguarding</h2>
+                        <h2 className="text-4xl font-black text-[#111827] mb-16">Platform safety features</h2>
                         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {[
                                 { icon: ShieldAlert, title: "Panic Button", info: "One-tap emergency alert in-app" },
