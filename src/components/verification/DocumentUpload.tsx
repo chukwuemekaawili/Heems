@@ -245,7 +245,7 @@ export function DocumentUpload({
                     )}
                 </div>
 
-                {(requiresExpiry || (documentType === 'rtw' && rtwType === 'visa')) && (
+                {((requiresExpiry && documentType !== 'rtw') || (documentType === 'rtw' && rtwType === 'visa')) && (
                     <div className="space-y-2">
                         <Label htmlFor={`expiry-${documentType}`}>Expiry Date</Label>
                         <Input
