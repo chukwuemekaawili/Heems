@@ -240,7 +240,7 @@ export default function ClientSearchEnhanced() {
                 <div className="flex items-center gap-3 mb-2">
                     <span className="h-2 w-2 rounded-full bg-[#1a9e8c]" />
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                        Find Care
+                        Find a Carer
                     </span>
                 </div>
                 <h1 className="text-3xl font-black text-[#111827] tracking-tight">Search Carers</h1>

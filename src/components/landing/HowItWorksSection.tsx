@@ -170,7 +170,7 @@ const PhoneScreen = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
                       <h4 className="font-bold text-sm text-[#111827]">Maria G.</h4>
-                      <span className="text-[10px] font-bold text-[#1a9e8c] bg-[#1a9e8c]/10 px-1.5 py-0.5 rounded">£25/hr</span>
+                      <span className="text-[10px] font-bold text-[#1a9e8c] bg-[#1a9e8c]/10 px-1.5 py-0.5 rounded">£18/hr</span>
                     </div>
                     <p className="text-[10px] text-slate-500 mt-1 truncate">Expert in Dementia Care • 5y Exp</p>
                     <div className="flex gap-1 mt-2">

@@ -65,7 +65,7 @@ const PricingEstimator = () => {
                                 <SelectValue placeholder="Select care type" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="visiting">Visiting Care (Avg £25/hr)</SelectItem>
+                                <SelectItem value="visiting">Visiting Care (Avg £18/hr)</SelectItem>
                                 <SelectItem value="live-in">Live-in Care</SelectItem>
                                 <SelectItem value="overnight">Overnight Care</SelectItem>
                             </SelectContent>
@@ -77,10 +77,10 @@ const PricingEstimator = () => {
                         <div className="flex items-center justify-between p-6 rounded-2xl bg-slate-50 border border-black/5">
                             <div className="space-y-1">
                                 <Label className="text-lg font-bold text-[#111827]">
-                                    {liveInType === "full-time" ? "Full-Time (Weekly)" : "Part-Time (Daily)"}
+                                    Daily Rate (Live-in Care)
                                 </Label>
                                 <p className="text-sm font-medium text-slate-500">
-                                    {liveInType === "full-time" ? "£1,200 per week" : "£160 per day"}
+                                    £120 per day
                                 </p>
                             </div>
                             <Switch
