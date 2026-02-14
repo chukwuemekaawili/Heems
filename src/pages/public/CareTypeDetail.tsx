@@ -81,14 +81,11 @@ const CareTypeDetail = () => {
                             {/* Left Column: Heavy Content */}
                             <div className="lg:col-span-7 space-y-16">
 
-                                {/* Intro Text */}
                                 <div>
                                     <h2 className="text-3xl font-black text-[#111827] mb-6">
-                                        Comprehensive Support
+                                        What is {careType.title}?
                                     </h2>
-                                    <div className="prose prose-lg prose-slate text-[#4B5563] font-medium leading-relaxed">
-                                        <p>{careType.content.split('\n\n')[0]}</p>
-                                    </div>
+                                    {/* Removed duplicate intro text - summary already appears in hero */}
                                 </div>
 
                                 {/* 2. Image Strip (Image 2 & 3) */}
@@ -135,6 +132,28 @@ const CareTypeDetail = () => {
                                                 <p className="text-[#111827] font-bold text-sm leading-relaxed pt-2">{benefit}</p>
                                             </div>
                                         ))}
+                                    </div>
+                                </div>
+
+                                {/* Cost Information Section */}
+                                <div className="p-10 rounded-[2.5rem] bg-gradient-to-br from-[#1a9e8c]/5 to-[#111827]/5 border border-[#1a9e8c]/10">
+                                    <div className="flex items-start gap-4 mb-6">
+                                        <div className="w-12 h-12 rounded-2xl bg-[#1a9e8c] flex items-center justify-center shrink-0">
+                                            <svg className="w-6 h-6 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-2xl font-black text-[#111827] mb-2">
+                                                How Much Does it Cost?
+                                            </h3>
+                                            <p className="text-3xl font-black text-[#1a9e8c] mb-4">
+                                                {careType.costRange}
+                                            </p>
+                                            <p className="text-[#4B5563] font-medium leading-relaxed">
+                                                {careType.costDescription}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
 

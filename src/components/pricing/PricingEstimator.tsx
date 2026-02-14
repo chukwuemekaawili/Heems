@@ -17,16 +17,12 @@ const PricingEstimator = () => {
         let unit = "hours";
 
         if (careType === "visiting") {
-            subtotal = 25 * duration;
+            subtotal = 18 * duration;
             unit = "hours";
         } else if (careType === "live-in") {
-            if (liveInType === "full-time") {
-                subtotal = 1200 * duration;
-                unit = "weeks";
-            } else {
-                subtotal = 160 * duration;
-                unit = "days";
-            }
+            // Display daily rate for both types
+            subtotal = 120 * duration;
+            unit = "days";
         } else if (careType === "overnight") {
             const nightlyRate = overnightType === "sleeping" ? 120 : 200;
             subtotal = nightlyRate * duration;
@@ -133,7 +129,7 @@ const PricingEstimator = () => {
                         </div>
                         {careType === "visiting" && (
                             <p className="text-xs font-bold text-[#1a9e8c] mt-2">
-                                Average Rate: £25.00/hr
+                                Average Rate: £18.00/hr
                             </p>
                         )}
                     </div>

@@ -28,6 +28,8 @@ The purpose of visiting care is to help individuals maintain independence, digni
         ],
         color: "bg-blue-100 text-blue-700",
         accentColor: "#1d4ed8", // blue-700
+        costRange: "£15-£40 per hour",
+        costDescription: "Rates vary depending on location, level of support required, and whether care is provided on a regular or occasional basis. Sessions typically range from one hour to several hours per visit.",
         gallery: ["/visiting_care.png", "/visiting_care_hero.png", "/carer_female_1.png", "/carer_client_home.png"]
     },
     "live-in": {
@@ -54,6 +56,8 @@ The purpose of visiting care is to help individuals maintain independence, digni
         ],
         color: "bg-emerald-100 text-emerald-700",
         accentColor: "#047857", // emerald-700
+        costRange: "£800-£1,500 per week",
+        costDescription: "Live-in care rates depend on the level of care needed, location, and whether care is required around the clock. This option typically provides better value than equivalent hourly arrangements.",
         gallery: ["/live_in_care.png", "/live_in_care_hero.png", "/modern_home_care_hero.png", "/carer_female_2.png"]
     },
     "overnight": {
@@ -84,6 +88,8 @@ Overnight care may be arranged in two common formats:
         ],
         color: "bg-indigo-100 text-indigo-700",
         accentColor: "#4338ca", // indigo-700
+        costRange: "£120-£200 per night",
+        costDescription: "The cost of overnight care depends on whether waking night or sleeping night support is required. Rates also vary by location and the complexity of care needs.",
         gallery: ["/overnight_care.png", "/overnight_care_hero.png", "/carer_male_1.png", "/about-care.png"]
     },
     "dementia": {
@@ -107,6 +113,8 @@ Overnight care may be arranged in two common formats:
         ],
         color: "bg-purple-100 text-purple-700",
         accentColor: "#7e22ce", // purple-700
+        costRange: "£18-£42 per hour",
+        costDescription: "Dementia care rates reflect the specialized understanding required. Costs vary by location, the level of support needed, and the structure of care (hourly visits, regular daily support, or live-in arrangements).",
         gallery: ["/about-care.png", "/dementia_care_hero.png", "/carer_casual_female_1.png", "/professional_carers_team.png"]
     },
     "palliative": {
@@ -130,6 +138,8 @@ Overnight care may be arranged in two common formats:
         ],
         color: "bg-rose-100 text-rose-700",
         accentColor: "#be123c", // rose-700
+        costRange: "£20-£45 per hour",
+        costDescription: "Palliative support rates reflect the compassionate, sensitive nature of the role. Costs depend on the hours required, location, and whether care is provided on an occasional or regular basis.",
         gallery: ["/palliative_care.png", "/palliative_care_hero.png", "/carer_casual_female_2.png", "/carer_client_home.png"]
     },
     "respite": {
@@ -153,6 +163,8 @@ Overnight care may be arranged in two common formats:
         ],
         color: "bg-amber-100 text-amber-700",
         accentColor: "#b45309", // amber-700
+        costRange: "£15-£38 per hour",
+        costDescription: "Respite care is typically charged at standard visiting care rates. Actual costs depend on the frequency, duration, and location of support, as well as whether care is arranged as occasional or regularly scheduled visits.",
         gallery: ["/respite_care.png", "/respite_care_hero.png", "/carer_client_home.png", "/about-team.png"]
     }
 };

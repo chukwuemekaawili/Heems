@@ -158,7 +158,7 @@ const TypesOfCare = () => {
                                     <div className="flex items-center gap-4">
                                         <Button asChild className="rounded-xl bg-[#111827] text-white hover:bg-[#1a9e8c] font-bold shadow-lg transition-all" size="sm">
                                             <Link to="/marketplace?type=${type.id}">
-                                                Find Care
+                                                Find a Carer
                                             </Link>
                                         </Button>
                                         <Button asChild variant="link" className="p-0 h-auto font-bold text-[#111827] hover:text-[#1a9e8c] transition-colors">
