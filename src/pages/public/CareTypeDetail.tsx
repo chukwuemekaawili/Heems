@@ -19,6 +19,8 @@ interface CareType {
     color: string;
     accentColor: string;
     gallery?: string[];
+    costRange: string;
+    costDescription: string;
 }
 
 const CareTypeDetail = () => {
@@ -135,6 +137,53 @@ const CareTypeDetail = () => {
                                     </div>
                                 </div>
 
+                                {/* Who Are the Carers? */}
+                                <div>
+                                    <h2 className="text-3xl font-black text-[#111827] mb-6">
+                                        Who Are the Carers?
+                                    </h2>
+                                    <p className="text-[#4B5563] font-medium leading-relaxed mb-6">
+                                        Our carers are experienced professionals who have valid work rights in the UK. They are compassionate, reliable, and dedicated to providing the highest quality of care.
+                                    </p>
+                                    <ul className="space-y-3">
+                                        {[
+                                            "Enhanced DBS Checked",
+                                            "Personally Interviewed",
+                                            "Reference Verified",
+                                            "Skills Assessed"
+                                        ].map((item, i) => (
+                                            <li key={i} className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-[#1a9e8c]" />
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* How to Arrange */}
+                                <div>
+                                    <h2 className="text-3xl font-black text-[#111827] mb-6">
+                                        How to Arrange Care
+                                    </h2>
+                                    <div className="space-y-6">
+                                        {[
+                                            { title: "Search", desc: "Browse profiles of verified carers in your area." },
+                                            { title: "Connect", desc: "Message and interview carers to find the perfect match." },
+                                            { title: "Book", desc: "Securely book and pay for care through our platform." }
+                                        ].map((step, i) => (
+                                            <div key={i} className="flex gap-4">
+                                                <div className="w-8 h-8 rounded-full bg-[#1a9e8c]/10 text-[#1a9e8c] flex items-center justify-center font-bold text-sm shrink-0">
+                                                    {i + 1}
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-bold text-[#111827]">{step.title}</h4>
+                                                    <p className="text-sm text-slate-500">{step.desc}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 {/* Cost Information Section */}
                                 <div className="p-10 rounded-[2.5rem] bg-gradient-to-br from-[#1a9e8c]/5 to-[#111827]/5 border border-[#1a9e8c]/10">
                                     <div className="flex items-start gap-4 mb-6">
@@ -234,7 +283,7 @@ const CareTypeDetail = () => {
                 </section>
             </main>
             <Footer />
-        </div>
+        </div >
     );
 };
 

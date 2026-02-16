@@ -70,7 +70,7 @@ const faqs = [
             },
             {
                 q: "Can I reschedule an appointment?",
-                a: "Yes, you can reschedule by cancelling the current booking and creating a new one, or by contacting the carer directly through our messaging system.",
+                a: "Yes. You can request a reschedule by messaging the carer through the platform, subject to their availability. Please note that requests made within 48 hours of the scheduled appointment may be treated as a cancellation and handled in line with the agreed cancellation terms.",
             },
             {
                 q: "What if my carer doesn't show up?",
@@ -275,9 +275,11 @@ const Help = () => {
                     <p className="text-muted-foreground mb-4">
                         Our support team is available 9am - 5pm to assist you
                     </p>
-                    <Button>
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Contact Support
+                    <Button asChild>
+                        <Link to="/contact">
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            Contact Support
+                        </Link>
                     </Button>
                 </CardContent>
             </Card>

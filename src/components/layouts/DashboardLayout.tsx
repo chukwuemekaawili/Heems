@@ -37,6 +37,7 @@ import {
   Building2,
   UserCheck,
   CreditCard,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Header from "@/components/landing/Header";
@@ -79,6 +80,7 @@ const getDefaultNavItems = (role: string): NavItem[] => {
         { name: "Bookings", href: "/carer/bookings", icon: Clock },
         { name: "Earnings", href: "/carer/earnings", icon: PoundSterling },
         { name: "Documents", href: "/carer/documents", icon: FileText },
+        { name: "Heems Academy", href: "/carer/academy", icon: GraduationCap },
         { name: "Messages", href: "/carer/messages", icon: MessageSquare },
         { name: "Profile", href: "/carer/profile", icon: User },
       ];

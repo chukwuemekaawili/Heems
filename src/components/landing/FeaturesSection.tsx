@@ -67,7 +67,7 @@ const FeaturesSection = () => {
           <div className="relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src="/carer_client_home.png"
+                src="/carer_black_female_1.png"
                 alt="Professional carer providing compassionate care"
                 className="w-full h-[400px] object-cover"
               />

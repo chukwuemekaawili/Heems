@@ -578,7 +578,7 @@ const CarerDashboard = () => {
               </p>
               <ul className="space-y-2">
                 {[
-                  "Set your own rates — earn £15-40/hour",
+                  "Set your own rates — earn £15-35/hour",
                   "Complete flexibility — work when you want",
                   "Meaningful work with ongoing clients"
                 ].map((benefit, i) => (

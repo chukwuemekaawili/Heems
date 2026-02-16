@@ -20,12 +20,13 @@ const PageLoader = () => null;
 // ============================================
 import Index from "./pages/Index";
 import PrivacyPolicy from "./pages/public/PrivacyPolicy";
+import Safeguarding from "./pages/public/Safeguarding";
+import Equality from "./pages/public/Equality";
 import Marketplace from "./pages/Marketplace";
 import ForCarers from "./pages/ForCarers";
 
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
-import HowItWorks from "./pages/public/HowItWorks";
 import TypesOfCare from "./pages/public/TypesOfCare";
 import About from "./pages/public/About";
 import CareTypeDetail from "./pages/public/CareTypeDetail";
@@ -33,13 +34,13 @@ import Solutions from "./pages/Solutions";
 import Contact from "./pages/public/Contact";
 
 import Security from "./pages/public/Security";
-import Privacy from "./pages/public/Privacy";
 import Terms from "./pages/public/Terms";
 import UserGuide from "./pages/public/UserGuide";
 import SafetyGuidelines from "./pages/public/SafetyGuidelines";
 import Blog from "./pages/public/Blog";
 import BlogPost from "./pages/public/BlogPost";
 import Cookies from "./pages/public/Cookies";
+import Complaints from "./pages/public/Complaints";
 
 // AUTH PAGES - Eagerly loaded for fast login experience
 import Login from "./pages/auth/Login";
@@ -115,6 +116,7 @@ const EarningsEnhanced = lazy(() => import("./pages/carer/EarningsEnhanced"));
 const CarerDocuments = lazy(() => import("./pages/carer/DocumentsNew")); // Renamed to use Enhanced Documents
 const DocumentsNew = lazy(() => import("./pages/carer/DocumentsNew"));
 const CarerProfile = lazy(() => import("./pages/carer/Profile"));
+const HeemsAcademy = lazy(() => import("./pages/carer/HeemsAcademy"));
 
 // Organisation Pages
 const OrganisationDashboard = lazy(() => import("./pages/organisation/Dashboard"));
@@ -179,7 +181,6 @@ const App = () => (
               <Route path="/pricing" element={<Pricing />} />
 
               {/* New Public Pages */}
-              <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/about" element={<About />} />
               <Route path="/types-of-care" element={<TypesOfCare />} />
               <Route path="/types-of-care/:typeId" element={<CareTypeDetail />} />
@@ -188,13 +189,14 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
 
               <Route path="/security" element={<Security />} />
-              <Route path="/privacy" element={<Privacy />} />
+
               <Route path="/terms" element={<Terms />} />
               <Route path="/user-guide" element={<UserGuide />} />
               <Route path="/safety-guidelines" element={<SafetyGuidelines />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogPost />} />
               <Route path="/cookies" element={<Cookies />} />
+              <Route path="/complaints" element={<Complaints />} />
 
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />
@@ -235,6 +237,7 @@ const App = () => (
                 </RoleGuard>
               }>
                 <Route path="/carer/dashboard" element={<CarerDashboard />} />
+                <Route path="/carer/academy" element={<HeemsAcademy />} />
                 <Route path="/carer/availability" element={<CarerAvailability />} />
                 <Route path="/carer/bookings" element={<CarerBookings />} />
                 <Route path="/carer/earnings" element={<CarerEarnings />} />

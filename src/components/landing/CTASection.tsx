@@ -69,13 +69,7 @@ const CTASection = () => {
               </Button>
             </div>
 
-            {/* Stats Row */}
-            <div className="flex justify-center mt-16 pt-12 border-t border-white/10">
-              <div>
-                <p className="text-3xl font-black text-white mb-1">400+</p>
-                <p className="text-xs font-bold text-white/50 uppercase tracking-widest">Carers</p>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

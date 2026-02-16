@@ -28,9 +28,9 @@ The purpose of visiting care is to help individuals maintain independence, digni
         ],
         color: "bg-blue-100 text-blue-700",
         accentColor: "#1d4ed8", // blue-700
-        costRange: "£15-£25 per hour",
+        costRange: "£15-£35 per hour",
         costDescription: "Rates vary depending on location, level of support required, and whether care is provided on a regular or occasional basis. Visiting care is a flexible option, with sessions typically ranging from one hour to several hours per visit.",
-        gallery: ["/visiting_care.png", "/visiting_care_hero.png", "/carer_female_1.png", "/carer_client_home.png"]
+        gallery: ["/visiting_care.png", "/visiting_care_hero.png", "/carer_black_female_1.png", "/carer_client_home.png"]
     },
     "live-in": {
         title: "Live-in Care",
@@ -56,9 +56,9 @@ The purpose of visiting care is to help individuals maintain independence, digni
         ],
         color: "bg-emerald-100 text-emerald-700",
         accentColor: "#047857", // emerald-700
-        costRange: "£100-£180 per day",
+        costRange: "£900 - £1,500 per week",
         costDescription: "Live-in care provides 24/7 support and is typically charged at a daily rate. Costs depend on the complexity of support required, location, and whether care is needed for one person or a couple.",
-        gallery: ["/live_in_care.png", "/live_in_care_hero.png", "/modern_home_care_hero.png", "/carer_female_2.png"]
+        gallery: ["/live_in_care.png", "/live_in_care_hero.png", "/modern_home_care_hero.png", "/carer_black_male_1.png"]
     },
     "overnight": {
         title: "Overnight Care",
@@ -88,9 +88,9 @@ Overnight care may be arranged in two common formats:
         ],
         color: "bg-indigo-100 text-indigo-700",
         accentColor: "#4338ca", // indigo-700
-        costRange: "£120-£200 per night",
+        costRange: "£90 - £230 per night",
         costDescription: "The cost of overnight care depends on whether waking night or sleeping night support is required. Rates also vary by location and the complexity of care needs.",
-        gallery: ["/overnight_care.png", "/overnight_care_hero.png", "/carer_male_1.png", "/about-care.png"]
+        gallery: ["/overnight_care.png", "/overnight_care_hero.png", "/carer_black_male_1.png", "/about-care.png"]
     },
     "dementia": {
         title: "Dementia Support",
@@ -115,7 +115,7 @@ Overnight care may be arranged in two common formats:
         accentColor: "#7e22ce", // purple-700
         costRange: "£18-£30 per hour",
         costDescription: "Dementia care rates reflect the specialized understanding required. Costs vary by location, the level of support needed, and the structure of care (hourly visits, regular daily support, or live-in arrangements).",
-        gallery: ["/about-care.png", "/dementia_care_hero.png", "/carer_casual_female_1.png", "/professional_carers_team.png"]
+        gallery: ["/about-care.png", "/dementia_care_hero.png", "/carer_casual_female_1.png", "/carer_black_female_1.png"]
     },
     "palliative": {
         title: "Palliative Support",

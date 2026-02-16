@@ -62,11 +62,12 @@ const UserGuide = () => {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <Button asChild variant="ghost" className="p-0 hover:bg-transparent text-[#111827] hover:text-[#1a9e8c] font-black group">
-                                            <a href="#faq-section">
-                                                READ CHAPTER <ChevronRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                                            </a>
+                                        <Button variant="link" className="p-0 text-[#1a9e8c] font-bold group-hover:translate-x-2 transition-transform" asChild>
+                                            <Link to={i === 0 ? "/signup" : i === 1 ? "/marketplace" : "/client/bookings"}>
+                                                {i === 0 ? "GET STARTED" : i === 1 ? "FIND CARERS" : "GO TO DASHBOARD"} <ChevronRight className="w-4 h-4 ml-1" />
+                                            </Link>
                                         </Button>
+
                                     </CardContent>
                                 </Card>
                             ))}
@@ -80,7 +81,11 @@ const UserGuide = () => {
                         <div className="grid lg:grid-cols-2 gap-24 items-center">
                             <div>
                                 <h2 className="text-4xl font-black mb-8 leading-tight">Watch: A Day in the Life with Heems</h2>
-                                <p className="text-white/60 text-lg font-medium mb-10 leading-relaxed">See how Heems simplifies management for both families and carers. Our platform handles the details so you can handle the care.</p>
+                                <p className="text-white/60 text-lg font-medium mb-10 leading-relaxed">
+                                    Discover how Heems brings clarity, structure, and calm to arranging care — supporting both families and independent carers every step of the way.
+                                    <br /><br />
+                                    "We take care of the coordination, so you can focus on what truly matters: delivering and receiving care with confidence."
+                                </p>
                                 <div className="space-y-6">
                                     <div className="flex gap-6 p-6 rounded-3xl bg-white/5 border border-white/10">
                                         <div className="h-12 w-12 rounded-2xl bg-[#1a9e8c] flex items-center justify-center shrink-0">
@@ -112,7 +117,7 @@ const UserGuide = () => {
                 </section>
 
                 {/* FAQ Style guide */}
-                <section className="py-32">
+                <section className="py-32" id="faq-section">
                     <div className="container mx-auto px-6 max-w-4xl">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl font-black text-[#111827] mb-4">Common Scenarios</h2>

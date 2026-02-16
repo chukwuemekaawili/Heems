@@ -3,13 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Calculator, Zap } from "lucide-react";
 
 const PricingEstimator = () => {
     const [careType, setCareType] = useState("visiting");
-    const [overnightType, setOvernightType] = useState("sleeping"); // sleeping | waking
-    const [liveInType, setLiveInType] = useState("full-time"); // full-time | part-time
+    const [overnightType, setOvernightType] = useState<"sleeping" | "waking">("sleeping");
+    const [liveInType, setLiveInType] = useState<"full-time" | "part-time">("full-time");
     const [duration, setDuration] = useState(1);
 
     const calculateCosts = () => {
@@ -20,9 +19,13 @@ const PricingEstimator = () => {
             subtotal = 18 * duration;
             unit = "hours";
         } else if (careType === "live-in") {
-            // Display daily rate for both types
-            subtotal = 120 * duration;
-            unit = "days";
+            if (liveInType === "full-time") {
+                subtotal = 1120 * duration;
+                unit = "weeks";
+            } else {
+                subtotal = 160 * duration;
+                unit = "days";
+            }
         } else if (careType === "overnight") {
             const nightlyRate = overnightType === "sleeping" ? 120 : 200;
             subtotal = nightlyRate * duration;
@@ -32,7 +35,10 @@ const PricingEstimator = () => {
         const serviceFee = subtotal * 0.10;
         const total = subtotal + serviceFee;
 
-        return { subtotal, serviceFee, total, unit };
+        // Ensure duration label is singular if 1
+        const durationLabel = duration === 1 ? unit.slice(0, -1) : unit;
+
+        return { subtotal, serviceFee, total, unit: durationLabel };
     };
 
     const { subtotal, serviceFee, total, unit } = calculateCosts();
@@ -52,7 +58,7 @@ const PricingEstimator = () => {
             </CardHeader>
             <CardContent className="p-10 lg:p-12 space-y-8">
                 <div className="grid gap-8">
-                    {/* Care Type */}
+                    {/* Care Type Selection */}
                     <div className="space-y-3">
                         <Label className="text-sm font-bold uppercase tracking-wider text-slate-500">Select Care Type</Label>
                         <Select value={careType} onValueChange={(val) => {
@@ -72,48 +78,104 @@ const PricingEstimator = () => {
                         </Select>
                     </div>
 
-                    {/* Sub-Option for Live-in */}
+                    {/* Live-in Care Options */}
                     {careType === "live-in" && (
-                        <div className="flex items-center justify-between p-6 rounded-2xl bg-slate-50 border border-black/5">
-                            <div className="space-y-1">
-                                <Label className="text-lg font-bold text-[#111827]">
-                                    Daily Rate (Live-in Care)
-                                </Label>
-                                <p className="text-sm font-medium text-slate-500">
-                                    £120 per day
-                                </p>
+                        <div className="grid sm:grid-cols-2 gap-4 animate-fade-in">
+                            <div
+                                onClick={() => setLiveInType("full-time")}
+                                className={`cursor-pointer p-6 rounded-2xl border-2 transition-all duration-200 ${liveInType === "full-time"
+                                    ? "border-[#1a9e8c] bg-[#1a9e8c]/5 ring-2 ring-[#1a9e8c]/20"
+                                    : "border-black/5 bg-slate-50 hover:border-[#1a9e8c]/30"
+                                    }`}
+                            >
+                                <div className="space-y-1">
+                                    <Label className={`text-lg font-bold cursor-pointer ${liveInType === "full-time" ? "text-[#1a9e8c]" : "text-[#111827]"}`}>
+                                        Full-Time / Ongoing
+                                    </Label>
+                                    <p className="text-sm font-medium text-slate-500">
+                                        £1,120 per week
+                                    </p>
+                                    <p className="text-xs text-slate-400 mt-2">
+                                        Best for consistent, long-term 24/7 support.
+                                    </p>
+                                </div>
                             </div>
-                            <Switch
-                                checked={liveInType === "part-time"}
-                                onCheckedChange={(checked) => setLiveInType(checked ? "part-time" : "full-time")}
-                                className="data-[state=checked]:bg-[#1a9e8c]"
-                            />
+
+                            <div
+                                onClick={() => setLiveInType("part-time")}
+                                className={`cursor-pointer p-6 rounded-2xl border-2 transition-all duration-200 ${liveInType === "part-time"
+                                    ? "border-[#1a9e8c] bg-[#1a9e8c]/5 ring-2 ring-[#1a9e8c]/20"
+                                    : "border-black/5 bg-slate-50 hover:border-[#1a9e8c]/30"
+                                    }`}
+                            >
+                                <div className="space-y-1">
+                                    <Label className={`text-lg font-bold cursor-pointer ${liveInType === "part-time" ? "text-[#1a9e8c]" : "text-[#111827]"}`}>
+                                        Short-Term / Respite
+                                    </Label>
+                                    <p className="text-sm font-medium text-slate-500">
+                                        £160 per day
+                                    </p>
+                                    <p className="text-xs text-slate-400 mt-2">
+                                        Flexible daily support for covering breaks.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     )}
 
-                    {/* Sub-Option for Overnight */}
+                    {/* Overnight Care Options */}
                     {careType === "overnight" && (
-                        <div className="flex items-center justify-between p-6 rounded-2xl bg-slate-50 border border-black/5">
-                            <div className="space-y-1">
-                                <Label className="text-lg font-bold text-[#111827]">
-                                    {overnightType === "sleeping" ? "Sleeping Night" : "Waking Night"}
-                                </Label>
-                                <p className="text-sm font-medium text-slate-500">
-                                    {overnightType === "sleeping" ? "£120 per night (Restful support)" : "£200 per night (Active support)"}
-                                </p>
+                        <div className="grid sm:grid-cols-2 gap-4 animate-fade-in">
+                            <div
+                                onClick={() => setOvernightType("sleeping")}
+                                className={`cursor-pointer p-6 rounded-2xl border-2 transition-all duration-200 ${overnightType === "sleeping"
+                                    ? "border-[#1a9e8c] bg-[#1a9e8c]/5 ring-2 ring-[#1a9e8c]/20"
+                                    : "border-black/5 bg-slate-50 hover:border-[#1a9e8c]/30"
+                                    }`}
+                            >
+                                <div className="space-y-1">
+                                    <Label className={`text-lg font-bold cursor-pointer ${overnightType === "sleeping" ? "text-[#1a9e8c]" : "text-[#111827]"}`}>
+                                        Sleeping Night
+                                    </Label>
+                                    <p className="text-sm font-medium text-slate-500">
+                                        £120 per night
+                                    </p>
+                                    <p className="text-xs text-slate-400 mt-2">
+                                        Carer sleeps but is available for occasional support.
+                                    </p>
+                                </div>
                             </div>
-                            <Switch
-                                checked={overnightType === "waking"}
-                                onCheckedChange={(checked) => setOvernightType(checked ? "waking" : "sleeping")}
-                                className="data-[state=checked]:bg-[#1a9e8c]"
-                            />
+
+                            <div
+                                onClick={() => setOvernightType("waking")}
+                                className={`cursor-pointer p-6 rounded-2xl border-2 transition-all duration-200 ${overnightType === "waking"
+                                    ? "border-[#1a9e8c] bg-[#1a9e8c]/5 ring-2 ring-[#1a9e8c]/20"
+                                    : "border-black/5 bg-slate-50 hover:border-[#1a9e8c]/30"
+                                    }`}
+                            >
+                                <div className="space-y-1">
+                                    <Label className={`text-lg font-bold cursor-pointer ${overnightType === "waking" ? "text-[#1a9e8c]" : "text-[#111827]"}`}>
+                                        Waking Night
+                                    </Label>
+                                    <p className="text-sm font-medium text-slate-500">
+                                        £200 per night
+                                    </p>
+                                    <p className="text-xs text-slate-400 mt-2">
+                                        Carer stays awake for continuous supervision.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     )}
 
-                    {/* Duration */}
+                    {/* Duration Input */}
                     <div className="space-y-3">
                         <Label className="text-sm font-bold uppercase tracking-wider text-slate-500">
-                            Duration ({unit.charAt(0).toUpperCase() + unit.slice(1)})
+                            Duration ({
+                                careType === 'live-in' && liveInType === 'full-time' ? 'Weeks' :
+                                    careType === 'live-in' && liveInType === 'part-time' ? 'Days' :
+                                        careType === 'overnight' ? 'Nights' : 'Hours'
+                            })
                         </Label>
                         <div className="relative">
                             <Input
@@ -124,7 +186,10 @@ const PricingEstimator = () => {
                                 className="h-14 rounded-2xl border-black/5 bg-slate-50 text-lg font-bold pl-6"
                             />
                             <span className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold uppercase text-xs tracking-widest">
-                                {unit}
+                                {careType === 'live-in' && liveInType === 'full-time' ? (duration === 1 ? 'Week' : 'Weeks') :
+                                    careType === 'live-in' && liveInType === 'part-time' ? (duration === 1 ? 'Day' : 'Days') :
+                                        careType === 'overnight' ? (duration === 1 ? 'Night' : 'Nights') :
+                                            (duration === 1 ? 'Hour' : 'Hours')}
                             </span>
                         </div>
                         {careType === "visiting" && (

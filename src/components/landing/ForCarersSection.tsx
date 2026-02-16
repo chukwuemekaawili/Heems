@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2, Star, Clock, Shield, TrendingUp, Heart } from
 import { Link } from "react-router-dom";
 
 const carerBenefits = [
-  { icon: TrendingUp, text: "Set your own rates — earn £15-40/hour" },
+  { icon: TrendingUp, text: "Set your own rates — earn £15-35/hour" },
   { icon: Clock, text: "Complete flexibility — work when you want" },
 
   { icon: Heart, text: "Meaningful work with ongoing clients" },

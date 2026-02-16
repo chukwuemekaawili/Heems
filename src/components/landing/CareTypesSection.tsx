@@ -8,19 +8,19 @@ const CareTypesSection: FC = () => {
             title: "Visiting care.",
             description:
                 "Flexible visits for support as you need it—perfect for daily routines such as meals preparation, walks, household tasks, or companionship. Visits may be arranged regularly or as one-off support.",
-            image: "/visiting_care.png",
+            image: "/carer_black_female_1.png",
         },
         {
             title: "Overnight care.",
             description:
                 "A carer remains present during the night to provide reassurance and assistance with routine, such as medication prompting, safe bathroom visits, and responding to overnight needs, helping to maintain comfort and peace of mind.",
-            image: "/overnight_care.png",
+            image: "/carer_client_home.png",
         },
         {
             title: "Live-in care.",
             description:
                 "Comprehensive, round-the-clock support with a dedicated carer living at home. Ensures continuity, companionship, and personalised care tailored to your needs.",
-            image: "/live_in_care.png",
+            image: "/carer_black_male_1.png",
         },
     ];
 
