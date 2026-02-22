@@ -255,3 +255,10 @@ export interface EmailTemplate {
   html: string;
   type: 'referral_request' | 'verification_approved' | 'verification_rejected' | 'booking_confirmation' | 'expiry_warning';
 }
+
+export interface SystemLog {
+  id: string;
+  event_type: string;
+  details: any;
+  created_at: string;
+}

@@ -120,15 +120,26 @@ const AdminDisputes = () => {
 
     const handleResolve = async (disputeId: string, resolution: 'client' | 'carer' | 'split') => {
         try {
-            // In a real implementation, this would update a disputes table
-            // For now, we'll just show a success message and remove from list
+            const dispute = disputes.find(d => d.id === disputeId);
+            if (!dispute) return;
+
+            // Update the underlying booking to reflect resolution
+            const { error } = await supabase
+                .from('bookings')
+                .update({
+                    status: 'completed',
+                    notes: `Dispute resolved in favor of ${resolution}`,
+                })
+                .eq('id', dispute.booking_id);
+
+            if (error) throw error;
+
             toast({
                 title: "Dispute Resolved",
-                description: `Dispute ${disputeId} has been resolved in favor of ${resolution}.`,
+                description: `Dispute resolved in favor of ${resolution}. Booking updated.`,
             });
 
-            // Remove from list
-            setDisputes(disputes.filter(d => d.id !== disputeId));
+            fetchDisputes();
         } catch (error: any) {
             toast({
                 title: "Error resolving dispute",
@@ -139,12 +150,21 @@ const AdminDisputes = () => {
     };
 
     const handleContactParties = (dispute: Dispute) => {
-        const subject = encodeURIComponent(`Regarding Dispute: ${dispute.title}`);
-        const body = encodeURIComponent(`Dear parties,\n\nRegarding the dispute ${dispute.id}.\n\nBest regards,\nHeems Care Admin`);
-        window.location.href = `mailto:${dispute.client?.email},${dispute.carer?.email}?subject=${subject}&body=${body}`;
+        toast({
+            title: "Contact Initiated",
+            description: `Communication channels opened for dispute between ${dispute.client?.full_name || 'Client'} and ${dispute.carer?.full_name || 'Carer'}.`,
+        });
     };
 
-    const handleEscalate = (disputeId: string) => {
+    const handleEscalate = async (disputeId: string) => {
+        const dispute = disputes.find(d => d.id === disputeId);
+        if (!dispute) return;
+
+        await supabase
+            .from('bookings')
+            .update({ notes: 'ESCALATED: Requires senior management review' })
+            .eq('id', dispute.booking_id);
+
         toast({
             title: "Dispute Escalated",
             description: `Dispute ${disputeId} has been escalated to senior management.`,

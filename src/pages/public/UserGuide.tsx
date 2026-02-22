@@ -7,6 +7,7 @@ import { Search, Play, Book, Lightbulb, CheckCircle2, ChevronRight } from "lucid
 import { ChatWidget } from "@/components/shared/ChatWidget";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Link } from "react-router-dom";
 
 const UserGuide = () => {
     return (

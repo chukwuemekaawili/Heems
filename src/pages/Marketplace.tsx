@@ -7,9 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Star, ShieldCheck, Clock, MapPin, BadgeCheck, FileCheck, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Search, Filter, Star, ShieldCheck, Clock, MapPin, BadgeCheck, FileCheck, ChevronLeft, ChevronRight, Loader2, PoundSterling } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+
+const AVAILABILITY_OPTIONS = [
+    { value: "weekdays", label: "Weekdays" },
+    { value: "weekends", label: "Weekends" },
+    { value: "evenings", label: "Evenings" },
+    { value: "nights", label: "Night Shifts" },
+    { value: "live-in", label: "Live-in" },
+];
 
 interface Carer {
     id: string;
@@ -22,6 +31,8 @@ interface Carer {
         verification_status: string;
         specializations: string[];
         experience_years: string;
+        postcode?: string;
+        availability?: string[];
     } | null;
 }
 
@@ -43,8 +54,10 @@ const Marketplace = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [postcode, setPostcode] = useState("");
-    const [verifiedOnly, setVerifiedOnly] = useState(false);
+    const [verifiedOnly, setVerifiedOnly] = useState(true);
     const [selectedSpecialization, setSelectedSpecialization] = useState<string>("all");
+    const [selectedAvailability, setSelectedAvailability] = useState<string>("all");
+    const [minRate, setMinRate] = useState<number[]>([15]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const [filtersApplied, setFiltersApplied] = useState(false);
@@ -65,12 +78,14 @@ const Marketplace = () => {
                     full_name,
                     avatar_url,
                     verified,
-                    carer_details!inner(
+                    carer_details(
                         bio,
                         hourly_rate,
                         verification_status,
                         specializations,
-                        experience_years
+                        experience_years,
+                        postcode,
+                        availability
                     )
                 `, { count: 'exact' })
                 .eq('role', 'carer');
@@ -95,7 +110,7 @@ const Marketplace = () => {
                 carer_details: Array.isArray(carer.carer_details) ? carer.carer_details[0] : carer.carer_details
             }));
 
-            // Client-side filtering for search and specialization (since these need text matching)
+            // Client-side filtering for search, specialization, postcode, rate, and availability
             if (searchQuery) {
                 formattedData = formattedData.filter(carer =>
                     carer.full_name?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -105,6 +120,32 @@ const Marketplace = () => {
             if (selectedSpecialization && selectedSpecialization !== "all") {
                 formattedData = formattedData.filter(carer =>
                     carer.carer_details?.specializations?.includes(selectedSpecialization)
+                );
+            }
+
+            // Postcode proximity matching (prefix-based: compare first 2-4 chars)
+            if (postcode) {
+                const cleanPostcode = postcode.replace(/\s/g, '').toUpperCase();
+                const prefix = cleanPostcode.slice(0, Math.min(4, cleanPostcode.length));
+                formattedData = formattedData.filter(carer => {
+                    const carerPostcode = carer.carer_details?.postcode?.replace(/\s/g, '').toUpperCase() || '';
+                    return carerPostcode.startsWith(prefix.slice(0, 2)) || carerPostcode.startsWith(prefix);
+                });
+            }
+
+            // Minimum rate filter
+            if (minRate[0] > 15) {
+                formattedData = formattedData.filter(carer =>
+                    (carer.carer_details?.hourly_rate || 0) >= minRate[0]
+                );
+            }
+
+            // Availability filter
+            if (selectedAvailability && selectedAvailability !== "all") {
+                formattedData = formattedData.filter(carer =>
+                    carer.carer_details?.availability?.some(a =>
+                        a.toLowerCase().includes(selectedAvailability.toLowerCase())
+                    )
                 );
             }
 
@@ -125,8 +166,10 @@ const Marketplace = () => {
     const handleClearFilters = () => {
         setSearchQuery("");
         setPostcode("");
-        setVerifiedOnly(false);
+        setVerifiedOnly(true);
         setSelectedSpecialization("all");
+        setSelectedAvailability("all");
+        setMinRate([15]);
         setCurrentPage(1);
         setFiltersApplied(!filtersApplied);
     };
@@ -194,6 +237,34 @@ const Marketplace = () => {
                                     <SelectItem value="all">All Specializations</SelectItem>
                                     {SPECIALIZATION_OPTIONS.map(spec => (
                                         <SelectItem key={spec} value={spec}>{spec}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        {/* Extended Filters Row */}
+                        <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <PoundSterling className="w-4 h-4 text-slate-400" />
+                                    <span className="text-xs font-bold text-slate-500">Min Rate: £{minRate[0]}/hr</span>
+                                </div>
+                                <Slider
+                                    value={minRate}
+                                    onValueChange={setMinRate}
+                                    min={15}
+                                    max={50}
+                                    step={1}
+                                    className="w-full"
+                                />
+                            </div>
+                            <Select value={selectedAvailability} onValueChange={setSelectedAvailability}>
+                                <SelectTrigger className="lg:w-56 h-14 bg-slate-50 border-black/5 rounded-2xl font-semibold">
+                                    <SelectValue placeholder="Availability" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Availability</SelectItem>
+                                    {AVAILABILITY_OPTIONS.map(opt => (
+                                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -370,8 +441,8 @@ const Marketplace = () => {
                                                 variant={currentPage === pageNum ? "default" : "outline"}
                                                 onClick={() => goToPage(pageNum)}
                                                 className={`h-12 w-12 rounded-xl font-bold ${currentPage === pageNum
-                                                        ? "bg-[#111827] text-white"
-                                                        : ""
+                                                    ? "bg-[#111827] text-white"
+                                                    : ""
                                                     }`}
                                             >
                                                 {pageNum}

@@ -15,6 +15,8 @@ export interface Message {
     file_url?: string | null;
     file_name?: string | null;
     file_type?: string | null;
+    message_type: 'text' | 'proposal' | 'system' | 'image' | 'file';
+    metadata: any;
     created_at: string;
     sender?: {
         full_name: string;
@@ -234,7 +236,13 @@ export function useMessaging(conversationId?: string) {
     }, [toast]);
 
     // Send a message with compliance checking
-    const sendMessage = useCallback(async (receiverId: string, content: string, fileData?: { url: string, name: string, type: string }) => {
+    const sendMessage = useCallback(async (
+        receiverId: string,
+        content: string,
+        fileData?: { url: string, name: string, type: string },
+        messageType: 'text' | 'proposal' | 'system' = 'text',
+        metadata: any = {}
+    ) => {
         try {
             setSending(true);
             const { data: { user } } = await supabase.auth.getUser();
@@ -244,7 +252,7 @@ export function useMessaging(conversationId?: string) {
             let complianceCheck = { passed: true, detectedKeywords: [] as string[] };
             let sanitizedContent = content;
 
-            if (content) {
+            if (content && messageType === 'text') {
                 complianceCheck = checkMessageCompliance(content);
                 if (!complianceCheck.passed) {
                     toast({
@@ -262,14 +270,16 @@ export function useMessaging(conversationId?: string) {
                 .insert({
                     sender_id: user.id,
                     receiver_id: receiverId,
-                    content: sanitizedContent || (fileData ? `Sent a file: ${fileData.name}` : ''),
+                    content: sanitizedContent || (fileData ? `Sent a file: ${fileData.name}` : '') || (messageType === 'proposal' ? 'Sent a booking offer' : ''),
                     is_flagged: !complianceCheck.passed,
                     flagged_keywords: complianceCheck.detectedKeywords.length > 0
                         ? complianceCheck.detectedKeywords
                         : null,
                     file_url: fileData?.url,
                     file_name: fileData?.name,
-                    file_type: fileData?.type
+                    file_type: fileData?.type,
+                    message_type: messageType,
+                    metadata: metadata
                 })
                 .select(`
           *,
@@ -299,6 +309,30 @@ export function useMessaging(conversationId?: string) {
             setSending(false);
         }
     }, [toast, fetchConversations]);
+
+    const updateMessageStatus = useCallback(async (messageId: string, newMetadata: any) => {
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .update({ metadata: newMetadata })
+                .eq('id', messageId);
+
+            if (error) throw error;
+
+            // Update local state
+            setMessages(prev => prev.map(msg =>
+                msg.id === messageId ? { ...msg, metadata: newMetadata } : msg
+            ));
+
+        } catch (error: any) {
+            console.error('Error updating message:', error);
+            toast({
+                title: 'Update Failed',
+                description: 'Could not update offer status',
+                variant: 'destructive'
+            });
+        }
+    }, [toast]);
 
     // Mark messages as read
     const uploadAttachment = useCallback(async (file: File) => {
@@ -410,6 +444,31 @@ export function useMessaging(conversationId?: string) {
                         });
                     }
                 )
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'messages',
+                        // We want updates for both sender and receiver to see status changes
+                        filter: `sender_id=eq.${user.id}`,
+                    },
+                    (payload) => {
+                        setMessages(prev => prev.map(m => m.id === payload.new.id ? { ...m, ...payload.new } : m));
+                    }
+                )
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'messages',
+                        filter: `receiver_id=eq.${user.id}`,
+                    },
+                    (payload) => {
+                        setMessages(prev => prev.map(m => m.id === payload.new.id ? { ...m, ...payload.new } : m));
+                    }
+                )
                 .subscribe();
         };
 
@@ -434,6 +493,7 @@ export function useMessaging(conversationId?: string) {
         sending,
         unreadCount,
         sendMessage,
+        updateMessageStatus,
         fetchMessages,
         markAsRead,
         uploadAttachment,

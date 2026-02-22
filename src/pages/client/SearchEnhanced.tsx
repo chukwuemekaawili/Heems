@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +29,7 @@ import {
 import { formatCurrency, MINIMUM_HOURLY_RATE } from '@/lib/fees';
 import { getVerificationBadge } from '@/lib/compliance';
 import { PostcodeAddressLookup } from '@/components/shared/PostcodeAddressLookup';
+import { getPostcodeCoordinates, getBulkPostcodeCoordinates, calculateDistance, PostcodeData } from '@/lib/postcode';
 
 const SPECIALIZATIONS = [
     'Personal Care',
@@ -65,6 +67,11 @@ interface Carer {
     carer_verification: {
         overall_status: string;
     } | null;
+    coordinates?: {
+        lat: number;
+        lng: number;
+    };
+    distance?: number;
 }
 
 export default function ClientSearchEnhanced() {
@@ -73,6 +80,8 @@ export default function ClientSearchEnhanced() {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [postcodeFilter, setPostcodeFilter] = useState('');
+    const [searchCoordinates, setSearchCoordinates] = useState<PostcodeData | null>(null);
+    const [radius, setRadius] = useState([10]); // Default 10 miles
     const [selectedSpecializations, setSelectedSpecializations] = useState<string[]>([]);
     const [minExperience, setMinExperience] = useState('');
     const [maxRate, setMaxRate] = useState('');
@@ -86,8 +95,27 @@ export default function ClientSearchEnhanced() {
     }, []);
 
     useEffect(() => {
+        const resolvePostcode = async () => {
+            if (postcodeFilter && postcodeFilter.length >= 3) {
+                // If we have a full postcode, try to resolve it
+                // Simple regex check for full postcode format to avoid API spam on every keystroke
+                const postcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
+                if (postcodeRegex.test(postcodeFilter)) {
+                    const coords = await getPostcodeCoordinates(postcodeFilter);
+                    setSearchCoordinates(coords);
+                }
+            } else {
+                setSearchCoordinates(null);
+            }
+        };
+
+        const timer = setTimeout(resolvePostcode, 1000); // 1s debounce
+        return () => clearTimeout(timer);
+    }, [postcodeFilter]);
+
+    useEffect(() => {
         applyFilters();
-    }, [carers, searchQuery, postcodeFilter, selectedSpecializations, minExperience, maxRate, verifiedOnly]);
+    }, [carers, searchQuery, searchCoordinates, radius, selectedSpecializations, minExperience, maxRate, verifiedOnly]);
 
     const fetchCarers = async () => {
         try {
@@ -115,11 +143,44 @@ export default function ClientSearchEnhanced() {
 
             if (error) throw error;
 
-            const transformedData = (data as any[] || []).map(item => ({
+            let transformedData: Carer[] = (data as any[] || []).map(item => ({
                 ...item,
                 carer_details: Array.isArray(item.carer_details) ? item.carer_details[0] : item.carer_details,
                 carer_verification: Array.isArray(item.carer_verification) ? item.carer_verification[0] : item.carer_verification
             }));
+
+            // Bulk geocode carer postcodes
+            const uniquePostcodes = Array.from(new Set(
+                transformedData
+                    .map(c => c.carer_details?.postcode)
+                    .filter(Boolean)
+            ));
+
+            if (uniquePostcodes.length > 0) {
+                // Batch requests if > 100 (API limit)
+                const postcodeMap: Record<string, PostcodeData> = {};
+
+                for (let i = 0; i < uniquePostcodes.length; i += 100) {
+                    const batch = uniquePostcodes.slice(i, i + 100);
+                    const batchResults = await getBulkPostcodeCoordinates(batch);
+                    Object.assign(postcodeMap, batchResults);
+                }
+
+                transformedData = transformedData.map(carer => {
+                    const postcode = carer.carer_details?.postcode;
+                    const coords = postcode ? postcodeMap[postcode] : null;
+                    if (coords) {
+                        return {
+                            ...carer,
+                            coordinates: {
+                                lat: coords.latitude,
+                                lng: coords.longitude
+                            }
+                        };
+                    }
+                    return carer;
+                });
+            }
 
             setCarers(transformedData);
         } catch (error: any) {
@@ -154,12 +215,36 @@ export default function ClientSearchEnhanced() {
             );
         }
 
-        // Postcode filter (starts with)
-        if (postcodeFilter) {
-            const postcode = postcodeFilter.toUpperCase().replace(/\s/g, '');
-            filtered = filtered.filter(carer =>
-                carer.carer_details?.postcode?.toUpperCase().replace(/\s/g, '').startsWith(postcode)
-            );
+        // Distance Filter
+        if (searchCoordinates) {
+            filtered = filtered.map(carer => {
+                if (carer.coordinates) {
+                    const dist = calculateDistance(
+                        searchCoordinates.latitude,
+                        searchCoordinates.longitude,
+                        carer.coordinates.lat,
+                        carer.coordinates.lng
+                    );
+                    return { ...carer, distance: dist };
+                }
+                return { ...carer, distance: undefined };
+            }).filter(carer => {
+                // Keep if distance is within radius OR if no coordinates (don't hide carers with invalid postcodes if manual search, but here we strictly filter if postcode is set)
+                // Actually, if user searches by postcode, they likely want local results.
+                // We should probably filter out those without coordinates or distance > radius.
+                return carer.distance !== undefined && carer.distance <= radius[0];
+            });
+
+            // Sort by distance
+            filtered.sort((a, b) => (a.distance || 999) - (b.distance || 999));
+        } else {
+            // Basic Postcode string match if API fails or no full postcode yet
+            if (postcodeFilter && !searchCoordinates) {
+                const postcode = postcodeFilter.toUpperCase().replace(/\s/g, '');
+                filtered = filtered.filter(carer =>
+                    carer.carer_details?.postcode?.toUpperCase().replace(/\s/g, '').startsWith(postcode)
+                );
+            }
         }
 
         // Specializations filter
@@ -187,12 +272,14 @@ export default function ClientSearchEnhanced() {
             );
         }
 
-        // Sort by rate (ascending)
-        filtered.sort((a, b) => {
-            const rateA = a.carer_details?.hourly_rate || 0;
-            const rateB = b.carer_details?.hourly_rate || 0;
-            return rateA - rateB;
-        });
+        // Sort by rate (ascending) if NO distance sort applied
+        if (!searchCoordinates) {
+            filtered.sort((a, b) => {
+                const rateA = a.carer_details?.hourly_rate || 0;
+                const rateB = b.carer_details?.hourly_rate || 0;
+                return rateA - rateB;
+            });
+        }
 
         setFilteredCarers(filtered);
     };
@@ -208,10 +295,12 @@ export default function ClientSearchEnhanced() {
     const clearFilters = () => {
         setSearchQuery('');
         setPostcodeFilter('');
+        setSearchCoordinates(null);
         setSelectedSpecializations([]);
         setMinExperience('');
         setMaxRate('');
         setVerifiedOnly(true);
+        setRadius([10]);
     };
 
     const activeFiltersCount = [
@@ -253,7 +342,7 @@ export default function ClientSearchEnhanced() {
             <Card>
                 <CardContent className="pt-6 space-y-4">
                     {/* Main Search */}
-                    <div className="flex gap-3">
+                    <div className="flex flex-col md:flex-row gap-3">
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                             <Input
@@ -263,14 +352,29 @@ export default function ClientSearchEnhanced() {
                                 className="pl-10 h-12 text-base"
                             />
                         </div>
-                        <div className="relative w-64">
+                        <div className="relative w-full md:w-64">
                             <PostcodeAddressLookup
                                 postcode={postcodeFilter}
                                 onPostcodeChange={(pc) => setPostcodeFilter(pc)}
                                 onAddressSelect={() => { }}
-                                placeholder="Postcode"
+                                placeholder="Enter Postcode"
                             />
                         </div>
+                        {/* Radius Slider - Only show if postcode is entered */}
+                        {postcodeFilter && (
+                            <div className="w-full md:w-48 px-2 flex flex-col justify-center space-y-2 border rounded-md">
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>Radius</span>
+                                    <span className="font-bold">{radius[0]} miles</span>
+                                </div>
+                                <Slider
+                                    value={radius}
+                                    onValueChange={setRadius}
+                                    max={50}
+                                    step={1}
+                                />
+                            </div>
+                        )}
                         <Button
                             variant="outline"
                             onClick={() => setShowFilters(!showFilters)}
@@ -427,6 +531,11 @@ export default function ClientSearchEnhanced() {
                                                     <Shield className="h-3 w-3 mr-1" />
                                                     {verificationBadge.label}
                                                 </Badge>
+                                                {carer.distance !== undefined && (
+                                                    <Badge variant="secondary" className="bg-slate-100">
+                                                        {carer.distance.toFixed(1)} miles
+                                                    </Badge>
+                                                )}
                                             </div>
                                             <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                                 <span className="flex items-center gap-1">

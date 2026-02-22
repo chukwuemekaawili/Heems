@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,9 +21,15 @@ import {
     AlertCircle,
     DollarSign,
     User,
+    CreditCard,
+    Pencil
 } from 'lucide-react';
-import { formatCurrency } from '@/lib/fees';
+import { formatCurrency, calculateFees, getCurrentPricingPhase } from '@/lib/fees';
 import { format } from 'date-fns';
+import { PaymentCheckout } from '@/components/payments/PaymentCheckout';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { BookingSkeleton } from '@/components/shared/BookingSkeleton';
+import type { PricingPhase } from '@/types/database';
 
 interface Booking {
     id: string;
@@ -37,6 +45,9 @@ interface Booking {
         id: string;
         full_name: string;
         avatar_url: string | null;
+        carer_details: {
+            stripe_account_id: string | null;
+        } | null;
     };
     created_at: string;
 }
@@ -45,12 +56,36 @@ export default function ClientBookingsEnhanced() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('all');
+    const [selectedBookingForPayment, setSelectedBookingForPayment] = useState<Booking | null>(null);
+    const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+    const [editDate, setEditDate] = useState('');
+    const [editTime, setEditTime] = useState('');
+    const [editDuration, setEditDuration] = useState(2);
+    const [currentPhase, setCurrentPhase] = useState<PricingPhase>('1');
     const { toast } = useToast();
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchBookings();
+        fetchPricingPhase();
+
+        // Check for payment success URL param
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('payment') === 'success') {
+            toast({
+                title: "Payment Successful",
+                description: "Your booking has been paid for successfully.",
+                className: "bg-green-500 text-white border-green-600",
+            });
+            // Clean URL
+            window.history.replaceState({}, '', window.location.pathname);
+        }
     }, []);
+
+    const fetchPricingPhase = async () => {
+        const phase = await getCurrentPricingPhase();
+        setCurrentPhase(phase);
+    };
 
     const fetchBookings = async () => {
         try {
@@ -62,13 +97,34 @@ export default function ClientBookingsEnhanced() {
                 .from('bookings')
                 .select(`
           *,
-          carer:profiles!bookings_carer_id_fkey(id, full_name, avatar_url)
+          carer:profiles!bookings_carer_id_fkey(
+            id, 
+            full_name, 
+            avatar_url,
+            carer_details(stripe_account_id)
+          )
         `)
                 .eq('client_id', user.id)
                 .order('start_time', { ascending: false });
 
             if (error) throw error;
-            setBookings(data || []);
+
+            // Transform data to match interface structure if needed (Supabase join returns arrays sometimes)
+            // But strict typing matches the query structure usually.
+            // carer_details is a single object because it's 1:1 with profiles (mostly)
+            // We need to cast or ensure typescript is happy.
+
+            const formattedData = data?.map(item => ({
+                ...item,
+                carer: {
+                    ...item.carer,
+                    carer_details: Array.isArray(item.carer.carer_details)
+                        ? item.carer.carer_details[0]
+                        : item.carer.carer_details
+                }
+            })) as Booking[];
+
+            setBookings(formattedData || []);
         } catch (error: any) {
             console.error('Error fetching bookings:', error);
             toast({
@@ -93,7 +149,7 @@ export default function ClientBookingsEnhanced() {
             toast({
                 title: data.status === 'cancelled' ? 'Booking Cancelled' : 'Cancellation Requested',
                 description: data.message,
-                variant: data.status === 'cancelled' ? 'default' : 'destructive', // Orange-ish warning? default is fine.
+                variant: data.status === 'cancelled' ? 'default' : 'destructive',
             });
 
             fetchBookings();
@@ -102,6 +158,49 @@ export default function ClientBookingsEnhanced() {
             toast({
                 title: 'Error',
                 description: error.message || 'Failed to cancel booking',
+                variant: 'destructive',
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openEditDialog = (booking: Booking) => {
+        setEditingBooking(booking);
+        setEditDate(format(new Date(booking.start_time), 'yyyy-MM-dd'));
+        setEditTime(format(new Date(booking.start_time), 'HH:mm'));
+        const dur = calculateDuration(booking.start_time, booking.end_time);
+        setEditDuration(dur);
+    };
+
+    const saveEditBooking = async () => {
+        if (!editingBooking) return;
+        try {
+            setLoading(true);
+            const newStart = new Date(`${editDate}T${editTime}`);
+            const newEnd = new Date(newStart);
+            newEnd.setHours(newEnd.getHours() + editDuration);
+
+            const { error } = await supabase
+                .from('bookings')
+                .update({
+                    start_time: newStart.toISOString(),
+                    end_time: newEnd.toISOString(),
+                })
+                .eq('id', editingBooking.id);
+
+            if (error) throw error;
+
+            toast({
+                title: 'Booking Updated',
+                description: 'Your booking date and time have been updated.',
+            });
+            setEditingBooking(null);
+            fetchBookings();
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: error.message || 'Failed to update booking',
                 variant: 'destructive',
             });
         } finally {
@@ -149,13 +248,16 @@ export default function ClientBookingsEnhanced() {
 
     const filteredBookings = filterBookings(activeTab);
 
-    if (loading) {
+    // Prepare fee calculation for the selected booking
+    const getFeeBreakdownForBooking = (booking: Booking) => {
+        const duration = calculateDuration(booking.start_time, booking.end_time);
+        return calculateFees(booking.rate_per_hour, duration, currentPhase);
+    };
+
+    if (loading && bookings.length === 0) {
         return (
-            <div className="flex items-center justify-center h-96">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a9e8c] mx-auto mb-4"></div>
-                    <p className="text-slate-500">Loading bookings...</p>
-                </div>
+            <div className="space-y-6 max-w-7xl mx-auto py-4">
+                <BookingSkeleton />
             </div>
         );
     }
@@ -279,6 +381,8 @@ export default function ClientBookingsEnhanced() {
                                 filteredBookings.map(booking => {
                                     const duration = calculateDuration(booking.start_time, booking.end_time);
                                     const canCancel = booking.status === 'pending' || booking.status === 'confirmed';
+                                    const canPay = booking.status === 'confirmed' && booking.payment_status !== 'paid';
+                                    const carerStripeConnected = !!booking.carer.carer_details?.stripe_account_id;
 
                                     return (
                                         <Card key={booking.id} className="hover:shadow-md transition-shadow">
@@ -331,16 +435,48 @@ export default function ClientBookingsEnhanced() {
                                                         <MessageCircle className="h-4 w-4 mr-1" />
                                                         Message
                                                     </Button>
-                                                    {canCancel && (
+
+                                                    {canPay && (
                                                         <Button
-                                                            variant="outline"
                                                             size="sm"
-                                                            onClick={() => cancelBooking(booking.id)}
-                                                            className="text-red-600 hover:text-red-700"
+                                                            onClick={() => {
+                                                                if (carerStripeConnected) {
+                                                                    setSelectedBookingForPayment(booking);
+                                                                } else {
+                                                                    toast({
+                                                                        title: "Payment Unavailable",
+                                                                        description: "This carer has not set up their payment details yet. Please contact them.",
+                                                                        variant: "destructive"
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className="bg-[#1a9e8c] hover:bg-[#15806c]"
                                                         >
-                                                            <XCircle className="h-4 w-4 mr-1" />
-                                                            Cancel
+                                                            <CreditCard className="h-4 w-4 mr-1" />
+                                                            Pay Now
                                                         </Button>
+                                                    )}
+
+                                                    {canCancel && (
+                                                        <>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => openEditDialog(booking)}
+                                                            >
+                                                                <Pencil className="h-4 w-4 mr-1" />
+                                                                Edit
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => cancelBooking(booking.id)}
+                                                                className="text-red-600 hover:text-red-700"
+                                                            >
+                                                                <XCircle className="h-4 w-4 mr-1" />
+                                                                Cancel
+                                                            </Button>
+                                                        </>
                                                     )}
                                                 </div>
                                             </CardContent>
@@ -352,6 +488,57 @@ export default function ClientBookingsEnhanced() {
                     </Tabs>
                 </CardContent>
             </Card>
+
+            {/* Payment Modal */}
+            <Dialog open={!!selectedBookingForPayment} onOpenChange={(open) => !open && setSelectedBookingForPayment(null)}>
+                <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-transparent border-none shadow-none">
+                    {selectedBookingForPayment && selectedBookingForPayment.carer.carer_details?.stripe_account_id && (
+                        <PaymentCheckout
+                            bookingId={selectedBookingForPayment.id}
+                            carerId={selectedBookingForPayment.carer.id}
+                            carerName={selectedBookingForPayment.carer.full_name}
+                            carerStripeAccountId={selectedBookingForPayment.carer.carer_details.stripe_account_id}
+                            feeBreakdown={getFeeBreakdownForBooking(selectedBookingForPayment)}
+                            onCancel={() => setSelectedBookingForPayment(null)}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
+
+            {/* Edit Booking Dialog */}
+            <Dialog open={!!editingBooking} onOpenChange={(open) => !open && setEditingBooking(null)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Edit Booking</DialogTitle>
+                    </DialogHeader>
+                    {editingBooking && (
+                        <div className="space-y-4 py-4">
+                            <div className="space-y-2">
+                                <Label>Date</Label>
+                                <Input type="date" value={editDate} onChange={e => setEditDate(e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Start Time</Label>
+                                <Input type="time" value={editTime} onChange={e => setEditTime(e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Duration (hours)</Label>
+                                <div className="flex items-center gap-3">
+                                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setEditDuration(Math.max(1, editDuration - 1))}>-</Button>
+                                    <span className="text-lg font-bold">{editDuration} hrs</span>
+                                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setEditDuration(editDuration + 1)}>+</Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setEditingBooking(null)}>Cancel</Button>
+                        <Button onClick={saveEditBooking} disabled={loading}>
+                            {loading ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from 'react-markdown';
 import { Button } from "@/components/ui/button";
 import { MessageCircle, X, Send, Minus } from "lucide-react";
@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-
+import { useLocation } from "react-router-dom";
 
 export const ChatWidget = () => {
+    const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
     const [message, setMessage] = useState("");
@@ -17,6 +18,24 @@ export const ChatWidget = () => {
     ]);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        // Check initial session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null);
+        });
+
+        // Listen for auth changes
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,6 +61,9 @@ export const ChatWidget = () => {
             setIsLoading(false);
         }
     };
+
+    if (!user) return null;
+    if (location.pathname === '/') return null;
 
     if (!isOpen) {
         return (

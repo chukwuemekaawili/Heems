@@ -1,16 +1,31 @@
 import { Helmet } from "react-helmet-async";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
 import CareTypesSection from "@/components/landing/CareTypesSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
-import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import ForCarersSection from "@/components/landing/ForCarersSection";
 import ForOrganisationsSection from "@/components/landing/ForOrganisationsSection";
+import PricingSection from "@/components/landing/PricingSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import CTASection from "@/components/landing/CTASection";
 import ParallaxSection from "@/components/landing/ParallaxSection";
 import Footer from "@/components/landing/Footer";
 
 const Index = () => {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      // Small delay to ensure DOM has rendered all sections
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  }, [hash]);
+
   return (
     <>
       {/* ... previous Helmet code remains same ... */}
@@ -58,7 +73,9 @@ const Index = () => {
           <CareTypesSection />
           <FeaturesSection />
           <ParallaxSection />
+          <ForCarersSection />
           <ForOrganisationsSection />
+          <PricingSection />
           <TestimonialsSection />
           <CTASection />
         </main>

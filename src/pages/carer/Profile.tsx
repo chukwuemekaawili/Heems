@@ -119,6 +119,11 @@ export default function CarerProfile() {
     onboarded_at: null // For promo logic
   });
 
+  // Reviews State
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [averageRating, setAverageRating] = useState(0);
+
   // Video Upload State
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
@@ -160,9 +165,30 @@ export default function CarerProfile() {
           specializations: carerData.specializations || [],
           languages: carerData.languages || ["English"],
           certifications: carerData.certifications || [],
-          // Ensure other potentially null value types are handled if needed
         });
       }
+
+      // Fetch Reviews
+      setLoadingReviews(true);
+      const { data: reviewsData, error: reviewsError } = await supabase
+        .from('reviews')
+        .select(`
+          *,
+          reviewer:profiles!reviews_reviewer_id_fkey(full_name, avatar_url)
+        `)
+        .eq('reviewee_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (reviewsError) {
+        console.error("Error fetching reviews:", reviewsError);
+      } else if (reviewsData) {
+        setReviews(reviewsData);
+        if (reviewsData.length > 0) {
+          const sum = reviewsData.reduce((acc, curr) => acc + (curr.rating || 0), 0);
+          setAverageRating(Number((sum / reviewsData.length).toFixed(1)));
+        }
+      }
+      setLoadingReviews(false);
 
     } catch (error: any) {
       console.error("Error fetching profile:", error);
@@ -426,17 +452,24 @@ export default function CarerProfile() {
                     <MapPin className="h-4 w-4" />
                     {profile.city || 'Location not set'}
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-amber-500" />
-                    4.9 (Demo)
-                  </span>
+                  {averageRating > 0 ? (
+                    <span className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-amber-500 fill-current" />
+                      {averageRating} ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-slate-300" />
+                      No reviews yet
+                    </span>
+                  )}
                   <span className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
                     {carerDetails.experience_years} years experience
                   </span>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="md:ml-auto md:text-right w-full md:w-auto mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-black/5">
                 <p className="text-sm text-muted-foreground">Hourly Rate</p>
                 <p className="text-2xl font-bold text-primary">£{carerDetails.hourly_rate}/hr</p>
               </div>
@@ -445,11 +478,12 @@ export default function CarerProfile() {
         </Card>
 
         <Tabs defaultValue="personal" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="personal">Personal Info</TabsTrigger>
-            <TabsTrigger value="professional">Professional</TabsTrigger>
-            <TabsTrigger value="specialties">Experience</TabsTrigger>
-            <TabsTrigger value="preferences">Preferences</TabsTrigger>
+          <TabsList className="flex flex-wrap w-full md:grid md:grid-cols-5 h-auto overflow-x-auto justify-start p-1 scrollbar-hide gap-1">
+            <TabsTrigger value="personal" className="whitespace-nowrap flex-grow">Personal Info</TabsTrigger>
+            <TabsTrigger value="professional" className="whitespace-nowrap flex-grow">Professional</TabsTrigger>
+            <TabsTrigger value="specialties" className="whitespace-nowrap flex-grow">Experience</TabsTrigger>
+            <TabsTrigger value="preferences" className="whitespace-nowrap flex-grow">Preferences</TabsTrigger>
+            <TabsTrigger value="reviews" className="whitespace-nowrap flex-grow">My Reviews</TabsTrigger>
           </TabsList>
 
           {/* Personal Info Tab */}
@@ -1074,6 +1108,76 @@ export default function CarerProfile() {
                     </Select>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          {/* My Reviews Tab */}
+          <TabsContent value="reviews">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-amber-500 fill-current" />
+                  Client Reviews & Feedback
+                </CardTitle>
+                <CardDescription>See what clients are saying about your care services</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loadingReviews ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : reviews.length === 0 ? (
+                  <div className="text-center py-16 px-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                    <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Star className="h-8 w-8 text-amber-200" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">No Reviews Yet</h3>
+                    <p className="text-slate-500 max-w-sm mx-auto">
+                      Once you complete bookings, clients will be prompted to leave a review of your services here.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {reviews.map((review) => (
+                      <div key={review.id} className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10 border border-slate-100">
+                              <AvatarImage src={review.reviewer?.avatar_url} />
+                              <AvatarFallback className="bg-primary/5 text-primary font-medium">
+                                {review.reviewer?.full_name?.charAt(0) || "C"}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-bold text-slate-900 leading-none mb-1">
+                                {review.reviewer?.full_name || "Client"}
+                              </p>
+                              <p className="text-xs text-slate-500">
+                                {new Date(review.created_at).toLocaleDateString('en-GB', {
+                                  day: 'numeric', month: 'short', year: 'numeric'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-0.5 bg-amber-50 px-2 py-1 rounded-md">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3.5 w-3.5 ${i < (review.rating || 0)
+                                  ? "text-amber-500 fill-amber-500"
+                                  : "text-amber-200"
+                                  }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-slate-600 text-sm leading-relaxed text-pretty">
+                          "{review.comment || "No comment provided."}"
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

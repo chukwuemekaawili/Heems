@@ -38,6 +38,7 @@ import {
   UserCheck,
   CreditCard,
   GraduationCap,
+  AlertCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Header from "@/components/landing/Header";
@@ -126,6 +127,7 @@ const DashboardLayout = ({
 }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [counts, setCounts] = useState<{ [key: string]: number }>({});
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [userData, setUserData] = useState<{ name: string; avatar?: string }>({
     name: userName,
     avatar: userAvatar
@@ -224,6 +226,55 @@ const DashboardLayout = ({
       if (isMounted) {
         setCounts(newCounts);
       }
+
+      // Fetch recent notifications (bookings + messages)
+      try {
+        const notifs: any[] = [];
+
+        // Recent bookings
+        const bookingField = role === 'carer' ? 'carer_id' : 'client_id';
+        const { data: recentBookings } = await supabase
+          .from('bookings')
+          .select('id, status, start_time, created_at')
+          .eq(bookingField, userId)
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        (recentBookings || []).forEach(b => {
+          notifs.push({
+            id: `b-${b.id}`,
+            title: b.status === 'confirmed' ? 'Booking Confirmed' : b.status === 'pending' ? 'New Booking' : `Booking ${b.status}`,
+            description: b.start_time ? `Scheduled for ${new Date(b.start_time).toLocaleDateString()}` : 'View details',
+            time: b.created_at,
+            type: 'booking',
+          });
+        });
+
+        // Recent messages
+        const { data: recentMsgs } = await supabase
+          .from('messages')
+          .select('id, content, created_at, sender:profiles!messages_sender_id_fkey(full_name)')
+          .eq('receiver_id', userId)
+          .eq('is_read', false)
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        (recentMsgs || []).forEach(m => {
+          notifs.push({
+            id: `m-${m.id}`,
+            title: `Message from ${(m.sender as any)?.full_name || 'User'}`,
+            description: (m.content || '').slice(0, 50) + ((m.content || '').length > 50 ? '...' : ''),
+            time: m.created_at,
+            type: 'message',
+          });
+        });
+
+        // Sort by time
+        notifs.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+        if (isMounted) setNotifications(notifs.slice(0, 5));
+      } catch {
+        // Non-critical, ignore
+      }
     };
 
     // Debounced fetch for realtime updates
@@ -297,10 +348,30 @@ const DashboardLayout = ({
             </Link>
 
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <Bell className="w-5 h-5" />
+                    {notifications.length > 0 && (
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80">
+                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {notifications.length === 0 ? (
+                    <div className="p-4 text-center text-sm text-muted-foreground">No new notifications</div>
+                  ) : (
+                    notifications.map(notif => (
+                      <DropdownMenuItem key={notif.id} className="flex flex-col items-start gap-1 py-3 cursor-pointer">
+                        <p className="text-sm font-medium">{notif.title}</p>
+                        <p className="text-xs text-muted-foreground">{notif.description}</p>
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
@@ -448,10 +519,30 @@ const DashboardLayout = ({
             </div>
 
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <Bell className="w-5 h-5" />
+                    {notifications.length > 0 && (
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80">
+                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {notifications.length === 0 ? (
+                    <div className="p-4 text-center text-sm text-muted-foreground">No new notifications</div>
+                  ) : (
+                    notifications.map(notif => (
+                      <DropdownMenuItem key={notif.id} className="flex flex-col items-start gap-1 py-3 cursor-pointer">
+                        <p className="text-sm font-medium">{notif.title}</p>
+                        <p className="text-xs text-muted-foreground">{notif.description}</p>
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </header>
 

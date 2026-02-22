@@ -19,7 +19,7 @@ const Pricing = () => {
                             Introductory Agency. <br />
                             <span className="text-[#1a9e8c]">Pure Transparency.</span>
                         </h1>
-                        <p className="text-xl text-[#4B5563] font-medium leading-relaxed max-w-xl">
+                        <p className="text-xl text-[#374151] font-medium leading-relaxed max-w-2xl">
                             Heems replaces expensive agency fees with a simple, transactional service fee.
                             No subscriptions. No paywalls to search. Pay only for care delivered.
                         </p>
@@ -30,42 +30,91 @@ const Pricing = () => {
                         <PricingEstimator />
                     </div>
 
-                    {/* Explainer Section */}
-                    <div className="border-t border-black/[0.05] pt-16">
-                        <div className="grid lg:grid-cols-2 gap-20">
-                            <div>
-                                <h2 className="text-4xl font-black text-[#111827] mb-8 tracking-tight">The Transactional Model</h2>
-                                <p className="text-[#4B5563] font-medium leading-relaxed mb-8">
-                                    Unlike traditional care agencies that charge up to 50% on top of a carer's rate,
-                                    Heems operates a high-efficiency introductory model. We charge a flat service fee
-                                    to maintain the verification infrastructure, secure messaging, and payment processing.
-                                </p>
-                                <div className="space-y-4">
-                                    <div className="flex gap-4 items-center">
-                                        <Zap className="w-6 h-6 text-[#1a9e8c]" />
-                                        <p className="text-sm font-bold text-[#111827]">Phase 2 triggers at 30+ verified carers.</p>
-                                    </div>
-                                    <div className="flex gap-4 items-center">
-                                        <Heart className="w-6 h-6 text-[#1a9e8c]" />
-                                        <p className="text-sm font-bold text-[#111827]">95% Caregiver retention rate.</p>
-                                    </div>
+                    {/* Comparison Section */}
+                    <div className="border-t border-black/[0.05] pt-24">
+                        <div className="text-center max-w-2xl mx-auto mb-16">
+                            <h2 className="text-4xl lg:text-5xl font-black text-[#111827] mb-6 tracking-tight">Why Heems makes sense</h2>
+                            <p className="text-[#374151] font-medium leading-relaxed text-lg">
+                                Transparent pricing. Complete control. No hidden costs.
+                                Compare our introductory model to traditional fully-managed care agencies.
+                            </p>
+                        </div>
+
+                        <div className="max-w-5xl mx-auto bg-white rounded-[3rem] border border-black/[0.05] overflow-hidden shadow-2xl">
+                            {/* Table Header */}
+                            <div className="grid grid-cols-[1.5fr_1fr_1fr] bg-slate-50 border-b border-black/[0.05] p-6 lg:p-8">
+                                <div className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center">Comparison</div>
+                                <div className="font-black text-[#111827] text-lg lg:text-xl text-center">Traditional Agency</div>
+                                <div className="font-black text-[#1a9e8c] text-lg lg:text-xl text-center flex items-center justify-center gap-2">
+                                    <ShieldCheck className="w-5 h-5" /> Heems
                                 </div>
                             </div>
-                            <div className="bg-slate-50 rounded-[3rem] p-12 border border-black/[0.03]">
-                                <h3 className="text-2xl font-black text-[#111827] mb-6 tracking-tight">Fee Breakdown</h3>
-                                <div className="space-y-6">
-                                    <div className="flex justify-between items-center pb-4 border-b border-black/[0.05]">
-                                        <span className="text-sm font-bold text-[#111827]">Service Fee (Client Side)</span>
-                                        <span className="text-2xl font-black text-[#1a9e8c]">10%</span>
+
+                            {/* Table Body */}
+                            <div className="divide-y divide-black/[0.05]">
+                                {[
+                                    {
+                                        feature: "Hourly Cost",
+                                        trad: "High (£25 - £40+/hr)",
+                                        heems: "Carer's Rate + 10% Fee",
+                                        heemsHighlight: true
+                                    },
+                                    {
+                                        feature: "Transparency",
+                                        trad: "Hidden markups up to 50%",
+                                        heems: "100% Transparent breakdown",
+                                        heemsHighlight: true
+                                    },
+                                    {
+                                        feature: "Choice of Carer",
+                                        trad: "Assigned by the agency",
+                                        heems: "You browse, interview & choose",
+                                        heemsHighlight: false
+                                    },
+                                    {
+                                        feature: "Commitment",
+                                        trad: "Long-term rigid contracts",
+                                        heems: "Flexible, cancel anytime",
+                                        heemsHighlight: false
+                                    },
+                                    {
+                                        feature: "Carer Compensation",
+                                        trad: "Often minimum wage",
+                                        heems: "Carers set & keep their own rates",
+                                        heemsHighlight: true
+                                    }
+                                ].map((row, i) => (
+                                    <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] group hover:bg-slate-50/50 transition-colors">
+                                        <div className="p-6 lg:p-8 flex items-center">
+                                            <span className="font-bold text-[#111827]">{row.feature}</span>
+                                        </div>
+                                        <div className="p-6 lg:p-8 flex items-center justify-center text-center border-l border-r border-black/[0.03] bg-slate-50/30">
+                                            <span className="font-medium text-slate-500">{row.trad}</span>
+                                        </div>
+                                        <div className={`p-6 lg:p-8 flex items-center justify-center text-center transition-colors ${row.heemsHighlight ? "bg-[#1a9e8c]/5 group-hover:bg-[#1a9e8c]/10" : ""}`}>
+                                            <span className={`font-bold ${row.heemsHighlight ? "text-[#1a9e8c]" : "text-[#111827]"}`}>
+                                                {row.heems}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex justify-between items-center pb-4 border-b border-black/[0.05]">
-                                        <span className="text-sm font-bold text-[#111827]">Support Fee (Carer Side)</span>
-                                        <span className="text-2xl font-black text-slate-300">0%</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-sm font-bold text-[#111827]">Minimum Hourly Rate</span>
-                                        <span className="text-2xl font-black text-[#111827]">£15.00</span>
-                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Phase 2 / Transactional Notes */}
+                        <div className="max-w-5xl mx-auto mt-12 grid sm:grid-cols-2 gap-6">
+                            <div className="flex gap-4 items-center bg-slate-50 rounded-2xl p-6 border border-black/[0.03]">
+                                <Heart className="w-8 h-8 text-[#1a9e8c] shrink-0" />
+                                <div>
+                                    <p className="text-sm font-bold text-[#111827]">Fairer for Carers</p>
+                                    <p className="text-xs text-slate-500 font-medium mt-1">Carers are charged 0% during Phase 1 Founder Pricing. They keep what they earn.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4 items-center bg-slate-50 rounded-2xl p-6 border border-black/[0.03]">
+                                <Zap className="w-8 h-8 text-amber-500 shrink-0" />
+                                <div>
+                                    <p className="text-sm font-bold text-[#111827]">No Ongoing Subscriptions</p>
+                                    <p className="text-xs text-slate-500 font-medium mt-1">We don't charge you securely to message carers. You only pay when care is delivered.</p>
                                 </div>
                             </div>
                         </div>

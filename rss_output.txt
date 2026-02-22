@@ -1,0 +1,40 @@
+
+Fetching Google News...
+
+[Article] Health and care sector latest developments - NHS Confederation
+  ❌ No Image Found!
+  -- Has media:content? false
+  -- Has media:thumbnail? false
+  -- Has enclosure? false
+  -- Description preview: &lt;a href="https://news.google.com/rss/articles/CBMifkFVX3lxTE1mUXc4cnR3VU1NWnBZQ0kxdE1heXBZcl9FcnN...
+  -- Any 'url' attributes in XML block? [ 'https://www.nhsconfed.org' ]
+  -- Any 'src' attributes in XML block? []
+
+[Article] The fundamental standards of care - Care Quality Commission
+  ❌ No Image Found!
+  -- Has media:content? false
+  -- Has media:thumbnail? false
+  -- Has enclosure? false
+  -- Description preview: &lt;a href="https://news.google.com/rss/articles/CBMiY0FVX3lxTE83YXJnZDBQN3pFUW10V2RLa3VPd0hVVXhOZlZ...
+  -- Any 'url' attributes in XML block? [ 'https://www.cqc.org.uk' ]
+  -- Any 'src' attributes in XML block? []
+
+[Article] Oracle Health’s clinical AI agent launches in UK after NHS pilot - digitalhealth.net
+  ❌ No Image Found!
+  -- Has media:content? false
+  -- Has media:thumbnail? false
+  -- Has enclosure? false
+  -- Description preview: &lt;a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxQZTlNUnVUc01QREpDR1diRnNMVkxrMmxXM20...
+  -- Any 'url' attributes in XML block? [ 'https://www.digitalhealth.net' ]
+  -- Any 'src' attributes in XML block? []
+
+Fetching BBC Health...
+
+[Article] Single vaccine could protect against all coughs, colds and flus, researchers say
+  ✅ Found Image: https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/8700/live/6c2b5460-0e44-11f1-b7e1-afb6d0884c18.jpg
+
+[Article] Cats may hold clues for human cancer treatment
+  ✅ Found Image: https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/a973/live/864eb9e0-0da4-11f1-917e-133342cfe2a1.jpg
+
+[Article] Sepsis warning after woman's quadruple amputation
+  ✅ Found Image: https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/70d9/live/7a6e3f80-0dc5-11f1-9bd3-4fa07d1f121c.jpg

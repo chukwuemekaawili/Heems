@@ -3,6 +3,9 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -17,12 +20,15 @@ import {
     MapPin,
     Phone,
     MessageSquare,
-    XCircle
+    XCircle,
+    Copy
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { BookingSkeleton } from "@/components/shared/BookingSkeleton";
 
 interface Booking {
     id: string;
@@ -43,11 +49,18 @@ interface Booking {
 export default function OrganisationBookings() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showBulkDialog, setShowBulkDialog] = useState(false);
+    const [bulkDate, setBulkDate] = useState('');
+    const [bulkTime, setBulkTime] = useState('09:00');
+    const [bulkDuration, setBulkDuration] = useState(4);
+    const [selectedCarerIds, setSelectedCarerIds] = useState<string[]>([]);
+    const [allCarers, setAllCarers] = useState<any[]>([]);
     const { toast } = useToast();
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchBookings();
+        fetchAllCarers();
     }, []);
 
     const fetchBookings = async () => {
@@ -107,6 +120,53 @@ export default function OrganisationBookings() {
         }
     };
 
+    const fetchAllCarers = async () => {
+        const { data } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url')
+            .eq('role', 'carer')
+            .eq('verified', true)
+            .limit(50);
+        setAllCarers(data || []);
+    };
+
+    const handleBulkBook = async () => {
+        if (selectedCarerIds.length === 0 || !bulkDate) {
+            toast({ title: 'Missing Info', description: 'Select at least one carer and a date.', variant: 'destructive' });
+            return;
+        }
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const startTime = new Date(`${bulkDate}T${bulkTime}`);
+            const endTime = new Date(startTime);
+            endTime.setHours(endTime.getHours() + bulkDuration);
+
+            const bookings = selectedCarerIds.map(carerId => ({
+                client_id: user.id,
+                carer_id: carerId,
+                start_time: startTime.toISOString(),
+                end_time: endTime.toISOString(),
+                status: 'pending',
+                total_price: 0,
+            }));
+
+            const { error } = await supabase.from('bookings').insert(bookings);
+            if (error) throw error;
+
+            toast({
+                title: 'Bulk Booking Created',
+                description: `${selectedCarerIds.length} bookings have been created.`,
+            });
+            setShowBulkDialog(false);
+            setSelectedCarerIds([]);
+            fetchBookings();
+        } catch (error: any) {
+            toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        }
+    };
+
     const getStatusBadge = (status: string) => {
         switch (status) {
             case "confirmed":
@@ -135,8 +195,8 @@ export default function OrganisationBookings() {
     if (loading) {
         return (
             <DashboardLayout role="organisation">
-                <div className="flex items-center justify-center h-[60vh]">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <div className="space-y-6">
+                    <BookingSkeleton />
                 </div>
             </DashboardLayout>
         );
@@ -156,6 +216,10 @@ export default function OrganisationBookings() {
                             <Plus className="h-4 w-4 mr-2" />
                             Book a Carer
                         </Link>
+                    </Button>
+                    <Button variant="outline" onClick={() => setShowBulkDialog(true)}>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Bulk Book
                     </Button>
                 </div>
 
@@ -425,6 +489,73 @@ export default function OrganisationBookings() {
                     </TabsContent>
                 </Tabs>
             </div>
+
+            <BulkBookDialog
+                open={showBulkDialog}
+                onOpenChange={setShowBulkDialog}
+                carers={allCarers}
+                selectedIds={selectedCarerIds}
+                onToggle={(id: string) => setSelectedCarerIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])}
+                date={bulkDate}
+                onDateChange={setBulkDate}
+                time={bulkTime}
+                onTimeChange={setBulkTime}
+                duration={bulkDuration}
+                onDurationChange={setBulkDuration}
+                onSubmit={handleBulkBook}
+            />
         </DashboardLayout>
+    );
+}
+
+function BulkBookDialog({ open, onOpenChange, carers, selectedIds, onToggle, date, onDateChange, time, onTimeChange, duration, onDurationChange, onSubmit }: any) {
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle>Bulk Book Carers</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label>Date</Label>
+                            <Input type="date" value={date} onChange={e => onDateChange(e.target.value)} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Start Time</Label>
+                            <Input type="time" value={time} onChange={e => onTimeChange(e.target.value)} />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Duration (hours)</Label>
+                        <div className="flex items-center gap-3">
+                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onDurationChange(Math.max(1, duration - 1))}>-</Button>
+                            <span className="text-lg font-bold">{duration} hrs</span>
+                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onDurationChange(duration + 1)}>+</Button>
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Select Carers ({selectedIds.length} selected)</Label>
+                        <div className="max-h-48 overflow-y-auto border rounded-xl p-3 space-y-2">
+                            {carers.map((c: any) => (
+                                <div key={c.id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg">
+                                    <Checkbox
+                                        checked={selectedIds.includes(c.id)}
+                                        onCheckedChange={() => onToggle(c.id)}
+                                    />
+                                    <span className="text-sm font-medium">{c.full_name}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+                    <Button onClick={onSubmit} disabled={selectedIds.length === 0 || !date}>
+                        Create {selectedIds.length} Booking{selectedIds.length !== 1 ? 's' : ''}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

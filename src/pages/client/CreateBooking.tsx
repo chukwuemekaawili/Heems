@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import {
     ArrowLeft,
@@ -19,7 +21,9 @@ import {
     ChevronRight,
     Info,
     AlertCircle,
-    TrendingUp
+    TrendingUp,
+    Tag,
+    Repeat
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -28,6 +32,7 @@ import type { FeeCalculation, PricingPhase } from "@/types/database";
 
 export default function CreateBooking() {
     const { carerId } = useParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { toast } = useToast();
     const [step, setStep] = useState(1);
@@ -36,6 +41,11 @@ export default function CreateBooking() {
     const [currentPhase, setCurrentPhase] = useState<PricingPhase>('1');
     const [feeBreakdown, setFeeBreakdown] = useState<FeeCalculation | null>(null);
 
+    // Proposal Data
+    const proposalRate = searchParams.get('rate') ? parseFloat(searchParams.get('rate')!) : null;
+    const proposalId = searchParams.get('proposalId');
+    const proposalType = searchParams.get('type');
+
     // Selection State
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
     const [selectedTime, setSelectedTime] = useState("09:00");
@@ -43,6 +53,17 @@ export default function CreateBooking() {
     const [serviceType, setServiceType] = useState<'hourly' | 'live_in' | 'overnight'>('hourly');
     const [serviceSubtype, setServiceSubtype] = useState<string>('hourly'); // 'hourly', 'daily', 'weekly', 'sleeping', 'waking'
     const [duration, setDuration] = useState(2); // reused as quantity (hours/days/weeks/nights)
+    const [isRecurring, setIsRecurring] = useState(false);
+    const [recurrenceType, setRecurrenceType] = useState<'weekly' | 'fortnightly' | 'monthly'>('weekly');
+    const [recurrenceEndDate, setRecurrenceEndDate] = useState<Date | undefined>(undefined);
+
+    useEffect(() => {
+        if (proposalType) {
+            if (proposalType === 'live-in') setServiceType('live_in');
+            else if (proposalType === 'overnight') setServiceType('overnight');
+            else setServiceType('hourly');
+        }
+    }, [proposalType]);
 
     useEffect(() => {
         fetchCarer();
@@ -53,7 +74,7 @@ export default function CreateBooking() {
         if (carer) {
             calculateFeeBreakdown();
         }
-    }, [carer, duration, currentPhase]);
+    }, [carer, duration, currentPhase, serviceType, serviceSubtype]);
 
     const fetchCarer = async () => {
         try {
@@ -63,6 +84,7 @@ export default function CreateBooking() {
           id,
           full_name,
           avatar_url,
+          email,
           carer_details (
             bio,
             hourly_rate,
@@ -120,20 +142,23 @@ export default function CreateBooking() {
         try {
             if (!carer?.carer_details) return;
 
-            let rate = carer.carer_details.hourly_rate || 25;
+            // Use proposal rate if available, otherwise default to carer's rate
+            let rate = proposalRate || carer.carer_details.hourly_rate || 25;
 
-            // Determine rate based on service type
-            if (serviceType === 'live_in') {
-                if (serviceSubtype === 'weekly' && carer.carer_details.live_in_rate_weekly) {
-                    rate = carer.carer_details.live_in_rate_weekly;
-                } else if (serviceSubtype === 'daily' && carer.carer_details.live_in_rate_daily) {
-                    rate = carer.carer_details.live_in_rate_daily;
-                }
-            } else if (serviceType === 'overnight') {
-                if (serviceSubtype === 'sleeping' && carer.carer_details.overnight_sleeping_rate) {
-                    rate = carer.carer_details.overnight_sleeping_rate;
-                } else if (serviceSubtype === 'waking' && carer.carer_details.overnight_waking_rate) {
-                    rate = carer.carer_details.overnight_waking_rate;
+            // Determine rate based on service type IF NOT A PROPOSAL
+            if (!proposalRate) {
+                if (serviceType === 'live_in') {
+                    if (serviceSubtype === 'weekly' && carer.carer_details.live_in_rate_weekly) {
+                        rate = carer.carer_details.live_in_rate_weekly;
+                    } else if (serviceSubtype === 'daily' && carer.carer_details.live_in_rate_daily) {
+                        rate = carer.carer_details.live_in_rate_daily;
+                    }
+                } else if (serviceType === 'overnight') {
+                    if (serviceSubtype === 'sleeping' && carer.carer_details.overnight_sleeping_rate) {
+                        rate = carer.carer_details.overnight_sleeping_rate;
+                    } else if (serviceSubtype === 'waking' && carer.carer_details.overnight_waking_rate) {
+                        rate = carer.carer_details.overnight_waking_rate;
+                    }
                 }
             }
 
@@ -158,7 +183,7 @@ export default function CreateBooking() {
             if (!user) throw new Error("Please log in to book");
 
             // Validate minimum rate
-            const rate = carer?.carer_details?.hourly_rate || 25;
+            const rate = proposalRate || carer?.carer_details?.hourly_rate || 25;
             if (!validateMinimumRate(rate)) {
                 throw new Error(`Rate must be at least £${MINIMUM_HOURLY_RATE}/hour`);
             }
@@ -171,26 +196,114 @@ export default function CreateBooking() {
             const [hours, minutes] = selectedTime.split(':');
             startTime.setHours(parseInt(hours), parseInt(minutes));
 
-            const endTime = new Date(startTime);
-            endTime.setHours(endTime.getHours() + duration);
+            const bookingsToInsert = [];
+            let currentStart = new Date(startTime);
+            const rEndDate = isRecurring && recurrenceEndDate ? new Date(recurrenceEndDate) : new Date(startTime.getTime() + 1000 * 60 * 60 * 24 * 365); // Default to max 1 year
 
-            const { error } = await supabase
-                .from('bookings')
-                .insert({
+            let occurrences = 0;
+            const maxOccurrences = 12; // Safety limit to avoid massive batch inserts at once
+
+            while (currentStart <= rEndDate && occurrences < maxOccurrences) {
+                const currentEnd = new Date(currentStart);
+                currentEnd.setHours(currentEnd.getHours() + duration);
+
+                bookingsToInsert.push({
                     client_id: user.id,
                     carer_id: carerId,
-                    start_time: startTime.toISOString(),
-                    end_time: endTime.toISOString(),
+                    start_time: currentStart.toISOString(),
+                    end_time: currentEnd.toISOString(),
                     total_price: feeBreakdown.clientTotal,
                     rate_per_hour: rate,
                     client_fee: feeBreakdown.clientFee,
                     carer_fee: feeBreakdown.carerFee,
-                    status: 'pending'
+                    status: 'pending',
+                    recurrence_type: isRecurring ? recurrenceType : null,
+                    recurrence_end_date: isRecurring && recurrenceEndDate ? recurrenceEndDate.toISOString() : null
                 });
 
-            if (error) throw error;
+                if (!isRecurring) break;
 
-            setStep(3); // Success step
+                // Advance the date based on frequency
+                if (recurrenceType === 'weekly') {
+                    currentStart.setDate(currentStart.getDate() + 7);
+                } else if (recurrenceType === 'biweekly') {
+                    currentStart.setDate(currentStart.getDate() + 14);
+                } else if (recurrenceType === 'monthly') {
+                    currentStart.setMonth(currentStart.getMonth() + 1);
+                } else {
+                    break;
+                }
+
+                occurrences++;
+            }
+
+            const { data: insertedBookings, error } = await supabase
+                .from('bookings')
+                .insert(bookingsToInsert)
+                .select();
+
+            if (error) throw error;
+            if (!insertedBookings || insertedBookings.length === 0) throw new Error("No bookings were created");
+
+            const booking = insertedBookings[0];
+
+            // If it was a proposal, mark it as booked and preserve other metadata
+            if (proposalId) {
+                const { data: proposal } = await supabase
+                    .from('messages')
+                    .select('metadata')
+                    .eq('id', proposalId)
+                    .single();
+
+                if (proposal) {
+                    await supabase
+                        .from('messages')
+                        .update({
+                            metadata: {
+                                ...proposal.metadata,
+                                status: 'booked',
+                                booked_at: new Date().toISOString()
+                            }
+                        })
+                        .eq('id', proposalId);
+                }
+            }
+
+            // 3. Send confirmation emails via Edge Function
+            // Email to Carer: Booking Request
+            await supabase.functions.invoke('send-transactional-email', {
+                body: {
+                    type: 'booking_request',
+                    email: carer.email, // Assuming checking carer email or handle in edge function
+                    name: carer.full_name,
+                    data: {
+                        clientName: user.user_metadata.full_name || 'A Client',
+                        date: startTime.toLocaleDateString(),
+                        duration: `${duration} ${serviceType === 'hourly' ? 'hours' : 'days'}`,
+                        bookingId: booking.id
+                    }
+                }
+            });
+
+            // Email to Client: Request Sent Confirmation
+            await supabase.functions.invoke('send-transactional-email', {
+                body: {
+                    type: 'booking_request_sent',
+                    email: user.email,
+                    name: user.user_metadata.full_name || 'Client',
+                    data: {
+                        carerName: carer.full_name,
+                        date: startTime.toLocaleDateString(),
+                        bookingId: booking.id
+                    }
+                }
+            });
+
+            setStep(3);
+            toast({
+                title: isRecurring ? "Recurring Booking Request Sent!" : "Booking Request Sent!",
+                description: `Your request for ${insertedBookings.length} session(s) has been sent to ${carer.full_name}. You'll be notified when they respond.`,
+            });
         } catch (error: any) {
             toast({
                 title: "Booking Failed",
@@ -211,14 +324,14 @@ export default function CreateBooking() {
     }
 
     return (
-        <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
+        <div className="max-w-5xl mx-auto space-y-6 px-4 md:px-6 py-4 animate-fade-in">
             {/* Navigation */}
             <Button variant="ghost" onClick={() => navigate(-1)} className="h-9 px-4 rounded-lg group hover:bg-primary/5 text-xs font-bold">
                 <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                 Back to Search
             </Button>
 
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="flex flex-col-reverse lg:grid lg:grid-cols-3 gap-6">
                 {/* Main Booking Content */}
                 <div className="lg:col-span-2 space-y-6">
                     {step < 3 && (
@@ -238,7 +351,14 @@ export default function CreateBooking() {
 
                                 {step === 1 ? (
                                     <div className="p-6 space-y-6">
-                                        <h2 className="text-xl font-bold tracking-tight">Configure Booking</h2>
+                                        <div className="flex justify-between items-center">
+                                            <h2 className="text-xl font-bold tracking-tight">Configure Booking</h2>
+                                            {proposalRate && (
+                                                <Badge className="bg-emerald-500 hover:bg-emerald-600">
+                                                    <Tag className="w-3 h-3 mr-1" /> Special Offer Applied
+                                                </Badge>
+                                            )}
+                                        </div>
 
                                         {/* Service Type Selection */}
                                         <div className="space-y-3">
@@ -246,8 +366,9 @@ export default function CreateBooking() {
                                             <div className="flex flex-wrap gap-2">
                                                 <Button
                                                     variant={serviceType === 'hourly' ? 'default' : 'outline'}
-                                                    onClick={() => { setServiceType('hourly'); setServiceSubtype('hourly'); setDuration(2); }}
-                                                    className="h-9 text-xs"
+                                                    onClick={() => { if (!proposalRate) { setServiceType('hourly'); setServiceSubtype('hourly'); setDuration(2); } }}
+                                                    className={`h-9 text-xs ${(proposalRate && serviceType !== 'hourly') ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                    disabled={!!proposalRate && serviceType !== 'hourly'} // Disable if offer is not for this type? Actually proposal sets type.
                                                 >
                                                     Hourly Care
                                                 </Button>
@@ -256,11 +377,14 @@ export default function CreateBooking() {
                                                     <Button
                                                         variant={serviceType === 'overnight' ? 'default' : 'outline'}
                                                         onClick={() => {
-                                                            setServiceType('overnight');
-                                                            setServiceSubtype(carer?.carer_details?.overnight_sleeping_rate ? 'sleeping' : 'waking');
-                                                            setDuration(1); // 1 night
+                                                            if (!proposalRate) {
+                                                                setServiceType('overnight');
+                                                                setServiceSubtype(carer?.carer_details?.overnight_sleeping_rate ? 'sleeping' : 'waking');
+                                                                setDuration(1); // 1 night
+                                                            }
                                                         }}
-                                                        className="h-9 text-xs"
+                                                        className={`h-9 text-xs ${(proposalRate && serviceType !== 'overnight') ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                        disabled={!!proposalRate && serviceType !== 'overnight'}
                                                     >
                                                         Overnight Care
                                                     </Button>
@@ -270,11 +394,14 @@ export default function CreateBooking() {
                                                     <Button
                                                         variant={serviceType === 'live_in' ? 'default' : 'outline'}
                                                         onClick={() => {
-                                                            setServiceType('live_in');
-                                                            setServiceSubtype(carer?.carer_details?.live_in_rate_daily ? 'daily' : 'weekly');
-                                                            setDuration(1); // 1 day/week
+                                                            if (!proposalRate) {
+                                                                setServiceType('live_in');
+                                                                setServiceSubtype(carer?.carer_details?.live_in_rate_daily ? 'daily' : 'weekly');
+                                                                setDuration(1); // 1 day/week
+                                                            }
                                                         }}
-                                                        className="h-9 text-xs"
+                                                        className={`h-9 text-xs ${(proposalRate && serviceType !== 'live_in') ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                        disabled={!!proposalRate && serviceType !== 'live_in'}
                                                     >
                                                         Live-in Care
                                                     </Button>
@@ -283,7 +410,7 @@ export default function CreateBooking() {
                                         </div>
 
                                         {/* Subtype Selection (if applicable) */}
-                                        {serviceType === 'overnight' && (
+                                        {serviceType === 'overnight' && !proposalRate && (
                                             <div className="space-y-3 animate-in fade-in">
                                                 <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Night Type</Label>
                                                 <div className="flex gap-2">
@@ -309,7 +436,7 @@ export default function CreateBooking() {
                                             </div>
                                         )}
 
-                                        {serviceType === 'live_in' && (
+                                        {serviceType === 'live_in' && !proposalRate && (
                                             <div className="space-y-3 animate-in fade-in">
                                                 <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Duration Unit</Label>
                                                 <div className="flex gap-2">
@@ -394,6 +521,51 @@ export default function CreateBooking() {
                                             </div>
                                         </div>
 
+                                        {/* Recurring Booking Toggle */}
+                                        <div className="pt-4 border-t space-y-3">
+                                            <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/5">
+                                                <div className="flex items-center gap-3">
+                                                    <Repeat className="w-4 h-4 text-[#1a9e8c]" />
+                                                    <div>
+                                                        <Label className="font-bold text-sm cursor-pointer">Recurring Booking</Label>
+                                                        <p className="text-[11px] text-muted-foreground">Automatically rebook on a schedule</p>
+                                                    </div>
+                                                </div>
+                                                <Switch checked={isRecurring} onCheckedChange={setIsRecurring} />
+                                            </div>
+                                            {isRecurring && (
+                                                <div className="space-y-4 animate-in fade-in">
+                                                    <Select value={recurrenceType} onValueChange={(v: any) => setRecurrenceType(v)}>
+                                                        <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-black/5">
+                                                            <SelectValue placeholder="Frequency" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="weekly">Every Week</SelectItem>
+                                                            <SelectItem value="biweekly">Every 2 Weeks</SelectItem>
+                                                            <SelectItem value="monthly">Every Month</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+
+                                                    <div className="space-y-2">
+                                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Until (Optional)</Label>
+                                                        <div className="p-3 border border-black/5 rounded-xl bg-slate-50/50 flex flex-col items-center">
+                                                            <Calendar
+                                                                mode="single"
+                                                                selected={recurrenceEndDate}
+                                                                onSelect={setRecurrenceEndDate}
+                                                                disabled={(date) => date < (selectedDate || new Date())}
+                                                                initialFocus
+                                                                className="rounded-md border bg-white shadow-sm"
+                                                            />
+                                                            <p className="text-[10px] text-muted-foreground mt-2">
+                                                                {recurrenceEndDate ? `Recurring until ${format(recurrenceEndDate, 'dd MMM yyyy')}` : 'Runs until cancelled'}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+
                                         <Button className="w-full h-12 rounded-xl font-bold text-sm shadow-md shadow-primary/10" onClick={() => setStep(2)}>
                                             Review Summary
                                             <ChevronRight className="w-4 h-4 ml-1.5" />
@@ -460,7 +632,7 @@ export default function CreateBooking() {
                                             {/* Rate Compliance Alert */}
 
 
-                                            {(carer?.carer_details?.hourly_rate || 25) < MINIMUM_HOURLY_RATE && (
+                                            {(carer?.carer_details?.hourly_rate || 25) < MINIMUM_HOURLY_RATE && !proposalRate && (
                                                 <Alert variant="destructive">
                                                     <AlertCircle className="h-4 w-4" />
                                                     <AlertDescription>
@@ -477,7 +649,7 @@ export default function CreateBooking() {
                                         <Button
                                             className="w-full h-12 rounded-xl font-bold text-sm shadow-md shadow-primary/10"
                                             onClick={handleBooking}
-                                            disabled={loading || ((carer?.carer_details?.hourly_rate || 25) < MINIMUM_HOURLY_RATE)}
+                                            disabled={loading || (!proposalRate && (carer?.carer_details?.hourly_rate || 25) < MINIMUM_HOURLY_RATE)}
                                         >
                                             {loading ? "Processing..." : "Confirm Booking"}
                                             {!loading && <CheckCircle2 className="w-4 h-4 ml-2" />}
@@ -514,8 +686,8 @@ export default function CreateBooking() {
                 </div>
 
                 {/* Sidebar: Carer Summary */}
-                <div className="space-y-6">
-                    <Card className="rounded-2xl border-none bg-slate-900 text-white overflow-hidden sticky top-8 shadow-xl">
+                <div className="space-y-6 w-full mb-6 lg:mb-0">
+                    <Card className="rounded-2xl border-none bg-slate-900 text-white overflow-hidden lg:sticky lg:top-8 shadow-xl">
                         <div className="p-6 space-y-6">
                             <div className="flex items-center gap-4">
                                 <Avatar className="h-12 w-12 border border-white/10 rounded-xl">
@@ -534,7 +706,14 @@ export default function CreateBooking() {
                             <div className="space-y-3 pt-5 border-t border-white/5">
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="font-semibold text-white/40">Hourly Rate</span>
-                                    <span className="font-bold tracking-tight">£{carer?.carer_details?.hourly_rate || '25.00'}</span>
+                                    {proposalRate ? (
+                                        <span className="font-bold tracking-tight text-emerald-400">
+                                            {formatCurrency(proposalRate)}
+                                            <span className="text-[10px] ml-1 text-white/50">(Offer)</span>
+                                        </span>
+                                    ) : (
+                                        <span className="font-bold tracking-tight">£{carer?.carer_details?.hourly_rate || '25.00'}</span>
+                                    )}
                                 </div>
                                 <div className="flex justify-between items-center text-[11px]">
                                     <span className="font-semibold text-white/40 flex items-center gap-2">

@@ -9,6 +9,7 @@ import { HelmetProvider } from "react-helmet-async";
 // Auth Protection
 import RoleGuard from "@/components/auth/RoleGuard";
 import ScrollToTop from "@/components/shared/ScrollToTop";
+import { CookieConsent } from "@/components/shared/CookieConsent";
 
 // Loading Fallback Component
 // Minimal loading fallback - nearly invisible to prevent flash
@@ -29,6 +30,7 @@ import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import TypesOfCare from "./pages/public/TypesOfCare";
 import About from "./pages/public/About";
+import Press from "./pages/public/Press";
 import CareTypeDetail from "./pages/public/CareTypeDetail";
 import Solutions from "./pages/Solutions";
 import Contact from "./pages/public/Contact";
@@ -36,6 +38,7 @@ import Contact from "./pages/public/Contact";
 import Security from "./pages/public/Security";
 import Terms from "./pages/public/Terms";
 import UserGuide from "./pages/public/UserGuide";
+import HowItWorks from "./pages/public/HowItWorks";
 import SafetyGuidelines from "./pages/public/SafetyGuidelines";
 import Blog from "./pages/public/Blog";
 import BlogPost from "./pages/public/BlogPost";
@@ -96,7 +99,8 @@ const AdminLayout = () => (
 const ClientDashboard = lazy(() => import("./pages/client/Dashboard"));
 const SearchCarers = lazy(() => import("./pages/client/SearchCarers"));
 const SearchEnhanced = lazy(() => import("./pages/client/SearchEnhanced"));
-const ClientBookings = lazy(() => import("./pages/client/Bookings"));
+const ClientBookings = lazy(() => import("./pages/client/BookingsEnhanced"));
+const LeaveReview = lazy(() => import("./pages/client/LeaveReview"));
 const CreateBooking = lazy(() => import("./pages/client/CreateBooking"));
 const CarePlans = lazy(() => import("./pages/client/CarePlans"));
 const ClientPayments = lazy(() => import("./pages/client/Payments"));
@@ -117,6 +121,7 @@ const CarerDocuments = lazy(() => import("./pages/carer/DocumentsNew")); // Rena
 const DocumentsNew = lazy(() => import("./pages/carer/DocumentsNew"));
 const CarerProfile = lazy(() => import("./pages/carer/Profile"));
 const HeemsAcademy = lazy(() => import("./pages/carer/HeemsAcademy"));
+const CarerSettings = lazy(() => import("./pages/carer/Settings"));
 
 // Organisation Pages
 const OrganisationDashboard = lazy(() => import("./pages/organisation/Dashboard"));
@@ -126,6 +131,9 @@ const OrganisationBookings = lazy(() => import("./pages/organisation/Bookings"))
 const OrganisationCompliance = lazy(() => import("./pages/organisation/Compliance"));
 const OrganisationAnalytics = lazy(() => import("./pages/organisation/Analytics"));
 const OrganisationSettings = lazy(() => import("./pages/organisation/Settings"));
+const OrganisationServiceAreas = lazy(() => import("./pages/organisation/ServiceAreas"));
+const OrganisationProfile = lazy(() => import("./pages/organisation/Profile"));
+
 
 // Admin Pages
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
@@ -159,6 +167,7 @@ const queryClient = new QueryClient({
 });
 
 import { ChatWidget } from "@/components/shared/ChatWidget";
+import { BackToTopButton } from "@/components/shared/BackToTopButton";
 
 // ... existing code ...
 
@@ -182,16 +191,19 @@ const App = () => (
 
               {/* New Public Pages */}
               <Route path="/about" element={<About />} />
+              <Route path="/press" element={<Press />} />
               <Route path="/types-of-care" element={<TypesOfCare />} />
               <Route path="/types-of-care/:typeId" element={<CareTypeDetail />} />
               <Route path="/solutions" element={<Solutions />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/equality" element={<Equality />} />
               <Route path="/contact" element={<Contact />} />
 
               <Route path="/security" element={<Security />} />
 
               <Route path="/terms" element={<Terms />} />
               <Route path="/user-guide" element={<UserGuide />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/safety-guidelines" element={<SafetyGuidelines />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogPost />} />
@@ -218,6 +230,7 @@ const App = () => (
                 <Route path="/client/search" element={<SearchCarers />} />
                 <Route path="/client/search-enhanced" element={<SearchEnhanced />} />
                 <Route path="/client/bookings" element={<ClientBookings />} />
+                <Route path="/client/bookings/:bookingId/review" element={<LeaveReview />} />
                 <Route path="/client/post-job" element={<PostJob />} />
                 <Route path="/client/book/:carerId" element={<CreateBooking />} />
                 <Route path="/client/care-plans" element={<CarePlans />} />
@@ -265,6 +278,7 @@ const App = () => (
                 <Route path="/organisation/profile" element={<OrganisationDashboard />} />
                 <Route path="/organisation/messages" element={<MessagesPage role="organisation" />} />
                 <Route path="/organisation/settings" element={<OrganisationSettings />} />
+                <Route path="/organisation/service-areas" element={<OrganisationServiceAreas />} />
               </Route>
 
               {/* Admin Routes */}
@@ -295,7 +309,9 @@ const App = () => (
             </Routes>
           </Suspense>
           <ChatWidget />
+          <BackToTopButton />
         </BrowserRouter>
+        <CookieConsent />
       </TooltipProvider>
     </QueryClientProvider>
   </HelmetProvider>

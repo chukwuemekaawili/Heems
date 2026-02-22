@@ -26,10 +26,14 @@ import {
     FileText,
     Download,
     Image as ImageIcon,
-    Loader2
+    Loader2,
+    PoundSterling
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ProposalCard } from './ProposalCard';
+import { CreateOfferDialog } from './CreateOfferDialog';
+import { useNavigate } from 'react-router-dom';
 
 interface MessageThreadProps {
     otherUserId: string;
@@ -44,6 +48,7 @@ export function MessageThread({
     otherUserAvatar,
     otherUserRole,
 }: MessageThreadProps) {
+    const navigate = useNavigate();
     const [messageText, setMessageText] = useState('');
     const [currentUserId, setCurrentUserId] = useState<string>('');
     const [isCallActive, setIsCallActive] = useState(false);
@@ -52,9 +57,12 @@ export function MessageThread({
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [attachedFile, setAttachedFile] = useState<{ url: string, name: string, type: string } | null>(null);
+    const [isOfferDialogOpen, setIsOfferDialogOpen] = useState(false);
+    const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const { messages, loading, sending, sendMessage, fetchMessages, uploadAttachment } = useMessaging();
+    const { messages, loading, sending, sendMessage, fetchMessages, uploadAttachment, updateMessageStatus } = useMessaging();
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
@@ -80,6 +88,53 @@ export function MessageThread({
         } catch (error) {
             // Error handled in hook
         }
+    };
+
+    const handleSendOffer = async (offerData: { rate: number; frequency: string; serviceType: string }) => {
+        try {
+            await sendMessage(
+                otherUserId,
+                '',
+                undefined,
+                'proposal',
+                {
+                    ...offerData,
+                    status: 'pending'
+                }
+            );
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleAcceptOffer = async (messageId: string) => {
+        setIsUpdatingStatus(true);
+        try {
+            const message = messages.find(m => m.id === messageId);
+            if (message) {
+                await updateMessageStatus(messageId, { ...message.metadata, status: 'accepted' });
+            }
+        } finally {
+            setIsUpdatingStatus(false);
+        }
+    };
+
+    const handleRejectOffer = async (messageId: string) => {
+        setIsUpdatingStatus(true);
+        try {
+            const message = messages.find(m => m.id === messageId);
+            if (message) {
+                await updateMessageStatus(messageId, { ...message.metadata, status: 'rejected' });
+            }
+        } finally {
+            setIsUpdatingStatus(false);
+        }
+    };
+
+    const handleBookNow = (messageId: string, metadata: any) => {
+        // Navigate to booking page with pre-filled data
+        // We'll pass the rate and proposal ID via query params
+        navigate(`/client/book/${otherUserId}?rate=${metadata.rate}&proposalId=${messageId}&type=${metadata.serviceType}`);
     };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,13 +241,14 @@ export function MessageThread({
                     messages.map((message) => {
                         const isOwn = message.sender_id === currentUserId;
                         const showWarning = message.is_flagged && message.flagged_keywords && message.flagged_keywords.length > 0;
+                        const isProposal = message.message_type === 'proposal';
 
                         return (
                             <div
                                 key={message.id}
                                 className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
                             >
-                                <div className={`max-w-[70%] ${isOwn ? 'order-2' : 'order-1'}`}>
+                                <div className={`max-w-[85%] ${isOwn ? 'order-2' : 'order-1'}`}>
                                     {!isOwn && (
                                         <div className="flex items-center gap-2 mb-1">
                                             <Avatar className="h-6 w-6">
@@ -205,40 +261,52 @@ export function MessageThread({
                                         </div>
                                     )}
 
-                                    <div
-                                        className={`rounded-2xl px-4 py-2 ${isOwn
-                                            ? 'bg-[#1a9e8c] text-white'
-                                            : 'bg-slate-100 text-slate-900 shadow-sm'
-                                            }`}
-                                    >
-                                        {message.file_url && (
-                                            <div className={`mb-2 p-2 rounded-lg ${isOwn ? 'bg-white/10' : 'bg-white/50'} border border-white/20`}>
-                                                {message.file_type?.startsWith('image/') ? (
-                                                    <img src={message.file_url} alt={message.file_name || 'image'} className="max-w-full rounded h-auto max-h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity" />
-                                                ) : (
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="h-10 w-10 rounded bg-primary/20 flex items-center justify-center">
-                                                            <FileText className="h-5 w-5" />
+                                    {isProposal ? (
+                                        <ProposalCard
+                                            messageId={message.id}
+                                            metadata={message.metadata}
+                                            isOwn={isOwn}
+                                            onAccept={handleAcceptOffer}
+                                            onReject={handleRejectOffer}
+                                            onBook={handleBookNow}
+                                            isUpdating={isUpdatingStatus}
+                                        />
+                                    ) : (
+                                        <div
+                                            className={`rounded-2xl px-4 py-2 ${isOwn
+                                                ? 'bg-[#1a9e8c] text-white'
+                                                : 'bg-slate-100 text-slate-900 shadow-sm'
+                                                }`}
+                                        >
+                                            {message.file_url && (
+                                                <div className={`mb-2 p-2 rounded-lg ${isOwn ? 'bg-white/10' : 'bg-white/50'} border border-white/20`}>
+                                                    {message.file_type?.startsWith('image/') ? (
+                                                        <img src={message.file_url} alt={message.file_name || 'image'} className="max-w-full rounded h-auto max-h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity" />
+                                                    ) : (
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="h-10 w-10 rounded bg-primary/20 flex items-center justify-center">
+                                                                <FileText className="h-5 w-5" />
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-xs font-bold truncate">{message.file_name}</p>
+                                                                <p className="text-[10px] opacity-70">Attachment</p>
+                                                            </div>
+                                                            <a href={message.file_url} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-black/5 rounded">
+                                                                <Download className="h-4 w-4" />
+                                                            </a>
                                                         </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="text-xs font-bold truncate">{message.file_name}</p>
-                                                            <p className="text-[10px] opacity-70">Attachment</p>
-                                                        </div>
-                                                        <a href={message.file_url} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-black/5 rounded">
-                                                            <Download className="h-4 w-4" />
-                                                        </a>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
-                                    </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                            <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                                        </div>
+                                    )}
 
                                     {showWarning && isOwn && (
                                         <Alert className="mt-2 border-amber-500 bg-amber-50">
                                             <AlertCircle className="h-4 w-4 text-amber-600" />
                                             <AlertDescription className="text-xs text-amber-900">
-                                                Modified: Prohibited words replaced ({message.flagged_keywords.join(', ')})
+                                                Modified: Prohibited words replaced ({message.flagged_keywords?.join(', ')})
                                             </AlertDescription>
                                         </Alert>
                                     )}
@@ -290,6 +358,16 @@ export function MessageThread({
                         disabled={isUploading}
                     >
                         {isUploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Paperclip className="h-5 w-5" />}
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-slate-400 hover:text-primary hover:bg-primary/5"
+                        onClick={() => setIsOfferDialogOpen(true)}
+                        disabled={isUploading}
+                        title="Create Offer"
+                    >
+                        <PoundSterling className="h-5 w-5" />
                     </Button>
                     <Input
                         placeholder="Type your message..."
@@ -376,6 +454,12 @@ export function MessageThread({
                     </div>
                 </DialogContent>
             </Dialog>
+
+            <CreateOfferDialog
+                isOpen={isOfferDialogOpen}
+                onClose={() => setIsOfferDialogOpen(false)}
+                onSubmit={handleSendOffer}
+            />
         </Card>
     );
 }

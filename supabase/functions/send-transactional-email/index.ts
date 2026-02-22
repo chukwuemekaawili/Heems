@@ -7,6 +7,7 @@ const SMTP_HOST = Deno.env.get("SMTP_HOST");
 const SMTP_PORT = parseInt(Deno.env.get("SMTP_PORT") || "465");
 const SMTP_USER = Deno.env.get("SMTP_USER");
 const SMTP_PASS = Deno.env.get("SMTP_PASS");
+const SMTP_SENDER = Deno.env.get("SMTP_SENDER") || (SMTP_USER === 'resend' ? 'onboarding@resend.dev' : SMTP_USER);
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -175,6 +176,21 @@ const handler = async (req: Request): Promise<Response> => {
                 `;
                 break;
 
+            case "booking_request_sent":
+                subject = "Booking Request Sent to " + data?.carerName;
+                title = "Request Sent";
+                content = `
+                    <p>Hello ${name},</p>
+                    <p>We've sent your booking request to <strong>${data?.carerName}</strong>.</p>
+                    <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                         <p><strong>Date:</strong> ${data?.date}</p>
+                         <p><strong>Status:</strong> Pending Carer Approval</p>
+                    </div>
+                    <p>You will be notified as soon as they respond.</p>
+                    <p><a href="https://heartful-care-connect.vercel.app/client/bookings" class="btn">View Bookings</a></p>
+                `;
+                break;
+
             case "booking_confirmation":
                 subject = "Booking Confirmed: " + data?.date;
                 title = "Booking Confirmed";
@@ -186,6 +202,36 @@ const handler = async (req: Request): Promise<Response> => {
                          <p style="color: #166534; margin: 8px 0 0;">Booking Ref: #${data?.bookingRef}</p>
                     </div>
                     <p>You can view full details in your dashboard.</p>
+                `;
+                break;
+
+                break;
+
+            case "booking_cancelled":
+                subject = "Booking Cancelled - " + data?.date;
+                title = "Booking Cancelled";
+                content = `
+                    <p>Hello ${name},</p>
+                    <p>Your booking with <strong>${data?.otherPartyName}</strong> on ${data?.date} has been cancelled.</p>
+                    ${data?.refundStatus === 'succeeded' ?
+                        `<div style="background-color: #f0fdf4; padding: 16px; border-radius: 8px; margin: 20px 0;"><p><strong>Refund Processed:</strong> £${data?.refundAmount} has been refunded to your card.</p></div>`
+                        : ''}
+                    <p>You can view the details in your dashboard.</p>
+                `;
+                break;
+
+            case "booking_cancellation_requested":
+                subject = "Cancellation Request: " + data?.bookingRef;
+                title = "Cancellation Requested";
+                content = `
+                    <p>Hello ${name},</p>
+                    <p><strong>${data?.requesterName}</strong> has requested to cancel the booking on ${data?.date}.</p>
+                    <div style="background-color: #fff7ed; border: 1px solid #ffedd5; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                        <p><strong>Reason:</strong> ${data?.reason}</p>
+                        <p><strong>Refund Requested:</strong> £${data?.refundAmount}</p>
+                    </div>
+                    <p>Please log in to approve or decline this refund request.</p>
+                    <p><a href="https://heartful-care-connect.vercel.app/carer/bookings" class="btn">Manage Request</a></p>
                 `;
                 break;
 
@@ -248,7 +294,7 @@ const handler = async (req: Request): Promise<Response> => {
         }
 
         await transporter.sendMail({
-            from: `"Heems Notifications" <${SMTP_USER}>`,
+            from: `"Heems Notifications" <${SMTP_SENDER}>`,
             to: email,
             subject: subject,
             html: generateEmailHtml(content, title),

@@ -210,14 +210,7 @@ const TestimonialsSection = () => {
           ))}
         </div>
 
-        {/* Trust badges */}
-        <div className="mt-16 text-center">
-          <p className="text-sm text-muted-foreground mb-6">Trusted by leading organisations</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
-            <div className="text-xl font-bold text-foreground">ICO Certified</div>
-            <div className="text-xl font-bold text-foreground">Stripe Verified</div>
-          </div>
-        </div>
+
       </div>
     </section>
   );

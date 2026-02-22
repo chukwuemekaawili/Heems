@@ -1,0 +1,1981 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/umbblockgridlayout.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="/media/eo2nb1h1/favicon-2.png">
+        <link rel="icon" type="image/x-icon" href="/media/eo2nb1h1/favicon-2.png">
+        <link rel="stylesheet" href="/css/templates/tokyo/styles.css?cache=19-2-2026" />
+        <link rel="preload" as="style" onload="this.onload = null;this.rel = 'stylesheet'" href="/css/brands/community-care.css?cache=19-2-2026">
+        <noscript>
+            <link rel="stylesheet" href="/css/brands/community-care.css?cache=19-2-2026">
+        </noscript>
+    <link rel="preload" as="style" onload="this.onload = null;this.rel = 'stylesheet'" href="/css/base/base.css?cache=19 - 2 - 2026">
+    <noscript>
+        <link rel="stylesheet" href="/css/base/base.css?cache=19 - 2 - 2026">
+    </noscript>
+    <link rel="preload" as="style" onload="this.onload = null;this.rel = 'stylesheet'" href="/css/background/background.css?cache=19 - 2 - 2026">
+    <noscript>
+        <link rel="stylesheet" href="/css/background/background.css?cache=19 - 2 - 2026">
+    </noscript>
+    
+
+    <script src="https://k121.communitycare.co.uk/script.js"></script>
+
+    <link rel="preconnect" href="//www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <script>
+        window.dataLayer = window.dataLayer || [];
+    </script>
+    <script>
+    (function (w, d, s, l, i) {
+        w[l] = w[l] || []; w[l].push({
+            'gtm.start':
+                new Date().getTime(), event: 'gtm.js'
+        }); var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+            'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-563F6SP');</script>
+
+    <script async id="ebx" src="//applets.ebxcdn.com/ebx.js"></script>
+
+    <link rel="preconnect" crossorigin href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" crossorigin href="https://fonts.gstatic.com">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&amp;display=swap">
+    <link rel="stylesheet" media="print" onload="this.onload=null;this.removeAttribute('media');" href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&amp;display=swap">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&amp;display=swap">
+    </noscript>
+    <style>
+        :root {
+            --font-brand-heading: 'Oxygen';
+            --font-brand-body: 'Oxygen';
+        }
+        
+        html, body {
+            font-family: 'Oxygen',sans-serif;
+        }
+
+
+                h1, h2, h3, h4, h5, h6, nav  {
+                font-family: 'Oxygen', sans-serif;
+                    }
+        </style>
+
+    <style>.color_893a497b-fa2e-41b4-b659-6c861334f0e3{color:#dc7f1e; fill:#dc7f1e;}.color_b11ec78b-eb0f-4d7b-8fbf-43fd48c041cb{color:#025e83; fill:#025e83;}.color_f6c869bc-c405-4265-b642-112855029793{color:#92c01f; fill:#92c01f;}.color_e6942d36-6e48-4ba3-85d7-891a78ee1edb{color:#f2fafe; fill:#f2fafe;}.color_5681648b-2dec-4cda-8932-cd092d9fe67b{color:#f5f5f5; fill:#f5f5f5;}.color_ab067edd-c06f-4197-b1d5-f1c0b0cb4ed6{color:#f4f9e8; fill:#f4f9e8;}.color_5c117868-9793-4f08-bf18-f5321ba778a9{color:#fcf9ea; fill:#fcf9ea;}.color_8ed73383-bd1d-42d1-a550-4e6f0405cb15{color:#f1f6f8; fill:#f1f6f8;}.color_d1efd904-599a-4cf6-bf8e-b5ff83f646f1{color:#ffffff; fill:#ffffff;}.color_1271c5dc-69fc-4bd8-870c-89b798642510{color:#f1f6f8; fill:#f1f6f8;}.color_01a5b9c1-f779-4156-a54d-eefe6e4feefd{color:#c01fa7; fill:#c01fa7;}.color_b47eb380-01e1-4ba3-9d54-b1bc069b57f3{color:#01aed6; fill:#01aed6;}.color_063bab00-820f-4400-af07-2c0be4f2c450{color:#c38edf; fill:#c38edf;}.color_3686ede7-4c97-4cdf-8164-326267ec4395{color:#8edfdc; fill:#8edfdc;}.color_115da3d8-6f21-41c0-b136-f65fb862a3ec{color:#eefaf9; fill:#eefaf9;}.color_371459b7-6904-483d-93e8-59fab3266c8c{color:#014560; fill:#014560;}</style>
+
+    <script integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="/scripts/jquery.dfp.min.js"></script>
+    <script src="/scripts/dfp-init.es5.min.js"></script>
+
+    
+
+    <script type='text/javascript'>
+        /* <![CDATA[ */
+        pm_adverts.init({
+  "dfpID": "21851664321",
+  "debug": false,
+  "adunit": "community-care",
+  "slotcount": 0,
+  "setTargeting": {
+    "community-care": [
+      "notfoundpage",
+      "not-found",
+      "LoggedOut",
+      "Anonymous"
+    ]
+  },
+  "mappings": {
+    "pm-datasizemap-mpu": [
+      {
+        "browser": [
+          1,
+          1
+        ],
+        "ad_sizes": [
+          [
+            120,
+            90
+          ],
+          [
+            160,
+            60
+          ],
+          [
+            300,
+            90
+          ],
+          [
+            300,
+            100
+          ],
+          [
+            300,
+            200
+          ],
+          [
+            300,
+            250
+          ],
+          [
+            300,
+            500
+          ],
+          [
+            300,
+            600
+          ]
+        ]
+      }
+    ],
+    "pm-datasizemap-banner": [
+      {
+        "browser": [
+          480,
+          1
+        ],
+        "ad_sizes": [
+          [
+            468,
+            60
+          ]
+        ]
+      },
+      {
+        "browser": [
+          1,
+          1
+        ],
+        "ad_sizes": [
+          [
+            300,
+            100
+          ],
+          [
+            320,
+            50
+          ],
+          [
+            320,
+            100
+          ],
+          [
+            468,
+            60
+          ]
+        ]
+      }
+    ],
+    "pm-datasizemap-billboard": [
+      {
+        "browser": [
+          992,
+          1
+        ],
+        "ad_sizes": [
+          [
+            1110,
+            380
+          ],
+          [
+            970,
+            250
+          ],
+          [
+            970,
+            90
+          ],
+          [
+            728,
+            210
+          ]
+        ]
+      },
+      {
+        "browser": [
+          769,
+          1
+        ],
+        "ad_sizes": [
+          [
+            728,
+            90
+          ],
+          [
+            728,
+            210
+          ],
+          [
+            780,
+            250
+          ]
+        ]
+      },
+      {
+        "browser": [
+          480,
+          1
+        ],
+        "ad_sizes": [
+          [
+            468,
+            60
+          ],
+          [
+            600,
+            206
+          ]
+        ]
+      },
+      {
+        "browser": [
+          1,
+          1
+        ],
+        "ad_sizes": [
+          [
+            320,
+            50
+          ],
+          [
+            300,
+            100
+          ],
+          [
+            320,
+            100
+          ]
+        ]
+      }
+    ],
+    "pm-datasizemap-leaderboard": [
+      {
+        "browser": [
+          769,
+          1
+        ],
+        "ad_sizes": [
+          [
+            728,
+            90
+          ],
+          [
+            728,
+            210
+          ],
+          [
+            780,
+            250
+          ]
+        ]
+      },
+      {
+        "browser": [
+          480,
+          1
+        ],
+        "ad_sizes": [
+          [
+            468,
+            60
+          ]
+        ]
+      },
+      {
+        "browser": [
+          1,
+          1
+        ],
+        "ad_sizes": [
+          [
+            320,
+            50
+          ],
+          [
+            300,
+            100
+          ],
+          [
+            320,
+            100
+          ]
+        ]
+      }
+    ]
+  }
+});
+        /* ]]> */
+    </script>
+    <script>
+      if (typeof Storage !== "undefined") {
+        try {
+          var targetingStr = localStorage.getItem("bcDFPTargetingParams");
+          if (targetingStr && window.pm_adverts && pm_adverts.setTargeting) {
+            var params = JSON.parse(targetingStr);
+
+            params.forEach(function (item) {
+              if (!pm_adverts.setTargeting[item.key]) {
+                pm_adverts.setTargeting[item.key] = [];
+              }
+
+              item.value.forEach(function (val) {
+                if (!pm_adverts.setTargeting[item.key].includes(val)) {
+                  pm_adverts.setTargeting[item.key].push(val);
+                }
+              });
+            });
+
+            console.log("✅ BlueConic DFP targeting merged:", pm_adverts.setTargeting);
+          }
+        } catch (e) {
+          console.warn("⚠️ BlueConic targeting parse error:", e);
+        }
+      }
+    </script>
+    <script>
+      window.onorientationchange = function () {
+        googletag.cmd.push(function () {
+          googletag.pubads().refresh(null, {changeCorrelator: false});
+        });
+      }
+    </script>
+
+
+    <link rel="preconnect" href="//www.googletagservices.com">
+    <link rel="dns-prefetch" href="//www.googletagservices.com">
+    <link rel="preconnect" href="//pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
+    <link rel="preconnect" href="//tpc.googlesyndication.com">
+    <link rel="dns-prefetch" href="//tpc.googlesyndication.com">
+    <link rel="preconnect" href="//ad.doubleclick.net">
+    <link rel="dns-prefetch" href="//ad.doubleclick.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Community Care - Not Found</title>
+<meta name="description" content="" />
+<link rel="canonical" href="https://www.communitycare.co.uk/not-found/" />
+<meta name="tdm-reservation" content="1">
+<meta name="tdm-policy" content="https://www.markallengroup.com/tdm-policy.json">
+<meta property="og:url" content="https://www.communitycare.co.uk/not-found/" />
+<meta property="og:site_name" content="Community Care" />
+<meta property="og:description" />
+<meta name="twitter:title" />
+<meta name="twitter:description" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" />
+
+
+    <script async="" src="/scripts/lazysizes.min.js"></script>
+</head>
+<body class="brand-community-care" itemscope itemtype="https://schema.org/WebPage">
+    
+    
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-563F6SP"
+                height="0" width="0" style="display: none; visibility: hidden"></iframe>
+    </noscript>
+
+
+        <header class="h-16 lg:h-auto">
+            <div x-data="menuposition()" :class="fixed ? 'fixed top-0' : 'relative top-auto'" class="group z-50 w-full bg-white shadow-lg shadow-neutral-200/60 lg:relative lg:h-auto">
+                <div>
+                    <div class="flex h-16 items-center space-x-0.5 px-4 lg:block lg:space-x-0 lg:px-0 lg:h-auto">
+                        <!--Logo / Search / ReachDeck -->
+                        <div class="w-full mx-auto lg:px-8 lg:max-w-8xl flex items-center justify-between lg:justify-start lg:h-24 lg:py-2">
+                            <!-- Logo -->
+                            <div class="flex">
+                                <a href="/">
+                                    <img id="logo" src="/media/5ognxys4/logo-community-care.png?height=64" alt="Community Care" class="block h-10 lg:h-16 w-auto" />
+                                </a>
+                            </div>
+                                <!-- Accessibility tool -->
+                                <div class="flex-none lg:ml-auto">
+                                    <div id="__ba_panel"></div>
+                                </div>
+                            <!-- Search -->
+                            <div class="lg:ml-auto">
+                                <nav aria-label="Search" class="flex items-center gap-x-2 ml-auto lg:ml-0 lg:w-full lg:gap-x-0">
+                                    <div x-data="searchdropdown()"
+                                         x-on:click.outside="close()"
+                                         x-on:focusin.window="if(window.innerWidth<1024){!$root.contains($event.target) && close()}">
+                                        <!--SEARCH BUTTON-->
+                                        <button type="button"
+                                                x-on:click="toggle(this.searchinput)"
+                                                :aria-expanded="open"
+                                                aria-controls="searchbox"
+                                                :class="open && 'bg-primary/5 hover:bg-primary/10'"
+                                                class="float-right flex items-center text-primary p-2 rounded-md hover:bg-primary/5 lg:hidden">
+                                            <span class="sr-only">Show Search</span>
+                                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                            </svg>
+                                        </button>
+                                        <!--SEARCH DROPDOWN -->
+                                        <div id="searchbox"
+                                             x-cloak
+                                             x-collapse
+                                             x-show="open"
+                                             x-bind:hidden="!isOpen"
+                                             x-on:keydown.escape.stop="close()"
+                                             aria-label="Search modal"
+                                             class="absolute w-full left-0 top-14 bg-panel-default shadow-lg shadow-neutral-200/60 lg:bg-transparent lg:block! lg:static! lg:h-auto! lg:shadow-none">
+                                            <!--Inner shadow-->
+                                            <div class="absolute inset-0 bg-linear-to-b from-neutral-200/40 to-panel-default to-[16px] lg:hidden"></div>
+                                            <div class="max-w-sm mx-auto p-4 py-6 lg:p-0 lg:max-w-none">
+                                                <!-- Search -->
+                                                <form action="/search/">
+                                                    <div x-data="{hasInput : false, hasFocus : false, hasHover : false}"
+                                                         x-init="this.searchinput = $refs.search, $refs.search.value ? hasInput = true : ''"
+                                                         x-on:mouseenter="hasHover = true"
+                                                         x-on:mouseleave="hasHover = false"
+                                                         x-on:focusin="hasFocus = true"
+                                                         x-on:focusout="hasFocus = false"
+                                                         class="flex border border-neutral-200 rounded-lg w-full overflow-hidden bg-neutral-100 items-center relative lg:w-full xl:w-[450px]">
+                                                        <input type="search"
+                                                               id="search"
+                                                               x-ref="search"
+                                                               x-on:keyup="$el.value ? hasInput = true : hasInput = false"
+                                                               x-on:keydown.escape="hasInput === true ? ($el.value = '', hasInput = false, $event.cancelBubble = true) : ''"
+                                                               name="query"
+                                                               placeholder="Search"
+                                                               :class="(hasInput || hasHover || hasFocus) && 'pl-3!'"
+                                                               class="peer block grow p-3 w-80 pl-8 pr-20 leading-none placeholder-neutral-500 text-base rounded-lg bg-neutral-100 border-none focus:ring-2 focus:ring-inset focus:pl-3 hover:pl-3 transition-al duration-100">
+                                                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                             :class="(hasInput || hasHover || hasFocus) && '-ml-3! opacity-0!'"
+                                                             class="size-5 absolute ml-2 text-primary pointer-events-none transition-all duration-100 peer-focus:-ml-3 peer-focus:opacity-0 peer-hover:-ml-3 peer-hover:opacity-0">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                                        </svg>
+                                                        <div class="absolute top-0 right-0 h-full items-center justify-center flex">
+                                                            <button x-show="hasInput"
+                                                                    x-on:click="$refs.search.value = '', hasInput = false, $refs.search.focus()"
+                                                                    type="button"
+                                                                    class="p-1 mr-1 rounded-full bg-white hover:bg-neutral-200">
+                                                                <span class="sr-only">Clear</span>
+                                                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                            <button type="submit"
+                                                                    x-show="hasInput || hasHover || hasFocus"
+                                                                    x-transition:enter="transition-all transform ease-in-out duration-100"
+                                                                    x-transition:enter-start="lg:opacity-0 lg:translate-x-3"
+                                                                    x-transition:enter-end="lg:opacity-100 lg:translate-x-0"
+                                                                    x-transition:leave="lg:transition lg:ease-in-out lg:duration-100"
+                                                                    x-transition:leave-start="lg:opacity-100"
+                                                                    x-transition:leave-end="lg:opacity-0"
+                                                                    class="px-4 bg-panel-tertiary text-white w-10 h-full grid items-center justify-center focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+                                                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-6">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                                                </svg>
+                                                                <span class="sr-only">Search</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                        <!-- Menu-->
+                        <div class="ml-auto lg:bg-panel-default lg:block lg:shadow-inner-lg lg:shadow-neutral-200/60">
+                            <div class="mx-auto lg:px-8 lg:max-w-8xl">
+                                <nav aria-label="Main" class="flex items-center gap-x-2 ml-auto lg:ml-0 lg:w-full lg:gap-x-0">
+                                    <div x-data="mobilemenu()"
+                                         x-on:click.outside="close()"
+                                         x-on:focusin.window="if(window.innerWidth<1024){!$root.contains($event.target) && close()}" class="w-full ">
+                                        <!--MENU BUTTON-->
+                                        <button type="button"
+                                                x-on:click="toggle()"
+                                                :class="open && 'bg-primary/5 hover:bg-primary/10'"
+                                                class="float-right flex items-center text-primary p-2 rounded-md hover:bg-primary/5 lg:hidden">
+                                            <span class="sr-only">Show Menu</span>
+                                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                            </svg>
+                                        </button>
+                                        <!--MENU MODAL-->
+                                        <div id="main-nav"
+                                             x-cloak
+                                             x-bind:hidden="!isOpen"
+                                             x-show="open"
+                                             x-collapse
+                                             x-on:keydown.escape.stop="close()"
+                                             class="absolute top-16 left-0 w-full z-50 bg-white lg:block! lg:static! lg:top-auto lg:left-auto lg:h-auto! lg:overflow-visible! lg:bg-transparent">
+                                            <div class="w-full  overflow-x-hidden bg-linear-to-b from-neutral-200/40 to-white to-[15px] lg:bg-none lg:overflow-visible lg:h-auto! h-full-exc-mobile-menu">
+                                               <!--main nav-->
+                                                <ul class="grid gap-y-4 lg:flex lg:gap-y-0 lg:gap-x-2 py-5">
+
+    <li>
+        <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+            <a href="/" class="flex items-center w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto">
+                <span class="text-xl font-bold lg:text-base leading-none!"> Home</span>
+                
+            </a>
+        </div>
+    </li>
+
+    <li>
+        <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+            <a href="/pages/news-home/" class="flex items-center w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto">
+                <span class="text-xl font-bold lg:text-base leading-none!"> News</span>
+                
+            </a>
+        </div>
+    </li>
+
+    <li x-data="menudropdown()"
+        x-on:keydown.escape.stop="close()"
+        x-on:click.outside="close()"
+        x-on:focusin.window="if(window.innerWidth>=1024){!$root.contains($event.target) && close()}"
+        class="relative">
+        <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+            <button type="button"
+                    x-ref="button"
+                    x-on:click="toggle(), $el.focus()"
+                    aria-haspopup="true"
+                    aria-controls="menu1"
+                    :aria-expanded="open"
+                    :class="open ? 'bg-link/5 hover:bg-link/10!' : ''"
+                    class="flex items-center lg:space-x-1 w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto">
+                <span class="text-xl font-bold lg:text-base leading-none!">
+                    
+
+                    Careers
+                </span>
+                <span class="ml-auto">
+                    <svg aria-hidden="true" x-cloak x-show="!open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                    <svg aria-hidden="true" x-cloak x-show="open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <div id="menu1"
+             x-ref="panel"
+             x-cloak
+             x-show="open"
+             x-collapse
+             class="bg-panel-default relative mt-2 border-b border-neutral-100 lg:absolute lg:z-40 lg:w-72 lg:-left-4 lg:top-14 lg:-mt-0.5 lg:shadow-md lg:rounded-b-lg lg:border-b-0 lg:overflow-hidden">
+            <!-- Mobile Background-->
+            <div class="absolute inset-0 bg-linear-to-b from-neutral-200/40 to-[15px] to-transparent lg:hidden"></div>
+            <div class="mx-auto max-w-sm lg:bg-white lg:max-w-none">
+                <!--Top shadow-->
+                <div class="absolute top-0 left-0 w-full h-4 lg:bg-linear-to-b lg:from-neutral-200/40 lg:to-white to-[16px]"></div>
+                <ul class="relative z-10 grid gap-y-4 lg:gap-y-3 p-4 lg:overflow-auto lg:max-h-full-exc-menu">
+                        <li>
+                            <a href="/pages/careers-home/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Careers home</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://jobs.communitycare.co.uk/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Community Care Jobsite</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="ml-1 inline size-2.5">
+        <title> External link</title>
+        <path stroke-linecap="round" d="M4.5,19.5l15-15M19.5,4.5H4.5M19.5,4.5v15" />
+    </svg>
+
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pages/employers/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Employers</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pages/workforce-insights/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Workforce Insights</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://thesocialworkcommunity.com/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>The Social Work Community</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="ml-1 inline size-2.5">
+        <title> External link</title>
+        <path stroke-linecap="round" d="M4.5,19.5l15-15M19.5,4.5H4.5M19.5,4.5v15" />
+    </svg>
+
+                            </a>
+                        </li>
+                </ul>
+            </div>
+        </div>
+    </li>
+
+    <li x-data="menudropdown()"
+        x-on:keydown.escape.stop="close()"
+        x-on:click.outside="close()"
+        x-on:focusin.window="if(window.innerWidth>=1024){!$root.contains($event.target) && close()}"
+        class="relative">
+        <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+            <button type="button"
+                    x-ref="button"
+                    x-on:click="toggle(), $el.focus()"
+                    aria-haspopup="true"
+                    aria-controls="menu1"
+                    :aria-expanded="open"
+                    :class="open ? 'bg-link/5 hover:bg-link/10!' : ''"
+                    class="flex items-center lg:space-x-1 w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto">
+                <span class="text-xl font-bold lg:text-base leading-none!">
+                    
+
+                    Learning
+                </span>
+                <span class="ml-auto">
+                    <svg aria-hidden="true" x-cloak x-show="!open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                    <svg aria-hidden="true" x-cloak x-show="open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <div id="menu1"
+             x-ref="panel"
+             x-cloak
+             x-show="open"
+             x-collapse
+             class="bg-panel-default relative mt-2 border-b border-neutral-100 lg:absolute lg:z-40 lg:w-72 lg:-left-4 lg:top-14 lg:-mt-0.5 lg:shadow-md lg:rounded-b-lg lg:border-b-0 lg:overflow-hidden">
+            <!-- Mobile Background-->
+            <div class="absolute inset-0 bg-linear-to-b from-neutral-200/40 to-[15px] to-transparent lg:hidden"></div>
+            <div class="mx-auto max-w-sm lg:bg-white lg:max-w-none">
+                <!--Top shadow-->
+                <div class="absolute top-0 left-0 w-full h-4 lg:bg-linear-to-b lg:from-neutral-200/40 lg:to-white to-[16px]"></div>
+                <ul class="relative z-10 grid gap-y-4 lg:gap-y-3 p-4 lg:overflow-auto lg:max-h-full-exc-menu">
+                        <li>
+                            <a href="/pages/learning-home/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Learning home</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://adults.ccinform.co.uk/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Inform Adults</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="ml-1 inline size-2.5">
+        <title> External link</title>
+        <path stroke-linecap="round" d="M4.5,19.5l15-15M19.5,4.5H4.5M19.5,4.5v15" />
+    </svg>
+
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.ccinform.co.uk/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Inform Children</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="ml-1 inline size-2.5">
+        <title> External link</title>
+        <path stroke-linecap="round" d="M4.5,19.5l15-15M19.5,4.5H4.5M19.5,4.5v15" />
+    </svg>
+
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/events/type/webinars" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Webinars</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/events/type/masterclasses" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Masterclasses</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pages/podcasts/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Podcasts</span>
+                                
+                            </a>
+                        </li>
+                </ul>
+            </div>
+        </div>
+    </li>
+
+    <li x-data="menudropdown()"
+        x-on:keydown.escape.stop="close()"
+        x-on:click.outside="close()"
+        x-on:focusin.window="if(window.innerWidth>=1024){!$root.contains($event.target) && close()}"
+        class="relative">
+        <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+            <button type="button"
+                    x-ref="button"
+                    x-on:click="toggle(), $el.focus()"
+                    aria-haspopup="true"
+                    aria-controls="menu1"
+                    :aria-expanded="open"
+                    :class="open ? 'bg-link/5 hover:bg-link/10!' : ''"
+                    class="flex items-center lg:space-x-1 w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto">
+                <span class="text-xl font-bold lg:text-base leading-none!">
+                    
+
+                    Events
+                </span>
+                <span class="ml-auto">
+                    <svg aria-hidden="true" x-cloak x-show="!open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                    <svg aria-hidden="true" x-cloak x-show="open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <div id="menu1"
+             x-ref="panel"
+             x-cloak
+             x-show="open"
+             x-collapse
+             class="bg-panel-default relative mt-2 border-b border-neutral-100 lg:absolute lg:z-40 lg:w-72 lg:-left-4 lg:top-14 lg:-mt-0.5 lg:shadow-md lg:rounded-b-lg lg:border-b-0 lg:overflow-hidden">
+            <!-- Mobile Background-->
+            <div class="absolute inset-0 bg-linear-to-b from-neutral-200/40 to-[15px] to-transparent lg:hidden"></div>
+            <div class="mx-auto max-w-sm lg:bg-white lg:max-w-none">
+                <!--Top shadow-->
+                <div class="absolute top-0 left-0 w-full h-4 lg:bg-linear-to-b lg:from-neutral-200/40 lg:to-white to-[16px]"></div>
+                <ul class="relative z-10 grid gap-y-4 lg:gap-y-3 p-4 lg:overflow-auto lg:max-h-full-exc-menu">
+                        <li>
+                            <a href="/pages/events-home/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Events home</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/events/type/webinars" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Webinars</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/events/type/masterclasses/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Masterclasses</span>
+                                
+                            </a>
+                        </li>
+                </ul>
+            </div>
+        </div>
+    </li>
+
+    <li x-data="menudropdown()"
+        x-on:keydown.escape.stop="close()"
+        x-on:click.outside="close()"
+        x-on:focusin.window="if(window.innerWidth>=1024){!$root.contains($event.target) && close()}"
+        class="relative">
+        <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+            <button type="button"
+                    x-ref="button"
+                    x-on:click="toggle(), $el.focus()"
+                    aria-haspopup="true"
+                    aria-controls="menu1"
+                    :aria-expanded="open"
+                    :class="open ? 'bg-link/5 hover:bg-link/10!' : ''"
+                    class="flex items-center lg:space-x-1 w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto">
+                <span class="text-xl font-bold lg:text-base leading-none!">
+                    
+
+                    Leadership
+                </span>
+                <span class="ml-auto">
+                    <svg aria-hidden="true" x-cloak x-show="!open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                    <svg aria-hidden="true" x-cloak x-show="open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <div id="menu1"
+             x-ref="panel"
+             x-cloak
+             x-show="open"
+             x-collapse
+             class="bg-panel-default relative mt-2 border-b border-neutral-100 lg:absolute lg:z-40 lg:w-72 lg:-left-4 lg:top-14 lg:-mt-0.5 lg:shadow-md lg:rounded-b-lg lg:border-b-0 lg:overflow-hidden">
+            <!-- Mobile Background-->
+            <div class="absolute inset-0 bg-linear-to-b from-neutral-200/40 to-[15px] to-transparent lg:hidden"></div>
+            <div class="mx-auto max-w-sm lg:bg-white lg:max-w-none">
+                <!--Top shadow-->
+                <div class="absolute top-0 left-0 w-full h-4 lg:bg-linear-to-b lg:from-neutral-200/40 lg:to-white to-[16px]"></div>
+                <ul class="relative z-10 grid gap-y-4 lg:gap-y-3 p-4 lg:overflow-auto lg:max-h-full-exc-menu">
+                        <li>
+                            <a href="/pages/leadership-home/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Leadership home</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pages/research/#" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Research</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pages/newsletters/#" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Senior leaders newsletter</span>
+                                
+                            </a>
+                        </li>
+                </ul>
+            </div>
+        </div>
+    </li>
+
+    <li x-data="menudropdown()"
+        x-on:keydown.escape.stop="close()"
+        x-on:click.outside="close()"
+        x-on:focusin.window="if(window.innerWidth>=1024){!$root.contains($event.target) && close()}"
+        class="relative">
+        <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+            <button type="button"
+                    x-ref="button"
+                    x-on:click="toggle(), $el.focus()"
+                    aria-haspopup="true"
+                    aria-controls="menu1"
+                    :aria-expanded="open"
+                    :class="open ? 'bg-link/5 hover:bg-link/10!' : ''"
+                    class="flex items-center lg:space-x-1 w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto">
+                <span class="text-xl font-bold lg:text-base leading-none!">
+                    
+
+                    More
+                </span>
+                <span class="ml-auto">
+                    <svg aria-hidden="true" x-cloak x-show="!open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                    <svg aria-hidden="true" x-cloak x-show="open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <div id="menu1"
+             x-ref="panel"
+             x-cloak
+             x-show="open"
+             x-collapse
+             class="bg-panel-default relative mt-2 border-b border-neutral-100 lg:absolute lg:z-40 lg:w-72 lg:-left-4 lg:top-14 lg:-mt-0.5 lg:shadow-md lg:rounded-b-lg lg:border-b-0 lg:overflow-hidden">
+            <!-- Mobile Background-->
+            <div class="absolute inset-0 bg-linear-to-b from-neutral-200/40 to-[15px] to-transparent lg:hidden"></div>
+            <div class="mx-auto max-w-sm lg:bg-white lg:max-w-none">
+                <!--Top shadow-->
+                <div class="absolute top-0 left-0 w-full h-4 lg:bg-linear-to-b lg:from-neutral-200/40 lg:to-white to-[16px]"></div>
+                <ul class="relative z-10 grid gap-y-4 lg:gap-y-3 p-4 lg:overflow-auto lg:max-h-full-exc-menu">
+                        <li>
+                            <a href="https://thesocialworkcommunity.com/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>The Social Work Community</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="ml-1 inline size-2.5">
+        <title> External link</title>
+        <path stroke-linecap="round" d="M4.5,19.5l15-15M19.5,4.5H4.5M19.5,4.5v15" />
+    </svg>
+
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pages/podcasts/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Podcasts</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pages/about-us/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>About us</span>
+                                
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pages/contact-us/" class="block text-[15px] px-2 py-1 font-bold text-primary-dark hover:underline">
+                                <span>Contact us</span>
+                                
+                            </a>
+                        </li>
+                </ul>
+            </div>
+        </div>
+    </li>
+                                                    <!--ct-->
+                                                            <li class=lg:ml-auto>
+                                                                <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+                                                                    <a href="https://adults.ccinform.co.uk/" target="_blank" class="flex items-center w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto" aria-label="Inform Adults">
+                                                                        <span class="text-xl font-bold lg:text-base leading-none!">Inform Adults</span>
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="ml-1 inline size-2.5">
+        <title> External link</title>
+        <path stroke-linecap="round" d="M4.5,19.5l15-15M19.5,4.5H4.5M19.5,4.5v15" />
+    </svg>
+
+                                                                    </a>
+                                                                </div>                                                       
+                                                            </li>
+                                                            <li class=>
+                                                                <div class="max-w-sm mx-auto px-4 lg:max-w-none lg:px-0">
+                                                                    <a href="https://www.ccinform.co.uk/" target="_blank" class="flex items-center w-full p-2 text-primary-dark rounded-md hover:bg-link/5 lg:w-auto" aria-label="Inform Children">
+                                                                        <span class="text-xl font-bold lg:text-base leading-none!">Inform Children</span>
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="ml-1 inline size-2.5">
+        <title> External link</title>
+        <path stroke-linecap="round" d="M4.5,19.5l15-15M19.5,4.5H4.5M19.5,4.5v15" />
+    </svg>
+
+                                                                    </a>
+                                                                </div>                                                       
+                                                            </li>
+                                                </ul>
+                                                <!--Social media icons-->
+                                                    <div class="w-full max-w-sm mt-4 p-4 mx-auto lg:hidden">
+                                                        <div class="flex flex-wrap w-full mt-0.5 px-2">
+
+    <a href="https://www.linkedin.com/company/community-care-social-work/" class="mx-3 inline-flex border-b-2 border-transparent hover:border-text-primary-dark">
+            <span class="w-7 h-7 icon-item svg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+            </span>
+    </a>
+
+    <a href="https://www.facebook.com/CommunityCarePage" class="mx-3 inline-flex border-b-2 border-transparent hover:border-text-primary-dark">
+            <span class="w-7 h-7 icon-item svg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"/></svg>
+            </span>
+    </a>
+
+    <a href="https://bsky.app/profile/community-care.bsky.social" class="mx-3 inline-flex border-b-2 border-transparent hover:border-text-primary-dark">
+            <span class="w-7 h-7 icon-item svg">
+                <?xml version="1.0" standalone="no"?>
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000"
+ preserveAspectRatio="xMidYMid meet">
+<g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
+<path d="M390 4706 c-136 -38 -201 -106 -247 -261 -25 -85 -24 -350 1 -645 2
+-19 7 -71 10 -115 4 -44 9 -96 11 -115 2 -19 6 -71 10 -115 6 -84 23 -243 30
+-285 2 -14 6 -52 10 -85 6 -53 13 -98 29 -171 11 -54 63 -166 111 -240 108
+-167 281 -302 470 -369 28 -9 59 -21 70 -26 30 -13 181 -46 250 -55 33 -4 113
+-8 177 -8 64 -1 114 -4 110 -7 -6 -4 -65 -17 -197 -43 -11 -2 -47 -11 -80 -21
+-33 -9 -73 -20 -90 -24 -50 -14 -180 -68 -245 -103 -91 -49 -173 -119 -219
+-188 -50 -75 -61 -112 -68 -217 -12 -180 93 -411 310 -681 222 -277 442 -450
+663 -524 88 -29 233 -31 309 -4 180 64 333 229 473 511 77 155 189 454 247
+664 19 67 29 76 39 34 9 -39 27 -100 91 -317 148 -494 305 -754 516 -850 74
+-34 109 -40 219 -39 108 1 202 27 325 91 92 48 267 161 295 192 3 3 25 21 50
+41 52 42 151 143 205 209 20 25 44 54 53 65 28 33 122 179 122 189 0 5 6 17
+14 25 8 9 28 57 46 106 108 309 -13 558 -355 727 -130 65 -292 118 -435 144
+-73 14 -54 19 68 20 254 1 468 53 660 160 241 135 421 396 447 649 4 38 8 72
+10 75 2 5 5 28 20 168 3 23 7 61 10 85 2 23 7 74 11 112 3 39 7 86 9 105 2 19
+7 76 10 125 4 50 8 106 10 125 20 204 26 480 13 558 -26 153 -80 247 -168 292
+-203 104 -452 40 -817 -209 -131 -90 -162 -114 -248 -186 -319 -270 -683 -685
+-967 -1105 -91 -134 -218 -344 -218 -360 0 -23 -18 -7 -39 36 -27 58 -135 231
+-210 339 -64 93 -211 295 -226 311 -5 6 -21 26 -35 44 -14 18 -30 38 -35 44
+-6 6 -39 46 -74 90 -124 152 -370 410 -511 536 -19 17 -44 39 -55 49 -218 194
+-582 408 -762 446 -57 13 -189 13 -233 1z"/>
+</g>
+</svg>
+
+            </span>
+    </a>
+
+    <a href="https://www.linkedin.com/company/community-care-social-work/" class="mx-3 inline-flex border-b-2 border-transparent hover:border-text-primary-dark">
+            <span class="w-7 h-7 icon-item svg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 2H1l8.26 11.014L1.45 22H4.1l6.388-7.349L16 22h7l-8.608-11.478L21.8 2h-2.65l-5.986 6.886L8 2zm9 18L5 4h2l12 16h-2z"/></svg>
+            </span>
+    </a>
+
+    <a href="https://www.instagram.com/communitycareofficial/" class="mx-3 inline-flex border-b-2 border-transparent hover:border-text-primary-dark">
+            <span class="w-7 h-7 icon-item svg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+            </span>
+    </a>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </header>
+
+<script type="text/javascript">
+    // CUSTOM ALPINE COMPONENTS
+    //-----------------------------
+    document.addEventListener('alpine:init', () => {
+
+        // MENU POSITIONING
+        // Fixes mobile menu as you reach it - needed for when content sits above menu (like ads)
+        //-----------------------------
+        Alpine.data('menuposition', () => ({
+            istop: false,
+            fixed: false,
+            menuTop: false,
+            init() {
+                const base = this;
+                /// scrolling
+                let scrollRunning = false;
+                window.addEventListener('scroll', (e) => {
+                    if (!scrollRunning) {
+                        window.requestAnimationFrame(() => {
+                            base.onChange();
+                            scrollRunning = false;
+                        });
+                        scrollRunning = true;
+                    }
+                });
+                //resizing
+                let resizeRunning = false;
+                window.addEventListener('resize', (e) => {
+                    if (!resizeRunning) {
+                        window.requestAnimationFrame(() => {
+                            base.onChange();
+                            resizeRunning = false;
+                        });
+                        resizeRunning = true;
+                    }
+                });
+                this.onChange();
+            },
+            onChange() {
+                if (window.innerWidth < 1024) {
+                    this.menuTop = this.$root.closest('header').getBoundingClientRect().top;
+                    if (this.menuTop <= 0) {
+                        this.fixed = true;
+                    } else {
+                        this.fixed = false;
+                    }
+                }
+            }
+        }));
+
+
+        // MOBILE MENU DROPDOWN
+        //-----------------------------
+        // Acts as a dropdown, but disables body scrolling when open
+        // Keyboard navigable and auto-closes when tabbing off
+        Alpine.data('mobilemenu', () => ({
+            open: false,
+            init() {
+                const base = this;
+                // Close menu when clicking an in-page link (anchor)
+                const anchors = this.$root.getElementsByTagName('a');
+                Array.from(anchors).forEach(function (el) {
+                    el.addEventListener('click', function (e) {
+                        let elHash = this.hash;
+                        base.close();
+                        base.$nextTick(function () {
+                            if (elHash) {
+                                document.getElementById(elHash.replace('#', '')).scrollIntoView();
+                            }
+                        });
+                    });
+                });
+                // resizing
+                let resizeRunning = false;
+                window.addEventListener('resize', (e) => {
+                    if (!resizeRunning) {
+                        window.requestAnimationFrame(() => {
+                            base.onResize();
+                            resizeRunning = false;
+                        });
+                        resizeRunning = true;
+                    }
+                });
+                this.onResize();
+            },
+            toggle() {
+                this.open ? this.close() : (this.open = true, this.bodyscroll(true), (!this.fixed && window.scrollTo(0, document.getElementsByTagName('header')[0].offsetTop))); //this.fixed references parent (mainmenuposition) object property
+            },
+            close(focusElement) {
+                this.open = false;
+                this.bodyscroll(false);
+                focusElement && focusElement.focus();
+            },
+            bodyscroll(scroll) {
+                scroll ? (document.body.classList.add('overflow-hidden'), document.documentElement.classList.add('overflow-hidden')) : (document.body.classList.remove('overflow-hidden'), document.documentElement.classList.remove('overflow-hidden'));
+                // Adding classes to the HTML element as well as body ensures scrolling is disables on iOS 15
+
+            },
+            onResize() {
+                // Close menus when resizing screen past breakpoint
+                const currentWidth = window.innerWidth,
+                    breakpoint = 1024;
+                if (currentWidth >= breakpoint && this.windowSize <= breakpoint - 1 || currentWidth <= breakpoint - 1 && this.windowSize >= breakpoint) {
+                    open ? this.close() : '';
+                }
+                this.windowSize = innerWidth;
+            }
+        }));
+
+
+        // SEARCH DROPDOWN
+        //-----------------------------
+        Alpine.data('searchdropdown', () => ({
+            open: false,
+            searchinput: false,
+            toggle(focusElement) {
+                this.open ? this.close() : this.open = true, this.$nextTick(() => { focusElement && focusElement.focus() });
+            },
+            close(focusElement) {
+                this.open = false;
+                this.$nextTick(() => { focusElement && focusElement.focus() })
+            },
+        }));
+
+
+        // MENU DROPDOWN
+        //-----------------------------
+        Alpine.data('menudropdown', () => ({
+            open: false,
+            windowSize: 0,
+            init() {
+                let resizeRunning = false,
+                    base = this;
+                window.addEventListener('resize', (e) => {
+                    if (!resizeRunning) {
+                        window.requestAnimationFrame(() => {
+                            base.onResize();
+                            resizeRunning = false;
+                        });
+                        resizeRunning = true;
+                    }
+                });
+                this.onResize();
+            },
+            toggle() {
+                this.open ? this.close() : this.open = true;
+            },
+            close(focusElement) {
+                this.open = false;
+                focusElement && focusElement.focus();
+            },
+            onResize() {
+                // Close menus when resizing screen past breakpoint
+                const currentWidth = window.innerWidth,
+                    breakpoint = 1024;
+                if (currentWidth >= breakpoint && this.windowSize <= breakpoint - 1 || currentWidth <= breakpoint - 1 && this.windowSize >= breakpoint) {
+                    open ? this.close() : '';
+                }
+                this.windowSize = innerWidth;
+            }
+        }));
+
+
+        // DROPDOWN
+        //-----------------------------
+        Alpine.data('dropdown', () => ({
+            open: false,
+            toggle(focusElement) {
+                this.open ? this.close() : this.open = true;
+                focusElement && focusElement.focus();
+            },
+            close(focusElement) {
+                this.open = false;
+                focusElement && focusElement.focus();
+            },
+        }));
+
+
+        // REFERENCES PANEL
+        //-----------------------------
+        Alpine.data('references', () => ({
+            refsopen: false,
+            refItems: document.getElementsByClassName("reference-item"),
+            triggerElement: '',
+            hightlightClass: 'bg-yellow-50 rounded-sm p-2',
+            init() {
+                var refs = document.querySelectorAll('a[href^="#B"]');
+                Array.from(refs).forEach(function (ref) {
+                    ref.setAttribute("x-on:click", 'toggleRefs($event)');
+                    ref.classList.add('ref-anchor');
+                });
+            },
+            // Toggle References Panel
+            toggleRefs(e) {
+                this.refsopen = !this.refsopen;
+                if (this.refsopen) {
+                    this.openRefs(e);
+                } else {
+                    this.closeRefs();
+                }
+            },
+            // Open References panel
+            openRefs(e) {
+                var base = this,
+                    targetA = e.target.closest('a');
+                this.triggerElement = document.activeElement;
+                this.refsopen = true;
+                e.preventDefault();
+                // If trigger is a ref anchor, hightlight relevant reference
+                if (e.target.classList.contains('ref-anchor')) {
+                    var refLink = e.target.getAttribute("href"),
+                        refElement = document.getElementById(refLink.replace("#", ""));
+                    this.$nextTick(function () {
+                        base.highlightRef(refElement);
+                    });
+                }
+            },
+            // Close References panel
+            closeRefs() {
+                var base = this;
+                this.refsopen = false;
+                this.$nextTick(function () {
+                    // Apply focus to last active element
+                    if (base.triggerElement != "" || base.triggerElement == undefined) {
+                        base.triggerElement.focus();
+                    }
+                });
+                this.removeHighlight();
+            },
+            // highlightRef — highlights a reference
+            // param: target (element obj) — the reference to highlight
+            highlightRef(target) {
+                var classes = this.hightlightClass.split(' '),
+                    refItem = target.querySelector(".reference-item");
+                classes.forEach(function (item) {
+                    refItem.classList.add(item);
+                });
+            },
+            // removeHighlight — removes hightlight classes from references
+            removeHighlight() {
+                var base = this;
+                Array.from(this.refItems).forEach(function (item) {
+                    var classes = base.hightlightClass.split(' ');
+                    classes.forEach(function (i) {
+                        item.classList.remove(i);
+                    });
+                });
+            }
+        }));
+
+    });
+</script>
+    
+<main>
+            <div class="umb-block-grid"
+                 data-grid-columns="12;"
+                 style="--umb-block-grid--grid-columns: 12; ">
+                 <div class="max-w-3xl lg:max-w-8xl mx-auto first:pt-6 first:lg:pt-10">
+                 <div class="content-start px-4 lg:px-8 pb-6 lg:pb-10 group-[.hasBackground]:py-6 lg:group-[.hasBackground]:py-10">
+        <div class="umb-block-grid__area-container     gap-6 lg:gap-8"
+                style="--umb-block-grid--area-grid-columns: 12;">
+                    <div class="umb-block-grid__area lg:col-end-custom xl:col-end-default " data-area-col-span="12"  data-area-row-span="1"   data-area-alias=""
+                         style = "--umb-block-grid--grid-columns: 12;--umb-block-grid--area-column-span: 12;--umb-block-grid--area-row-span: 1;">
+                        
+    <!--Section Header-->
+    <div class="grid gap-y-3 items-end mb-6 lg:flex lg:gap-y-0 lg:gap-x-8 lg:mb-8 last:mb-0">
+            <div class="flex items-center lg:items-center">
+                <div class="grid gap-y-1 order-1 grow lg:order-2">
+
+                    <h2 class="leading-tight! font-heading font-bold pb-1 text-xl sm:text-2xl font-bold ">
+                            <i class="mr-2 color_b11ec78b-eb0f-4d7b-8fbf-43fd48c041cb"><i class="usn_ion-md-remove-circle-outline"></i></i>
+                        Page Not Found
+                    </h2>
+                </div>
+            </div>
+    </div>
+                   </div>                         
+                    <div class="umb-block-grid__area lg:col-end-custom xl:col-end-default " data-area-col-span="12"  data-area-row-span="1"   data-area-alias=""
+                         style = "--umb-block-grid--grid-columns: 12;--umb-block-grid--area-column-span: 12;--umb-block-grid--area-row-span: 1;">
+                        
+<!--Section Header-->
+    <div class="grid gap-y-3 items-end mb-6 lg:flex lg:gap-y-0 lg:gap-x-8 lg:mb-8 last:mb-0">
+        <!--Image/Text-->
+            <div class="flex items-center lg:items-center">
+                    <div class="grid gap-y-1 order-1 grow lg:order-2">
+                        <h2 class="leading-tight! font-heading font-bold pb-1 text-lg sm:text-xl font-semibold">We can&#x27;t seem to find the page you are looking for</h2>
+                            <p class="leading-tight! text-sm sm:text-base md:text-lg">There may be a misspelling in the URL entered, or the page may no longer exist.</p>
+                    </div>
+            </div>
+    </div>
+                   </div>                         
+                    <div class="umb-block-grid__area lg:col-end-custom xl:col-end-default " data-area-col-span="12"  data-area-row-span="1"   data-area-alias=""
+                         style = "--umb-block-grid--grid-columns: 12;--umb-block-grid--area-column-span: 12;--umb-block-grid--area-row-span: 1;">
+                        
+
+<div class="flex items-baseline space-x-4 mb-6 lg:mb-8 last:mb-0">
+            <a href="/"
+               class="inline-flex w-full items-center justify-center space-x-1 text-sm leading-none btn-primary px-1.5 py-1.5 sm:px-2.5 sm:py-1 sm:w-auto sm:text-base hover:btn-primary-alt focus:btn-primary-alt">
+                <span>Homepage</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                     class="text-tertiary size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"></path>
+                </svg>
+            </a>
+            <a href="/search/"
+               class="inline-flex w-full items-center justify-center space-x-1 text-sm leading-none btn-primary px-1.5 py-1.5 sm:px-2.5 sm:py-1 sm:w-auto sm:text-base hover:btn-primary-alt focus:btn-primary-alt">
+                <span>Search</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                     class="text-tertiary size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"></path>
+                </svg>
+            </a>
+</div>                   </div>                         
+        </div>  
+            </div>
+            </div>
+                    <div class="bg-cover bg-center group hasBackground mb-6 lg:mb-10 last:mb-0 last:lg:mb-0 " style="background-image:url(&#x27;/media/5z5nrmwd/bg-fade-grey-blue.png&#x27;);">
+                 <div class="max-w-3xl lg:max-w-8xl mx-auto ">
+                 <div class="content-start px-4 lg:px-8 pb-6 lg:pb-10 group-[.hasBackground]:py-6 lg:group-[.hasBackground]:py-10">
+        <div class="umb-block-grid__area-container   bg-cover bg-center;  gap-6 lg:gap-8"
+                style="--umb-block-grid--area-grid-columns: 12;">
+                    <div class="umb-block-grid__area lg:col-end-custom xl:col-end-default " data-area-col-span="12"  data-area-row-span="1"   data-area-alias=""
+                         style = "--umb-block-grid--grid-columns: 12;--umb-block-grid--area-column-span: 12;--umb-block-grid--area-row-span: 1;">
+                        
+    <!--Section Header-->
+    <div class="grid gap-y-3 items-end mb-6 lg:flex lg:gap-y-0 lg:gap-x-8 lg:mb-8 last:mb-0">
+            <div class="flex items-center lg:items-center">
+                <div class="grid gap-y-1 order-1 grow lg:order-2">
+
+                    <h2 class="leading-tight! font-heading font-bold pb-1 text-lg sm:text-xl font-semibold ">
+                        Latest articles
+                    </h2>
+                </div>
+            </div>
+    </div>
+                   </div>                         
+                    <div class="umb-block-grid__area lg:col-end-custom xl:col-end-default " data-area-col-span="12"  data-area-row-span="1"   data-area-alias=""
+                         style = "--umb-block-grid--grid-columns: 12;--umb-block-grid--area-column-span: 12;--umb-block-grid--area-row-span: 1;">
+                        
+
+
+<div class="grid grid-cols-12 gap-6 mx-auto w-full flex flex-col article-list mb-6 last:mb-0 ">
+        <div itemscope itemtype="http://schema.org/Article"
+             class="article grid items-start relative rounded-md hover:bg-panel-primary/5 p-1 gap-1 group sm:p-2 col-span-12 lg:col-span-4 xl:col-span-4">
+                    <div class="col-span-12">
+                        <div class="article__img-container w-full flex-none mb-2">
+                            <div class="aspect-video rounded-sm overflow-hidden shadow-lg shadow-neutral-200">
+                                
+
+<picture>
+    <!--[if IE 9]><video style="display: none"><![endif]-->
+        <source data-srcset="/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=160&amp;height=90&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca192c59cff90 160w,/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=320&amp;height=180&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca192c59cff90 320w,/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=480&amp;height=270&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca192c59cff90 480w,/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=640&amp;height=360&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca192c59cff90 640w,/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=800&amp;height=450&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca192c59cff90 800w" type="image/webp" data-sizes="auto" />
+        <source data-srcset="/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=160&amp;height=90&amp;quality=90&amp;bgcolor=White&amp;v=1dca192c59cff90 160w,/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=320&amp;height=180&amp;quality=90&amp;bgcolor=White&amp;v=1dca192c59cff90 320w,/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=480&amp;height=270&amp;quality=90&amp;bgcolor=White&amp;v=1dca192c59cff90 480w,/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=640&amp;height=360&amp;quality=90&amp;bgcolor=White&amp;v=1dca192c59cff90 640w,/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=800&amp;height=450&amp;quality=90&amp;bgcolor=White&amp;v=1dca192c59cff90 800w" type="image/jpeg" data-sizes="auto" class="display-block" />
+        <!--[if IE 9]></video><![endif]-->
+    <img itemprop="image" src="/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=10&amp;quality=10&amp;v=1dca192c59cff90"
+             data-src="/media/4m1fh52d/a-young-woman-working-at-a-kitchen-table-with-a-calculator-and-laptop-looking-at-paperwork-damir-khabirov-adobestock_206859466.jpg?width=525&amp;height=295&amp;bgcolor=White&amp;v=1dca192c59cff90"
+             class="lazyload lazyload article__img object-cover object-center w-full w-full"
+             alt="A Young Woman Working At A Kitchen Table With A Calculator And Laptop Looking At Paperwork"
+             data-sizes="auto" />
+</picture>
+                            </div>
+                        </div>
+                        <div class="article__meta-top flex flex-wrap gap-x-2 text-xs leading-tight!">
+
+                        </div>
+                        <div class="article__headlines flex flex-col grow my-0.5">
+                            <div class="flex flex-col grow">
+                                <a aria-label="Read more about Number receiving social work bursaries in Wales recovers following drop last year" href="/content/news/number-of-social-work-bursaries-in-wales-recovers-following-drop-last-year">
+                                    <span class="before:absolute before:inset-0">
+                                    </span>
+                                    <h2 class="article__title font-heading font-bold text-primary relative z-0 leading-tight! md:text-xl  ">
+                                        <span>Number receiving social work bursaries in Wales recovers following drop last year</span>
+                                    </h2>
+                                </a>
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="article__meta-base grid gap-2">
+
+                                <div>
+                                    <a href="/content/category/workforce"
+                                       aria-label="Read more articles from Workforce"
+                                       class="category inline-flex space-x-1 items-center leading-tight! text-xs relative z-10">
+                                            <div class="category__color  w-2 h-2 rounded-full" style="background-color:#c38edf"></div>
+                                        <span class="font-bold text-primary-dark hover:underline"> Workforce</span>
+                                    </a>
+                                </div>
+                        </div>
+                    </div>
+        </div>
+        <div itemscope itemtype="http://schema.org/Article"
+             class="article grid items-start relative rounded-md hover:bg-panel-primary/5 p-1 gap-1 group sm:p-2 col-span-12 sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-4">
+                    <div class="col-span-12">
+                        <div class="article__img-container w-full flex-none mb-2">
+                            <div class="aspect-video rounded-sm overflow-hidden shadow-lg shadow-neutral-200">
+                                
+
+<picture>
+    <!--[if IE 9]><video style="display: none"><![endif]-->
+        <source data-srcset="/media/5kinly3s/payroll-tax-earnings.jpg?width=160&amp;height=90&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1db410dae24f700 160w,/media/5kinly3s/payroll-tax-earnings.jpg?width=320&amp;height=180&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1db410dae24f700 320w,/media/5kinly3s/payroll-tax-earnings.jpg?width=480&amp;height=270&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1db410dae24f700 480w" type="image/webp" data-sizes="auto" />
+        <source data-srcset="/media/5kinly3s/payroll-tax-earnings.jpg?width=160&amp;height=90&amp;quality=90&amp;bgcolor=White&amp;v=1db410dae24f700 160w,/media/5kinly3s/payroll-tax-earnings.jpg?width=320&amp;height=180&amp;quality=90&amp;bgcolor=White&amp;v=1db410dae24f700 320w,/media/5kinly3s/payroll-tax-earnings.jpg?width=480&amp;height=270&amp;quality=90&amp;bgcolor=White&amp;v=1db410dae24f700 480w" type="image/jpeg" data-sizes="auto" class="display-block" />
+        <!--[if IE 9]></video><![endif]-->
+    <img itemprop="image" src="/media/5kinly3s/payroll-tax-earnings.jpg?width=10&amp;quality=10&amp;v=1db410dae24f700"
+             data-src="/media/5kinly3s/payroll-tax-earnings.jpg?width=525&amp;height=295&amp;bgcolor=White&amp;v=1db410dae24f700"
+             class="lazyload lazyload article__img object-cover object-center w-full w-full"
+             alt="(credit: vinnstock / Adobe Stock)"
+             data-sizes="auto" />
+</picture>
+                            </div>
+                        </div>
+                        <div class="article__meta-top flex flex-wrap gap-x-2 text-xs leading-tight!">
+
+                        </div>
+                        <div class="article__headlines flex flex-col grow my-0.5">
+                            <div class="flex flex-col grow">
+                                <a aria-label="Read more about Social work pay down in real terms over past decade in adults&#x27; services" href="/content/news/social-work-pay-down-in-real-terms-over-past-decade-in-adults-services">
+                                    <span class="before:absolute before:inset-0">
+                                    </span>
+                                    <h2 class="article__title font-heading font-bold text-primary relative z-0 leading-tight! md:text-xl  ">
+                                        <span>Social work pay down in real terms over past decade in adults&#x27; services</span>
+                                    </h2>
+                                </a>
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="article__meta-base grid gap-2">
+                                    <span itemprop="author" class="">
+                                        <a href="/authors/mithran-samuel/"
+                                           class="font-bold text-primary-dark leading-tight! text-xs hover:underline relative z-10">
+                                            Mithran Samuel
+                                        </a>
+                                    </span>
+
+                                <div>
+                                    <a href="/content/category/workforce"
+                                       aria-label="Read more articles from Workforce"
+                                       class="category inline-flex space-x-1 items-center leading-tight! text-xs relative z-10">
+                                            <div class="category__color  w-2 h-2 rounded-full" style="background-color:#c38edf"></div>
+                                        <span class="font-bold text-primary-dark hover:underline"> Workforce</span>
+                                    </a>
+                                </div>
+                        </div>
+                    </div>
+        </div>
+        <div itemscope itemtype="http://schema.org/Article"
+             class="article grid items-start relative rounded-md hover:bg-panel-primary/5 p-1 gap-1 group sm:p-2 col-span-12 sm:col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-4">
+                    <div class="col-span-12">
+                        <div class="article__img-container w-full flex-none mb-2">
+                            <div class="aspect-video rounded-sm overflow-hidden shadow-lg shadow-neutral-200">
+                                
+
+<picture>
+    <!--[if IE 9]><video style="display: none"><![endif]-->
+        <source data-srcset="/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=160&amp;height=90&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca0c9006ebc00 160w,/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=320&amp;height=180&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca0c9006ebc00 320w,/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=480&amp;height=270&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca0c9006ebc00 480w,/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=640&amp;height=360&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca0c9006ebc00 640w,/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=800&amp;height=450&amp;format=webp&amp;quality=80&amp;bgcolor=White&amp;v=1dca0c9006ebc00 800w" type="image/webp" data-sizes="auto" />
+        <source data-srcset="/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=160&amp;height=90&amp;quality=90&amp;bgcolor=White&amp;v=1dca0c9006ebc00 160w,/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=320&amp;height=180&amp;quality=90&amp;bgcolor=White&amp;v=1dca0c9006ebc00 320w,/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=480&amp;height=270&amp;quality=90&amp;bgcolor=White&amp;v=1dca0c9006ebc00 480w,/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=640&amp;height=360&amp;quality=90&amp;bgcolor=White&amp;v=1dca0c9006ebc00 640w,/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=800&amp;height=450&amp;quality=90&amp;bgcolor=White&amp;v=1dca0c9006ebc00 800w" type="image/jpeg" data-sizes="auto" class="display-block" />
+        <!--[if IE 9]></video><![endif]-->
+    <img itemprop="image" src="/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=10&amp;quality=10&amp;v=1dca0c9006ebc00"
+             data-src="/media/xaxbryco/towers-of-wooden-blocks-of-ascending-height-next-to-one-another-with-each-having-an-upward-pointing-blue-arrow-painted-onto-them-monster-ztudio-adobestock_286063353.jpg?width=525&amp;height=295&amp;bgcolor=White&amp;v=1dca0c9006ebc00"
+             class="lazyload lazyload article__img object-cover object-center w-full w-full"
+             alt="Towers Of Wooden Blocks Of Ascending Height Next To One Another With Each Having An Upward Pointing Blue Arrow Painted Onto Them "
+             data-sizes="auto" />
+</picture>
+                            </div>
+                        </div>
+                        <div class="article__meta-top flex flex-wrap gap-x-2 text-xs leading-tight!">
+
+                        </div>
+                        <div class="article__headlines flex flex-col grow my-0.5">
+                            <div class="flex flex-col grow">
+                                <a aria-label="Read more about Record number of adult social workers in post, reveals annual workforce report" href="/content/news/record-number-of-adult-social-workers-in-post-reveals-annual-workforce-report">
+                                    <span class="before:absolute before:inset-0">
+                                    </span>
+                                    <h2 class="article__title font-heading font-bold text-primary relative z-0 leading-tight! md:text-xl  ">
+                                        <span>Record number of adult social workers in post, reveals annual workforce report</span>
+                                    </h2>
+                                </a>
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="article__meta-base grid gap-2">
+                                    <span itemprop="author" class="">
+                                        <a href="/authors/mithran-samuel/"
+                                           class="font-bold text-primary-dark leading-tight! text-xs hover:underline relative z-10">
+                                            Mithran Samuel
+                                        </a>
+                                    </span>
+
+                                <div>
+                                    <a href="/content/category/workforce"
+                                       aria-label="Read more articles from Workforce"
+                                       class="category inline-flex space-x-1 items-center leading-tight! text-xs relative z-10">
+                                            <div class="category__color  w-2 h-2 rounded-full" style="background-color:#c38edf"></div>
+                                        <span class="font-bold text-primary-dark hover:underline"> Workforce</span>
+                                    </a>
+                                </div>
+                        </div>
+                    </div>
+        </div>
+</div>                   </div>                         
+        </div>  
+            </div>
+            </div>
+            </div>
+        </div>
+</main>
+    <footer class="relative">
+
+    <div class="bg-panel-advertising shadow-lg shadow-neutral-500/10 relative z-20">
+        <!-- Inner Shadow -->
+        <div class="shadow-lg shadow-neutral-500/10 h-10 absolute -top-10 left-0 w-full"></div>
+        <div class="max-w-3xl lg:max-w-8xl mx-auto px-4 md:px-8 py-8 md:py-12">
+            <div class="grid grid-cols-12 gap-y-8 sm:gap-x-8 md:gap-x-12 mx-auto">
+                    <div class="flex md:grid col-span-12 content-stretch gap-y-3 h-full md:text-center md:col-span-6 lg:col-span-3">
+                        <div class="overflow-hidden rounded-full size-24 md:size-40 bg-white mx-auto flex-none">
+                            <img src="/media/kidkr2cs/square-swc.png" alt="Network" class="size-24 md:size-40">
+                        </div>
+                        <div class="grid content-stretch gap-y-1 ml-3 w-full md:gap-y-3 md:ml-auto">
+                            <div>
+                                <h2 class="font-heading text-base font-bold md:text-lg">Network</h2>
+                            </div>
+                            <div>
+                                <p class="text-sm md:text-base">The networking platform for social workers</p>
+                            </div>
+                            <div class="mt-auto">
+                                <a href="https://thesocialworkcommunity.com/" class="inline-flex w-auto items-center justify-center space-x-1 text-sm leading-none btn-primary px-1.5 py-0.5 md:px-2.5 md:py-1 md:w-auto md:text-base hover:btn-primary-alt focus:btn-primary-alt">
+                                    <span>Connect with peers</span>
+                                    <svg aria-hidden="true" width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-tertiary size-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex md:grid col-span-12 content-stretch gap-y-3 h-full md:text-center md:col-span-6 lg:col-span-3">
+                        <div class="overflow-hidden rounded-full size-24 md:size-40 bg-white mx-auto flex-none">
+                            <img src="/media/2vudzdrs/square-cc-jobs.png" alt="Jobs" class="size-24 md:size-40">
+                        </div>
+                        <div class="grid content-stretch gap-y-1 ml-3 w-full md:gap-y-3 md:ml-auto">
+                            <div>
+                                <h2 class="font-heading text-base font-bold md:text-lg">Jobs</h2>
+                            </div>
+                            <div>
+                                <p class="text-sm md:text-base">The latest job opportunities within the social work sector</p>
+                            </div>
+                            <div class="mt-auto">
+                                <a href="https://jobs.communitycare.co.uk/" class="inline-flex w-auto items-center justify-center space-x-1 text-sm leading-none btn-primary px-1.5 py-0.5 md:px-2.5 md:py-1 md:w-auto md:text-base hover:btn-primary-alt focus:btn-primary-alt">
+                                    <span>Search jobs</span>
+                                    <svg aria-hidden="true" width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-tertiary size-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex md:grid col-span-12 content-stretch gap-y-3 h-full md:text-center md:col-span-6 lg:col-span-3">
+                        <div class="overflow-hidden rounded-full size-24 md:size-40 bg-white mx-auto flex-none">
+                            <img src="/media/yklplkk0/square-cc-events.png" alt="Events" class="size-24 md:size-40">
+                        </div>
+                        <div class="grid content-stretch gap-y-1 ml-3 w-full md:gap-y-3 md:ml-auto">
+                            <div>
+                                <h2 class="font-heading text-base font-bold md:text-lg">Events</h2>
+                            </div>
+                            <div>
+                                <p class="text-sm md:text-base">View this year&#x2019;s leading live events for social workers</p>
+                            </div>
+                            <div class="mt-auto">
+                                <a href="/pages/events-home/" class="inline-flex w-auto items-center justify-center space-x-1 text-sm leading-none btn-primary px-1.5 py-0.5 md:px-2.5 md:py-1 md:w-auto md:text-base hover:btn-primary-alt focus:btn-primary-alt">
+                                    <span>Latest events</span>
+                                    <svg aria-hidden="true" width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-tertiary size-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex md:grid col-span-12 content-stretch gap-y-3 h-full md:text-center md:col-span-6 lg:col-span-3">
+                        <div class="overflow-hidden rounded-full size-24 md:size-40 bg-white mx-auto flex-none">
+                            <img src="/media/40sf1hrr/square-cc-inform.png" alt="Learn" class="size-24 md:size-40">
+                        </div>
+                        <div class="grid content-stretch gap-y-1 ml-3 w-full md:gap-y-3 md:ml-auto">
+                            <div>
+                                <h2 class="font-heading text-base font-bold md:text-lg">Learn</h2>
+                            </div>
+                            <div>
+                                <p class="text-sm md:text-base">The online learning and practice resource for social workers</p>
+                            </div>
+                            <div class="mt-auto">
+                                <a href="/pages/learning-home/" class="inline-flex w-auto items-center justify-center space-x-1 text-sm leading-none btn-primary px-1.5 py-0.5 md:px-2.5 md:py-1 md:w-auto md:text-base hover:btn-primary-alt focus:btn-primary-alt">
+                                    <span>Learning Home</span>
+                                    <svg aria-hidden="true" width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-tertiary size-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+        <!-- Nav and social-->
+        <div class="bg-panel-default shadow-lg shadow-neutral-500/1 relative z-10">
+            <div class="max-w-3xl lg:max-w-8xl mx-auto px-4 lg:px-8 py-6">
+                <div class="grid grid-cols-12 gap-y-4">
+                    <div class="col-span-12 grid justify-center gap-y-3 lg:flex lg:col-span-8 lg:items-center lg:justify-normal lg:gap-y-0">
+                        <nav aria-label="Footer" class="grid gap-y-4">
+<div class="col-span-12 sm:col-span-6 md:col-span-12 lg:col-span-12 md:text-">
+        <ul class="flex flex-wrap justify-center -mt-3 lg:justify-start">
+                <li class="mt-3 mr-5 last:mr-0"><a href="/" class="text-primary-dark font-bold hover:underline ">Home</a></li>
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/news-home/" class="text-primary-dark font-bold hover:underline ">News</a></li>
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/careers-home/" class="text-primary-dark font-bold hover:underline ">Careers</a></li>
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/learning-home/" class="text-primary-dark font-bold hover:underline ">Learning</a></li>
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/events-home/" class="text-primary-dark font-bold hover:underline ">Events</a></li>
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/leadership-home/" class="text-primary-dark font-bold hover:underline ">Leadership</a></li>
+        </ul>
+</div><div class="col-span-12 sm:col-span-6 md:col-span-12 lg:col-span-12 md:text-">
+        <ul class="flex flex-wrap justify-center -mt-3 lg:justify-start">
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/about-us/" class="text-primary-dark font-bold hover:underline text-sm">About us</a></li>
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/write-for-community-care/" class="text-primary-dark font-bold hover:underline text-sm">Write for us</a></li>
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/advertise/" class="text-primary-dark font-bold hover:underline text-sm">Advertise</a></li>
+                <li class="mt-3 mr-5 last:mr-0"><a href="/pages/contact-us/" class="text-primary-dark font-bold hover:underline text-sm">Contact us</a></li>
+        </ul>
+</div>                        </nav>
+                    </div>
+                    <!--Social-->
+                        <div class="col-span-12 grid justify-center lg:col-span-4 lg:items-center lg:justify-normal lg:gap-y-0">
+                            <div class="flex-none mx-auto lg:ml-auto lg:mr-0">
+                                <nav aria-label="Social" class="flex mt-0.5">
+                                            <a href="https://www.linkedin.com/company/community-care-social-work/" class="pb-0.5 mr-3 border-b-2 border-transparent last:mr-0 hover:border-text-primary-dark">
+                                                <!-- LinkedIn logo -->
+                                                <title></title>
+                                                
+<i class="icon-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg></i>
+
+                                            </a>
+                                            <a href="https://www.facebook.com/CommunityCarePage" class="pb-0.5 mr-3 border-b-2 border-transparent last:mr-0 hover:border-text-primary-dark">
+                                                <!-- LinkedIn logo -->
+                                                <title></title>
+                                                
+<i class="icon-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"/></svg></i>
+
+                                            </a>
+                                            <a href="https://bsky.app/profile/community-care.bsky.social" class="pb-0.5 mr-3 border-b-2 border-transparent last:mr-0 hover:border-text-primary-dark">
+                                                <!-- LinkedIn logo -->
+                                                <title></title>
+                                                
+<i class="icon-item"><?xml version="1.0" standalone="no"?>
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000"
+ preserveAspectRatio="xMidYMid meet">
+<g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
+<path d="M390 4706 c-136 -38 -201 -106 -247 -261 -25 -85 -24 -350 1 -645 2
+-19 7 -71 10 -115 4 -44 9 -96 11 -115 2 -19 6 -71 10 -115 6 -84 23 -243 30
+-285 2 -14 6 -52 10 -85 6 -53 13 -98 29 -171 11 -54 63 -166 111 -240 108
+-167 281 -302 470 -369 28 -9 59 -21 70 -26 30 -13 181 -46 250 -55 33 -4 113
+-8 177 -8 64 -1 114 -4 110 -7 -6 -4 -65 -17 -197 -43 -11 -2 -47 -11 -80 -21
+-33 -9 -73 -20 -90 -24 -50 -14 -180 -68 -245 -103 -91 -49 -173 -119 -219
+-188 -50 -75 -61 -112 -68 -217 -12 -180 93 -411 310 -681 222 -277 442 -450
+663 -524 88 -29 233 -31 309 -4 180 64 333 229 473 511 77 155 189 454 247
+664 19 67 29 76 39 34 9 -39 27 -100 91 -317 148 -494 305 -754 516 -850 74
+-34 109 -40 219 -39 108 1 202 27 325 91 92 48 267 161 295 192 3 3 25 21 50
+41 52 42 151 143 205 209 20 25 44 54 53 65 28 33 122 179 122 189 0 5 6 17
+14 25 8 9 28 57 46 106 108 309 -13 558 -355 727 -130 65 -292 118 -435 144
+-73 14 -54 19 68 20 254 1 468 53 660 160 241 135 421 396 447 649 4 38 8 72
+10 75 2 5 5 28 20 168 3 23 7 61 10 85 2 23 7 74 11 112 3 39 7 86 9 105 2 19
+7 76 10 125 4 50 8 106 10 125 20 204 26 480 13 558 -26 153 -80 247 -168 292
+-203 104 -452 40 -817 -209 -131 -90 -162 -114 -248 -186 -319 -270 -683 -685
+-967 -1105 -91 -134 -218 -344 -218 -360 0 -23 -18 -7 -39 36 -27 58 -135 231
+-210 339 -64 93 -211 295 -226 311 -5 6 -21 26 -35 44 -14 18 -30 38 -35 44
+-6 6 -39 46 -74 90 -124 152 -370 410 -511 536 -19 17 -44 39 -55 49 -218 194
+-582 408 -762 446 -57 13 -189 13 -233 1z"/>
+</g>
+</svg>
+</i>
+
+                                            </a>
+                                            <a href="https://x.com/CommunityCare" class="pb-0.5 mr-3 border-b-2 border-transparent last:mr-0 hover:border-text-primary-dark">
+                                                <!-- LinkedIn logo -->
+                                                <title></title>
+                                                
+<i class="icon-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.205 2.25h3.308l-7.227 8.26 8.502 11.24H16.13l-5.214-6.817L4.95 21.75H1.64l7.73-8.835L1.215 2.25H8.04l4.713 6.231 5.45-6.231zm-1.161 17.52h1.833L7.045 4.126H5.078L17.044 19.77z"/></svg></i>
+
+                                            </a>
+                                            <a href="https://www.instagram.com/communitycareofficial/" class="pb-0.5 mr-3 border-b-2 border-transparent last:mr-0 hover:border-text-primary-dark">
+                                                <!-- LinkedIn logo -->
+                                                <title></title>
+                                                
+<i class="icon-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></i>
+
+                                            </a>
+                                </nav>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="max-w-3xl lg:max-w-8xl mx-auto py-6 px-4 lg:px-8">
+                <div class="grid grid-cols-12">
+                    <div class="col-span-12 grid gap-y-6 items-center lg:flex">
+                        <!-- Copyright -->
+                        <div itemscope="" itemtype="http://schema.org/Organization" class="order-2 lg:order-1 mx-auto lg:ml-0">
+                            <div itemprop="copyrightHolder" class="w-full">
+                                <a href="https://www.markallengroup.com" target="_blank" class="font-arial text-sm flex hover:underline">
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                         xmlns:xlink="http://www.w3.org/1999/xlink" class="sm:mr-4 mb-2 sm:mb-0" x="0px"
+                                         role="img"
+                                         aria-labelledby="logoTitle"
+                                         y="0px" width="87px" height="20px" xml:space="preserve">
+                                    <title id="logoTitle">Mark Allen Group logo</title>
+                                        <image id="image0" height="100%" x="0" y="0" href="data:image/png;base64,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
+            rkJggg=="></image>
+
+                                </svg>
+                                    <span class="text-xs">© Copyright 2026 Mark Allen Group. All rights are reserved, including those for text and data mining, AI training, and similar technologies.</span>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Legal -->
+                            <div class="order-1 lg:order-2 mx-auto lg:mr-0">
+                                <nav aria-label="Legal">
+                                    <ul class="flex flex-wrap justify-center -mt-3">
+                                            <li class="mt-3 mr-8 last:mr-0">
+                                                <a href="https://www.markallengroup.com/terms-and-conditions/" class="flex text-primary-dark font-bold text-xs relative hover:underline">
+                                                    <span>Terms &amp; Conditions</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 absolute top-0 -right-3">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.2,15.8L19.5,4.5 M19.5,4.5H8.2 M19.5,4.5v11.2" />
+                                                    </svg>
+                                                </a>
+                                            </li>
+                                            <li class="mt-3 mr-8 last:mr-0">
+                                                <a href="https://www.markallengroup.com/cookie-policy" class="flex text-primary-dark font-bold text-xs relative hover:underline">
+                                                    <span>Cookie Policy</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 absolute top-0 -right-3">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.2,15.8L19.5,4.5 M19.5,4.5H8.2 M19.5,4.5v11.2" />
+                                                    </svg>
+                                                </a>
+                                            </li>
+                                            <li class="mt-3 mr-8 last:mr-0">
+                                                <a href="https://www.markallengroup.com/privacy-policy" class="flex text-primary-dark font-bold text-xs relative hover:underline">
+                                                    <span>Privacy Policy</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 absolute top-0 -right-3">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.2,15.8L19.5,4.5 M19.5,4.5H8.2 M19.5,4.5v11.2" />
+                                                    </svg>
+                                                </a>
+                                            </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <link rel="preload" as="style" onload="this.onload = null;this.rel = 'stylesheet'" href="/css/icons.css">
+    <noscript>
+        <link rel="stylesheet" href="/css/icons.css">
+    </noscript>
+        <script type="text/javascript" crossorigin="anonymous" integrity="sha256-VCrJcQdV3IbbIVjmUyF7DnCqBbWD1BcZ/1sda2KWeFc= sha384-k2OQFn+wNFrKjU9HiaHAcHlEvLbfsVfvOnpmKBGWVBrpmGaIleDNHnnCJO4z2Y2H sha512-gxDfysgvGhVPSHDTieJ/8AlcIEjFbF3MdUgZZL2M5GXXDdIXCcX0CpH7Dh6jsHLOLOjRzTFdXASWZtxO+eMgyQ==" src="https://www.browsealoud.com/plus/scripts/3.1.0/ba.js"></script>
+</body>
+</html>

@@ -303,7 +303,7 @@ const ClientDashboard = () => {
                 { label: 'Instant Book', icon: Zap, color: 'text-amber-500', link: '/client/search' },
                 { label: 'Messages', icon: MessageSquare, color: 'text-primary', link: '/client/messages' },
                 { label: 'Payments', icon: CreditCard, color: 'text-emerald-500', link: '/client/payments' },
-                { label: 'Recipients', icon: Users, color: 'text-slate-900', link: '/client/recipients' },
+                { label: 'Recipients', icon: Users, color: 'text-slate-900', link: '/client/profile' },
               ].map((tool, i) => (
                 <Link key={i} to={tool.link} className="flex items-center justify-between p-3 rounded-xl border border-black/5 hover:bg-slate-50 transition-colors group">
                   <div className="flex items-center gap-3">

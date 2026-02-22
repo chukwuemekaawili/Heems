@@ -127,6 +127,47 @@ serve(async (req) => {
                 })
                 .eq('id', bookingId);
 
+            // Fetch profiles for emails
+            const { data: client } = await supabaseAdmin.from('profiles').select('full_name, email').eq('id', booking.client_id).single();
+            const { data: carer } = await supabaseAdmin.from('profiles').select('full_name, email').eq('id', booking.carer_id).single();
+
+            const bookingDate = new Date(booking.start_time).toLocaleDateString();
+            const refundAmount = (booking.total_price - (booking.client_fee || 0)).toFixed(2);
+
+            // Notify Client
+            if (client) {
+                await supabaseAdmin.functions.invoke('send-transactional-email', {
+                    body: {
+                        type: 'booking_cancelled',
+                        email: client.email,
+                        name: client.full_name,
+                        data: {
+                            otherPartyName: carer?.full_name || 'Carer',
+                            date: bookingDate,
+                            refundStatus: 'succeeded',
+                            refundAmount: refundAmount
+                        }
+                    }
+                });
+            }
+
+            // Notify Carer
+            if (carer) {
+                await supabaseAdmin.functions.invoke('send-transactional-email', {
+                    body: {
+                        type: 'booking_cancelled',
+                        email: carer.email,
+                        name: carer.full_name,
+                        data: {
+                            otherPartyName: client?.full_name || 'Client',
+                            date: bookingDate,
+                            refundStatus: 'succeeded',
+                            refundAmount: '0.00 (Refunded to Client)'
+                        }
+                    }
+                });
+            }
+
             return new Response(JSON.stringify({
                 message: "Booking cancelled and refunded successfully.",
                 refunded: true,
@@ -171,7 +212,29 @@ serve(async (req) => {
                 })
                 .eq('id', bookingId);
 
-            // Trigger Notification to Carer (TODO: Add notification logic if needed)
+            // Fetch profiles for emails
+            const { data: client } = await supabaseAdmin.from('profiles').select('full_name, email').eq('id', booking.client_id).single();
+            const { data: carer } = await supabaseAdmin.from('profiles').select('full_name, email').eq('id', booking.carer_id).single();
+
+            const bookingDate = new Date(booking.start_time).toLocaleDateString();
+
+            // Trigger Notification to Carer
+            if (carer && client) {
+                await supabaseAdmin.functions.invoke('send-transactional-email', {
+                    body: {
+                        type: 'booking_cancellation_requested',
+                        email: carer.email,
+                        name: carer.full_name,
+                        data: {
+                            requesterName: client.full_name,
+                            bookingRef: booking.id.substring(0, 8),
+                            date: bookingDate,
+                            reason: reason || 'User requested late cancellation',
+                            refundAmount: (booking.total_price - (booking.client_fee || 0)).toFixed(2)
+                        }
+                    }
+                });
+            }
 
             return new Response(JSON.stringify({
                 message: "Cancellation requested. The carer needs to approve the refund.",

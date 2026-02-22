@@ -34,6 +34,7 @@ interface Booking {
         id: string;
         full_name: string;
         avatar_url: string | null;
+        email?: string;
     };
     created_at: string;
 }
@@ -59,7 +60,7 @@ export default function CarerBookingsEnhanced() {
                 .from('bookings')
                 .select(`
           *,
-          client:profiles!bookings_client_id_fkey(id, full_name, avatar_url)
+          client:profiles!bookings_client_id_fkey(id, full_name, avatar_url, email)
         `)
                 .eq('carer_id', user.id)
                 .order('start_time', { ascending: false });
@@ -80,12 +81,51 @@ export default function CarerBookingsEnhanced() {
 
     const acceptBooking = async (bookingId: string) => {
         try {
+            const booking = bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
             const { error } = await supabase
                 .from('bookings')
                 .update({ status: 'confirmed' })
                 .eq('id', bookingId);
 
             if (error) throw error;
+
+            // Send confirmation emails via Edge Function
+            try {
+                // To Client
+                if (booking.client.email) {
+                    await supabase.functions.invoke('send-transactional-email', {
+                        body: {
+                            type: 'booking_confirmation',
+                            email: booking.client.email,
+                            name: booking.client.full_name,
+                            data: {
+                                date: new Date(booking.start_time).toLocaleDateString(),
+                                bookingRef: booking.id.substring(0, 8).toUpperCase()
+                            }
+                        }
+                    });
+                }
+
+                // To Carer
+                await supabase.functions.invoke('send-transactional-email', {
+                    body: {
+                        type: 'booking_confirmation',
+                        email: user.email,
+                        name: user.user_metadata?.full_name || 'Carer',
+                        data: {
+                            date: new Date(booking.start_time).toLocaleDateString(),
+                            bookingRef: booking.id.substring(0, 8).toUpperCase()
+                        }
+                    }
+                });
+            } catch (emailError) {
+                console.error("Failed to send emails:", emailError);
+            }
 
             toast({
                 title: 'Booking Accepted',
@@ -104,6 +144,13 @@ export default function CarerBookingsEnhanced() {
 
     const completeBooking = async (bookingId: string) => {
         try {
+            const booking = bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // 1. Update booking status
             const { error } = await supabase
                 .from('bookings')
                 .update({ status: 'completed' })
@@ -111,9 +158,19 @@ export default function CarerBookingsEnhanced() {
 
             if (error) throw error;
 
+            // 2. Schedule review request
+            try {
+                // Import dynamically if needed or just use the imported function
+                // ensure scheduleReviewRequest is imported at top
+                await scheduleReviewRequest(bookingId, booking.client.id, user.id);
+            } catch (reviewError) {
+                console.error("Failed to schedule review:", reviewError);
+                // Don't block the UI for this, but log it
+            }
+
             toast({
                 title: 'Booking Completed',
-                description: 'This booking has been marked as completed',
+                description: 'Booking completed. Review request sent to client.',
             });
 
             fetchBookings();
