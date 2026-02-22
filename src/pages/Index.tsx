@@ -5,7 +5,6 @@ import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
 import CareTypesSection from "@/components/landing/CareTypesSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
-import ForCarersSection from "@/components/landing/ForCarersSection";
 import ForOrganisationsSection from "@/components/landing/ForOrganisationsSection";
 import PricingSection from "@/components/landing/PricingSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
@@ -73,7 +72,6 @@ const Index = () => {
           <CareTypesSection />
           <FeaturesSection />
           <ParallaxSection />
-          <ForCarersSection />
           <ForOrganisationsSection />
           <PricingSection />
           <TestimonialsSection />
