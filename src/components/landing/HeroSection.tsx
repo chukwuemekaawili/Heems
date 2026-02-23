@@ -118,19 +118,16 @@ const HeroSection = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a9e8c] to-purple-500 rounded-3xl blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-500 animate-pulse-slow"></div>
 
               {/* Main Hero Image with 3D Transform */}
-              <div className="relative transform perspective-1000 animate-float3d">
+              <div className="relative transform perspective-1000 animate-float3d overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white/20">
                 <img
-                  src="/hero-carer-app.png"
-                  alt="Professional carer with Heems mobile app"
-                  className="w-full max-w-lg mx-auto rounded-3xl shadow-2xl border border-white/10 transform hover:scale-105 transition-transform duration-500"
-                  style={{
-                    filter: 'drop-shadow(0 25px 50px rgba(26, 158, 140, 0.3))',
-                  }}
+                  src="/compassionate_care_hero.png"
+                  alt="Compassionate caregiver sharing a warm moment with an elderly person at home"
+                  className="w-full max-w-lg mx-auto object-cover aspect-[4/5] transform hover:scale-105 transition-transform duration-700"
                 />
 
-                {/* Animated Ring Effect */}
-                <div className="absolute -inset-4 border-2 border-[#1a9e8c]/30 rounded-[2rem] animate-pulse-slow pointer-events-none"></div>
-                <div className="absolute -inset-8 border border-[#1a9e8c]/20 rounded-[2.5rem] animate-pulse-slow animation-delay-1000 pointer-events-none"></div>
+                {/* Animated Ring Effect Overlay */}
+                <div className="absolute inset-0 border-2 border-[#1a9e8c]/30 rounded-[2.5rem] animate-pulse-slow pointer-events-none"></div>
+                <div className="absolute inset-2 border border-[#1a9e8c]/20 rounded-[2rem] animate-pulse-slow animation-delay-1000 pointer-events-none"></div>
               </div>
 
               {/* Floating Elements */}
