@@ -174,16 +174,16 @@ const Footer = () => {
             © {new Date().getFullYear()} Heems. All rights Reserved.
           </p>
 
-          <div className="flex flex-col md:flex-row gap-8 text-xs font-bold text-white/40 uppercase tracking-widest">
-            <div className="flex items-center gap-2">
-              <Mail className="w-3.5 h-3.5" /> support@heems.com
-            </div>
-            <div className="flex items-center gap-2">
-              <Phone className="w-3.5 h-3.5" /> 020 1234 5678
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin className="w-3.5 h-3.5" /> 71-75 Shelton Street, London, WC2H 9JQ
-            </div>
+          <div className="flex gap-4">
+            <a href="mailto:support@heems.com" className="h-10 w-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-white transition-colors" aria-label="Email Support" title="support@heems.com">
+              <Mail className="h-5 w-5" />
+            </a>
+            <a href="tel:02012345678" className="h-10 w-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-white transition-colors" aria-label="Call Support" title="020 1234 5678">
+              <Phone className="h-5 w-5" />
+            </a>
+            <a href="https://maps.google.com/?q=71-75+Shelton+Street,+London,+WC2H+9JQ" target="_blank" rel="noopener noreferrer" className="h-10 w-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-white transition-colors" aria-label="Location" title="71-75 Shelton Street, London, WC2H 9JQ">
+              <MapPin className="h-5 w-5" />
+            </a>
           </div>
         </div>
       </div>
