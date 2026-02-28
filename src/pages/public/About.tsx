@@ -453,8 +453,7 @@ const About = () => {
                                 "Enhanced DBS Checked",
                                 "Identity Verified",
                                 "References Confirmed",
-                                "Right to Work Validated",
-                                "Skills Assessed"
+                                "Right to Work Validated"
                             ].map((item, i) => (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
