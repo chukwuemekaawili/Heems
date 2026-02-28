@@ -34,6 +34,7 @@ import Press from "./pages/public/Press";
 import CareTypeDetail from "./pages/public/CareTypeDetail";
 import Solutions from "./pages/Solutions";
 import Contact from "./pages/public/Contact";
+import Careers from "./pages/public/Careers";
 
 import Security from "./pages/public/Security";
 import Terms from "./pages/public/Terms";
@@ -192,6 +193,7 @@ const App = () => (
               {/* New Public Pages */}
               <Route path="/about" element={<About />} />
               <Route path="/press" element={<Press />} />
+              <Route path="/careers" element={<Careers />} />
               <Route path="/types-of-care" element={<TypesOfCare />} />
               <Route path="/types-of-care/:typeId" element={<CareTypeDetail />} />
               <Route path="/solutions" element={<Solutions />} />
