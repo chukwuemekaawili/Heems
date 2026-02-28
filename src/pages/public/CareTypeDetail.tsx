@@ -125,7 +125,7 @@ const CareTypeDetail = () => {
                                         Who Are the Carers?
                                     </h2>
                                     <p className="text-[#4B5563] font-medium leading-relaxed mb-6">
-                                        Carers offering {careType.title.toLowerCase()} through Heems:
+                                        {careType.whoAreTheCarersIntro}
                                     </p>
                                     <ul className="space-y-4 mb-6">
                                         {careType.whoAreTheCarers.map((item, i) => (
@@ -195,7 +195,7 @@ const CareTypeDetail = () => {
                                     ) : (
                                         <>
                                             <p className="text-[#4B5563] font-medium leading-relaxed mb-8">
-                                                Arranging {careType.title.toLowerCase()} through Heems is straightforward:
+                                                {careType.howToArrangeIntro}
                                             </p>
                                             <div className="space-y-6 mb-8">
                                                 {careType.howToArrange?.map((step, i) => (

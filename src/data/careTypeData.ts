@@ -16,6 +16,7 @@ export interface CareType {
     whoIsItFor: string[];
     whoIsItForOutro?: string;
 
+    whoAreTheCarersIntro: string;
     whoAreTheCarers: string[];
     whoAreTheCarersOutro?: string;
 
@@ -23,6 +24,7 @@ export interface CareType {
     costDescription: string;
     costRange: string;
 
+    howToArrangeIntro?: string;
     howToArrangeText?: string;
     howToArrange?: string[];
     isHowToArrangeNumbered?: boolean;
@@ -59,6 +61,7 @@ export const careTypeData: Record<string, CareType> = {
             "People experiencing reduced mobility, confidence, or energy levels",
             "Families seeking additional or supplementary home support"
         ],
+        whoAreTheCarersIntro: "Carers offering visiting care through Heems are:",
         whoAreTheCarers: [
             "Independent, self-employed professionals",
             "Not employees, agents, or representatives of Heems",
@@ -75,6 +78,7 @@ export const careTypeData: Record<string, CareType> = {
         ],
         costRange: "£15 - £35 per hour",
         costDescription: "Rates on Heems typically range from £15 - £35 per hour. Carers set their own rates, which are clearly displayed on the platform before booking, allowing families to make informed and transparent choices.",
+        howToArrangeIntro: "Arranging visiting care through Heems is straightforward:",
         howToArrange: [
             "Create a client account on the Heems platform",
             "Search for carers by location, availability, experience, and hourly rate",
@@ -112,6 +116,7 @@ export const careTypeData: Record<string, CareType> = {
             "Individuals recovering from illness or surgery on a non-clinical basis",
             "Families who need night-time support without committing to full live-in care"
         ],
+        whoAreTheCarersIntro: "Carers offering overnight care through Heems are:",
         whoAreTheCarers: [
             "Independent, self-employed professionals",
             "Not employed, supervised, or managed by Heems",
@@ -127,6 +132,7 @@ export const careTypeData: Record<string, CareType> = {
         ],
         costRange: "£90 - £230 per night",
         costDescription: "Typical price ranges:\n• Sleeping night: £90–£150 per night\n• Waking night: £170–£230 per night\n\nCarers set their own rates, which are displayed transparently on the platform prior to booking.",
+        howToArrangeIntro: "Arranging overnight care through Heems is simple and flexible:",
         howToArrange: [
             "Create a client account on the Heems platform",
             "Search for carers offering overnight availability",
@@ -165,6 +171,7 @@ export const careTypeData: Record<string, CareType> = {
             "Families seeking continuity of care without rotating carers"
         ],
         whoIsItForOutro: "Live-in care arranged through Heems is not suitable for complex clinical interventions.",
+        whoAreTheCarersIntro: "Carers offering live-in care through Heems are:",
         whoAreTheCarers: [
             "Independent, self-employed professionals",
             "Not employed, supervised, or managed by Heems",
@@ -180,6 +187,7 @@ export const careTypeData: Record<string, CareType> = {
         ],
         costRange: "£900 - £1,500 per week",
         costDescription: "Weekly live-in care typically ranges between £900 and £1,500, while part-time daily support may start from around £160 per day. Rates are set by carers themselves and are clearly displayed on the platform before any booking is confirmed.",
+        howToArrangeIntro: "Arranging live-in care through Heems is straightforward:",
         howToArrange: [
             "Create a client account on the Heems platform",
             "Search for carers offering live-in availability",
@@ -214,6 +222,7 @@ export const careTypeData: Record<string, CareType> = {
             "Families seeking extra practical and emotional support alongside existing healthcare provision",
             "Clients who value comfort, dignity, and companionship rather than clinical intervention."
         ],
+        whoAreTheCarersIntro: "Carers offering palliative support through Heems:",
         whoAreTheCarers: [
             "Are independent, self-employed professionals with experience in providing emotional and end-of-life support",
             "Focus on compassionate presence, reassurance, and respect for individual wishes",
@@ -251,6 +260,7 @@ export const careTypeData: Record<string, CareType> = {
             "Families seeking additional support alongside existing medical or community services"
         ],
         whoIsItForOutro: "Dementia support arranged via Heems may not be suitable for individuals with advanced dementia, complex behavioural needs, or those requiring specialist clinical intervention.",
+        whoAreTheCarersIntro: "Carers offering dementia support through Heems:",
         whoAreTheCarers: [
             "Are independent, self-employed professionals with relevant experience supporting individuals with dementia",
             "Are chosen directly by clients or families based on experience, availability, and compatibility",
@@ -260,6 +270,7 @@ export const careTypeData: Record<string, CareType> = {
         ],
         costRange: "£15 - £35 per hour",
         costDescription: "Independent carers set their own rates. Rates on Heems typically Ranges from £15–£35 per hour depending on experience and schedule.",
+        howToArrangeIntro: "Families can arrange dementia support through Heems by:",
         howToArrange: [
             "Creating a client account and searching for carers with experience supporting individuals living with dementia",
             "Reviewing carer profiles to understand experience, availability, and approach to routine and reassurance",
@@ -297,6 +308,7 @@ export const careTypeData: Record<string, CareType> = {
             "Situations where additional support is needed during periods of change or increased demand"
         ],
         whoIsItForOutro: "Respite care is designed to supplement existing arrangements and is not intended for clinical, nursing, or specialist care needs.",
+        whoAreTheCarersIntro: "Carers offering respite support through Heems:",
         whoAreTheCarers: [
             "Are independent, self-employed professionals",
             "Provide short-term or ad hoc support based on availability",
@@ -307,6 +319,7 @@ export const careTypeData: Record<string, CareType> = {
         whoAreTheCarersOutro: "All arrangements, expectations, and schedules are agreed directly between the family and the carer.",
         costRange: "£15 - £35 per hour",
         costDescription: "Independent carers set their own rates. Rates on Heems typically ranges from £15–£35 depending on duration and requirements.",
+        howToArrangeIntro: "Arranging respite care through Heems is straightforward:",
         howToArrange: [
             "Create a client account on the Heems platform",
             "Search for carers by location, availability, experience, and hourly rate",
