@@ -5,11 +5,9 @@ import { Link } from "react-router-dom";
 
 const footerLinks = {
   product: [
-    { name: "Features", href: "/#features" },
     { name: "How it Works", href: "/how-it-works" },
     { name: "Pricing", href: "/#pricing" },
     { name: "For Carers", href: "/#for-carers" },
-    { name: "For Organisations", href: "/#for-organisations" },
   ],
   company: [
     { name: "About Us", href: "/about" },
@@ -19,9 +17,6 @@ const footerLinks = {
   ],
   legal: [
     { name: "Privacy Policy", href: "/privacy" },
-    { name: "Safeguarding Policy", href: "/safety-guidelines" },
-    { name: "Equality Policy", href: "/equality" },
-    { name: "Complaints Policy", href: "/complaints" },
     { name: "Terms of Service", href: "/terms" },
     { name: "Security", href: "/security" },
   ],
