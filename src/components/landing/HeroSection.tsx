@@ -132,7 +132,7 @@ const HeroSection = () => {
               <div className="absolute top-[10%] -right-4 bg-white rounded-2xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.15)] border border-slate-100 animate-float z-20">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-emerald-500" />
-                  <span className="text-sm font-bold text-slate-800">Elite Verification</span>
+                  <span className="text-sm font-bold text-slate-800">DBS Verified</span>
                 </div>
               </div>
 
