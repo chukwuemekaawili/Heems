@@ -401,7 +401,7 @@ const About = () => {
                                                 <Heart className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <p className="font-black text-[#111827] text-lg">Founder Hems</p>
+                                                <p className="font-black text-[#111827] text-lg">Founder Heems</p>
                                                 <p className="text-sm text-slate-500 font-medium">Championing transparency and dignity in care</p>
                                             </div>
                                         </div>
