@@ -300,21 +300,21 @@ const About = () => {
                                 transition={{ duration: 0.7 }}
                                 className="lg:col-span-7 space-y-8"
                             >
-                                <div className="grid sm:grid-cols-2 gap-4">
-                                    <div className="rounded-[2rem] overflow-hidden bg-white border border-slate-100 shadow-2xl">
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="rounded-[2rem] overflow-hidden bg-white border border-slate-100 shadow-2xl h-full">
                                         <img
                                             src="/about-care.png"
                                             alt="Care professional supporting a client"
-                                            className="w-full h-[320px] object-cover"
+                                            className="w-full h-full min-h-[320px] object-cover"
                                             loading="lazy"
                                         />
                                     </div>
-                                    <div className="grid gap-4">
+                                    <div className="grid gap-4 h-full">
                                         <div className="rounded-[2rem] overflow-hidden bg-white border border-slate-100 shadow-xl">
                                             <img
-                                                src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
-                                                alt="Care coordination in action"
-                                                className="w-full h-[150px] object-cover"
+                                                src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80"
+                                                alt="Carer planning support with an older adult"
+                                                className="w-full h-[200px] object-cover"
                                                 loading="lazy"
                                             />
                                         </div>
@@ -322,7 +322,7 @@ const About = () => {
                                             <img
                                                 src="https://images.unsplash.com/photo-1505685296765-3a2736de412f?auto=format&fit=crop&w=900&q=80"
                                                 alt="Supportive hands symbolizing trust"
-                                                className="w-full h-[150px] object-cover object-center"
+                                                className="w-full h-[200px] object-cover object-center"
                                                 loading="lazy"
                                             />
                                         </div>
