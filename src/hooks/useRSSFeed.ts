@@ -69,7 +69,7 @@ export function useRSSFeed() {
                         .from("news_articles")
                         .select("*")
                         .order("published_at", { ascending: false })
-                        .limit(60)
+                        .limit(200)
                         .then(({ data: fresh }) => {
                             if (fresh && fresh.length > 0 && !cancelled) {
                                 setArticles(fresh.map(fromDBRow));
