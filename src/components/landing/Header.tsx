@@ -109,7 +109,7 @@ const Header = () => {
   ];
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white border-b border-black/5 py-2' : 'bg-white border-b border-black/[0.03] py-4'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/80 backdrop-blur-xl border-b border-black/5 py-2 shadow-sm' : 'bg-transparent py-5'}`}>
       <nav className="container mx-auto px-6 lg:px-12">
         <div className="flex items-center justify-between h-14 lg:h-16">
           {/* Logo */}
@@ -117,7 +117,7 @@ const Header = () => {
             <img
               src="/heems-logo.png"
               alt="Heems"
-              className="h-14 w-auto"
+              className={`h-14 w-auto transition-all ${!scrolled ? "brightness-0 invert" : ""}`}
             />
           </Link>
 
@@ -127,7 +127,8 @@ const Header = () => {
               <Link
                 key={link.name}
                 to={link.href}
-                className="text-sm font-bold text-[#4B5563] hover:text-[#1a9e8c] transition-colors"
+                className={`text-sm font-bold transition-colors duration-300 ${scrolled ? "text-slate-600 hover:text-[#1a9e8c]" : "text-white/90 hover:text-white"
+                  }`}
               >
                 {link.name}
               </Link>
@@ -139,22 +140,22 @@ const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors">
+                  <button className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-colors ${scrolled ? "hover:bg-slate-50" : "hover:bg-white/10"}`}>
                     <Avatar className="h-9 w-9">
                       <AvatarImage src={profile?.avatar_url} />
-                      <AvatarFallback className="bg-[#1a9e8c] text-white text-sm font-bold">
+                      <AvatarFallback className="bg-[#1a9e8c] text-white text-sm font-bold shadow-lg">
                         {getUserInitials()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="text-left">
-                      <p className="text-sm font-bold text-[#111827] leading-none">
+                      <p className={`text-sm font-bold leading-none ${scrolled ? "text-[#111827]" : "text-white"}`}>
                         Welcome, {getUserName().split(' ')[0]}
                       </p>
-                      <p className="text-xs text-[#4B5563] capitalize leading-none mt-0.5">
+                      <p className={`text-xs capitalize leading-none mt-0.5 ${scrolled ? "text-[#4B5563]" : "text-white/70"}`}>
                         {profile?.role || 'User'}
                       </p>
                     </div>
-                    <ChevronDown className="h-4 w-4 text-[#4B5563]" />
+                    <ChevronDown className={`h-4 w-4 ${scrolled ? "text-[#4B5563]" : "text-white/70"}`} />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -190,10 +191,10 @@ const Header = () => {
               </DropdownMenu>
             ) : (
               <>
-                <Button variant="ghost" className="font-bold text-xs h-10 px-5 rounded-xl text-[#4B5563]" asChild>
+                <Button variant="ghost" className={`font-bold text-sm h-11 px-6 rounded-2xl transition-all duration-300 ${scrolled ? 'text-slate-600 hover:text-[#111827] hover:bg-slate-50' : 'text-white/90 hover:text-white hover:bg-white/10'}`} asChild>
                   <Link to="/login">Sign In</Link>
                 </Button>
-                <Button className="font-bold text-xs h-10 px-6 rounded-xl bg-[#1a9e8c] hover:bg-[#15806c] text-white shadow-sm" asChild>
+                <Button className="font-bold text-sm h-11 px-7 rounded-2xl bg-[#1a9e8c] hover:bg-[#15806c] text-white shadow-lg shadow-black/5 hover:-translate-y-0.5 transition-all duration-300" asChild>
                   <Link to="/signup">Get Started</Link>
                 </Button>
               </>

@@ -12,7 +12,7 @@ const ParallaxSection = () => {
             />
 
             {/* Multi-layer Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#111827]/80 via-[#111827]/70 to-[#1a9e8c]/60 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0B1120]/95 via-[#0B1120]/80 to-[#1a9e8c]/40 backdrop-blur-md" />
 
             {/* Animated Geometric Patterns */}
             <div className="absolute inset-0 opacity-10">
@@ -29,12 +29,12 @@ const ParallaxSection = () => {
                     Introductory Agency Excellence
                 </div>
 
-                <h2 className="text-5xl lg:text-8xl font-black text-white mb-10 tracking-tighter leading-none max-w-5xl mx-auto">
+                <h2 className="text-5xl lg:text-7xl font-black text-white mb-10 tracking-tight leading-[1.1] max-w-5xl mx-auto">
                     Proven vetting standards. <br />
                     <span className="text-[#1a9e8c]">Unmatched peace of mind.</span>
                 </h2>
 
-                <div className="text-lg lg:text-xl text-white/90 font-medium max-w-4xl mx-auto mb-16 leading-relaxed space-y-6 text-left lg:text-center">
+                <div className="text-lg lg:text-xl text-slate-300 font-medium max-w-4xl mx-auto mb-16 leading-relaxed space-y-6 text-left lg:text-center">
                     <p>
                         Every carer using the Heems platform goes through a robust, multi-stage verification process designed to promote safety, professionalism, and trust.
                     </p>
@@ -46,33 +46,26 @@ const ParallaxSection = () => {
                     </p>
                 </div>
 
-                {/* Stats Row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16">
-                    <div className="p-8 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-500">
-                        <div className="flex items-center justify-center gap-3 mb-3">
-                            <ShieldCheck className="w-8 h-8 text-[#1a9e8c]" />
-                            <p className="text-4xl font-black text-white">100%</p>
-                        </div>
-                        <p className="text-sm font-bold text-white/70 uppercase tracking-widest">DBS Verified</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
+                    <div className="p-8 rounded-[2rem] bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:-translate-y-2 shadow-[0_10px_40px_rgba(0,0,0,0.3)] transition-all duration-500 flex flex-col items-center justify-center min-h-[200px]">
+                        <ShieldCheck className="w-10 h-10 text-[#1a9e8c] mb-4" />
+                        <p className="text-4xl font-black text-white mb-2">100%</p>
+                        <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">DBS Verified</p>
                     </div>
-                    <div className="p-8 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-500">
-                        <div className="flex items-center justify-center gap-3 mb-3">
-                            <TrendingUp className="w-8 h-8 text-[#1a9e8c]" />
-                            <p className="text-4xl font-black text-white">2000+</p>
-                        </div>
-                        <p className="text-sm font-bold text-white/70 uppercase tracking-widest">Carers</p>
+                    <div className="p-8 rounded-[2rem] bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:-translate-y-2 shadow-[0_10px_40px_rgba(0,0,0,0.3)] transition-all duration-500 flex flex-col items-center justify-center min-h-[200px]">
+                        <TrendingUp className="w-10 h-10 text-[#1a9e8c] mb-4" />
+                        <p className="text-4xl font-black text-white mb-2">2000+</p>
+                        <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Carers</p>
                     </div>
-                    <div className="p-8 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-500">
-                        <div className="flex items-center justify-center gap-3 mb-3">
-                            <Award className="w-8 h-8 text-[#1a9e8c]" />
-                            <p className="text-4xl font-black text-white">99.2%</p>
-                        </div>
-                        <p className="text-sm font-bold text-white/70 uppercase tracking-widest">Satisfaction</p>
+                    <div className="p-8 rounded-[2rem] bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:-translate-y-2 shadow-[0_10px_40px_rgba(0,0,0,0.3)] transition-all duration-500 flex flex-col items-center justify-center min-h-[200px]">
+                        <Award className="w-10 h-10 text-[#1a9e8c] mb-4" />
+                        <p className="text-4xl font-black text-white mb-2">4.9</p>
+                        <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Rating</p>
                     </div>
                 </div>
 
                 {/* CTA Button */}
-                <Button size="lg" className="h-20 px-16 rounded-3xl bg-[#1a9e8c] text-white font-black text-xl hover:bg-[#15806c] shadow-2xl shadow-[#1a9e8c]/30 transition-all border-none group" asChild>
+                <Button size="lg" className="h-16 px-10 rounded-2xl bg-[#1a9e8c] text-white font-bold text-lg hover:bg-[#158f7e] shadow-[0_10px_30px_rgba(26,158,140,0.3)] hover:shadow-[0_15px_40px_rgba(26,158,140,0.4)] hover:-translate-y-1 transition-all duration-500 border-none group" asChild>
                     <Link to="/marketplace">
                         View Verified Professionals
                         <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform" />

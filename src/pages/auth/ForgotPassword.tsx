@@ -49,8 +49,8 @@ const ForgotPassword = () => {
       >
         <div className="space-y-6 animate-in-up">
           <div className="flex justify-center">
-            <div className="w-16 h-16 rounded-full bg-[#1a9e8c]/10 flex items-center justify-center">
-              <CheckCircle2 className="w-8 h-8 text-[#1a9e8c]" />
+            <div className="w-20 h-20 rounded-full bg-[#1a9e8c]/10 flex items-center justify-center border border-[#1a9e8c]/20 shadow-[0_8px_30px_rgba(26,158,140,0.15)]">
+              <CheckCircle2 className="w-10 h-10 text-[#1a9e8c]" />
             </div>
           </div>
 
@@ -70,7 +70,7 @@ const ForgotPassword = () => {
             </p>
           </div>
 
-          <Button variant="outline" className="w-full h-14 rounded-xl border-black/10 font-bold text-[#111827] hover:bg-slate-50 transition-all" asChild>
+          <Button variant="outline" className="w-full h-16 rounded-2xl border-slate-200 font-bold text-[#111827] hover:bg-slate-50 hover:-translate-y-0.5 transition-all duration-300" asChild>
             <Link to="/login">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to sign in
@@ -98,15 +98,15 @@ const ForgotPassword = () => {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm font-medium focus-visible:ring-[#1a9e8c]"
+              className="pl-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all"
               required
             />
           </div>
         </div>
 
         {/* Submit */}
-        <Button type="submit" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] transition-all shadow-xl shadow-black/5" disabled={isLoading}>
-          {isLoading ? "Sending..." : "Send reset link"}
+        <Button type="submit" className="w-full h-16 rounded-2xl bg-[#111827] text-white font-black text-sm uppercase tracking-[0.2em] hover:bg-[#1a9e8c] shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.3)] hover:-translate-y-1 transition-all duration-500 disabled:opacity-50" disabled={isLoading}>
+          {isLoading ? "Sending..." : "Send Reset Link"}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
 

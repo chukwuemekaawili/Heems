@@ -155,7 +155,7 @@ const Login = () => {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm font-medium focus-visible:ring-[#1a9e8c]"
+              className="pl-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all"
               required
             />
           </div>
@@ -180,7 +180,7 @@ const Login = () => {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-11 pr-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm font-medium focus-visible:ring-[#1a9e8c]"
+              className="pl-12 pr-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all"
               required
             />
             <button
@@ -207,7 +207,7 @@ const Login = () => {
         </div>
 
         {/* Submit */}
-        <Button type="submit" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] transition-all shadow-xl shadow-black/5" disabled={isLoading}>
+        <Button type="submit" className="w-full h-16 rounded-2xl bg-[#111827] text-white font-black text-sm uppercase tracking-[0.2em] hover:bg-[#1a9e8c] shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.3)] hover:-translate-y-1 transition-all duration-500" disabled={isLoading}>
           {isLoading ? "Signing in..." : "Sign in"}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>

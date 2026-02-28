@@ -87,8 +87,11 @@ const SignupSuccess = () => {
             <div className="space-y-6 animate-in-up text-center">
                 {/* Success Icon */}
                 <div className="flex justify-center">
-                    <div className="w-20 h-20 rounded-full bg-[#1a9e8c]/10 flex items-center justify-center">
-                        <Mail className="w-10 h-10 text-[#1a9e8c]" />
+                    <div className="relative">
+                        <div className="w-24 h-24 rounded-full bg-[#1a9e8c]/10 flex items-center justify-center border border-[#1a9e8c]/20 shadow-[0_8px_30px_rgba(26,158,140,0.15)]">
+                            <Mail className="w-10 h-10 text-[#1a9e8c]" />
+                        </div>
+                        <div className="absolute inset-0 rounded-full border-2 border-[#1a9e8c]/20 animate-ping opacity-40" />
                     </div>
                 </div>
 
@@ -103,17 +106,17 @@ const SignupSuccess = () => {
                 </div>
 
                 {/* Steps */}
-                <div className="bg-slate-50 rounded-2xl p-5 space-y-4 text-left">
+                <div className="bg-white rounded-[2rem] p-6 space-y-5 text-left border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
                     {content.steps.map((step, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                            <div className="w-6 h-6 rounded-full bg-[#1a9e8c] text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5">
+                        <div key={index} className="flex items-start gap-4">
+                            <div className="w-7 h-7 rounded-full bg-[#1a9e8c] text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5 shadow-[0_4px_10px_rgba(26,158,140,0.3)]">
                                 {index + 1}
                             </div>
                             <div>
                                 <p className="text-sm font-bold text-[#111827]">
                                     {step.text}
                                 </p>
-                                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                                <p className="text-xs text-slate-500 font-medium mt-0.5 leading-relaxed">
                                     {step.desc}
                                 </p>
                             </div>
@@ -124,7 +127,7 @@ const SignupSuccess = () => {
                 {/* CTA */}
                 <Button
                     size="lg"
-                    className="w-full h-14 rounded-xl bg-[#111827] text-white font-black text-base hover:bg-[#1a9e8c] shadow-xl shadow-black/5 transition-all"
+                    className="w-full h-16 rounded-2xl bg-[#111827] text-white font-black text-sm uppercase tracking-[0.2em] hover:bg-[#1a9e8c] shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.3)] hover:-translate-y-1 transition-all duration-500"
                     asChild
                 >
                     <Link to="/login">

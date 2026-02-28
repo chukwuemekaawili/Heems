@@ -50,11 +50,11 @@ const FeaturesSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
           {/* Left - Text Content */}
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#1a9e8c]/10 to-[#111827]/10 border border-[#1a9e8c]/20 text-[#111827] text-xs font-black uppercase tracking-[0.25em] mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-[#111827] text-xs font-black uppercase tracking-[0.2em] mb-8 shadow-sm">
               <Zap className="w-3.5 h-3.5 text-[#1a9e8c]" />
               High-Performance Infrastructure
             </div>
-            <h2 className="text-4xl lg:text-6xl font-black text-[#111827] leading-[0.95] tracking-tighter mb-8">
+            <h2 className="text-4xl lg:text-6xl font-black text-[#111827] leading-[1.1] tracking-tight mb-8">
               Care Engineered <br />
               <span className="bg-gradient-to-r from-[#1a9e8c] to-[#111827] bg-clip-text text-transparent">for Total Trust.</span>
             </h2>
@@ -94,7 +94,7 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group relative bg-white p-8 rounded-3xl border border-black/[0.05] hover:border-[#1a9e8c]/30 hover:shadow-2xl transition-all duration-700 overflow-hidden"
+              className="group relative bg-white p-8 rounded-[2rem] border border-slate-100 hover:border-[#1a9e8c]/20 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(26,158,140,0.1)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Gradient Background on Hover */}
@@ -107,10 +107,10 @@ const FeaturesSection = () => {
                 </div>
               </div>
 
-              <h3 className="text-xl font-black text-[#111827] mb-3 tracking-tight group-hover:text-[#1a9e8c] transition-colors duration-500">
+              <h3 className="text-xl font-black text-[#111827] mb-3 tracking-tight group-hover:text-[#1a9e8c] transition-colors duration-300">
                 {feature.title}
               </h3>
-              <p className="text-[#4B5563] font-medium leading-relaxed text-sm">
+              <p className="text-slate-500 font-medium leading-relaxed text-sm">
                 {feature.description}
               </p>
             </div>
@@ -119,7 +119,7 @@ const FeaturesSection = () => {
 
         {/* Additional Trust Indicators */}
         <div className="mt-20 grid md:grid-cols-3 gap-8">
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-black/[0.03] hover:shadow-xl transition-all duration-500">
+          <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] hover:-translate-y-2 transition-all duration-500">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-[#1a9e8c]/10 flex items-center justify-center">
                 <Clock className="w-6 h-6 text-[#1a9e8c]" />
@@ -132,7 +132,7 @@ const FeaturesSection = () => {
             <p className="text-sm text-[#4B5563] font-medium">Dedicated support team available during business hours.</p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-black/[0.03] hover:shadow-xl transition-all duration-500">
+          <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] hover:-translate-y-2 transition-all duration-500">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-[#1a9e8c]/10 flex items-center justify-center">
                 <MessageSquare className="w-6 h-6 text-[#1a9e8c]" />
@@ -145,7 +145,7 @@ const FeaturesSection = () => {
             <p className="text-sm text-[#4B5563] font-medium">Secure, HIPAA-compliant communication platform.</p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-black/[0.03] hover:shadow-xl transition-all duration-500">
+          <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] hover:-translate-y-2 transition-all duration-500">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-[#1a9e8c]/10 flex items-center justify-center">
                 <CreditCard className="w-6 h-6 text-[#1a9e8c]" />

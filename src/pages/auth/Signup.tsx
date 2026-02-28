@@ -65,9 +65,9 @@ const Signup = () => {
           {roleOptions.map((role) => (
             <div
               key={role.id}
-              className={`group cursor-pointer p-5 rounded-2xl border transition-all duration-300 ${selectedRole === role.id
-                ? "bg-[#111827] border-[#111827] shadow-lg"
-                : "bg-white border-black/[0.05] hover:border-[#1a9e8c]/30"
+              className={`group cursor-pointer p-6 rounded-[2rem] border transition-all duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(26,158,140,0.1)] hover:-translate-y-1 ${selectedRole === role.id
+                ? "bg-[#0B1120] border-[#0B1120] shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
+                : "bg-white border-slate-100 hover:border-[#1a9e8c]/30"
                 }`}
               onClick={() => setSelectedRole(role.id)}
             >
@@ -100,7 +100,7 @@ const Signup = () => {
         {/* Continue Button */}
         <Button
           size="lg"
-          className="w-full h-14 rounded-xl bg-[#111827] text-white font-black text-base hover:bg-[#1a9e8c] shadow-xl shadow-black/5 transition-all disabled:opacity-50"
+          className="w-full h-16 rounded-2xl bg-[#111827] text-white font-black text-sm uppercase tracking-[0.2em] hover:bg-[#1a9e8c] shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.3)] hover:-translate-y-1 transition-all duration-500 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
           disabled={!selectedRole}
           asChild={!!selectedRole}
         >

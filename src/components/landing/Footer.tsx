@@ -33,7 +33,7 @@ const footerLinks = {
 
 const Footer = () => {
   return (
-    <footer className="bg-[#111827] text-white pt-24 pb-12">
+    <footer className="bg-[#0B1120] text-white pt-32 pb-16">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Main Grid */}
         <div className="grid lg:grid-cols-12 gap-16">
@@ -45,7 +45,7 @@ const Footer = () => {
                 className="h-12 w-auto brightness-0 invert"
               />
             </Link>
-            <div className="text-white/60 font-medium leading-relaxed mb-10 space-y-4">
+            <div className="text-slate-400 font-medium leading-relaxed mb-10 space-y-4">
               <p>Our platform brings families and independent carers together through secure verification, transparent profiles, and intelligent matching, helping the right people find each other at the right time.</p>
               <p>For families, it’s confidence and clarity.</p>
               <p>For carers, it’s independence, dignity, and choice. For everyone, it’s care built on trust.</p>
@@ -106,11 +106,11 @@ const Footer = () => {
                 {footerLinks.product.map((link) => (
                   <li key={link.name}>
                     {link.href.startsWith('/#') ? (
-                      <a href={link.href} className="text-sm font-bold text-white/60 hover:text-white transition-colors">
+                      <a href={link.href} className="text-sm font-bold text-slate-400 hover:text-white transition-colors duration-300">
                         {link.name}
                       </a>
                     ) : (
-                      <Link to={link.href} className="text-sm font-bold text-white/60 hover:text-white transition-colors">
+                      <Link to={link.href} className="text-sm font-bold text-slate-400 hover:text-white transition-colors duration-300">
                         {link.name}
                       </Link>
                     )}
@@ -121,11 +121,11 @@ const Footer = () => {
             <div>
               <h4 className="text-xs font-black text-[#1a9e8c] uppercase tracking-widest mb-8">Platform</h4>
               <ul className="space-y-4">
-                <li><Link to="/login" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Sign In</Link></li>
-                <li><Link to="/signup" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Register</Link></li>
+                <li><Link to="/login" className="text-sm font-bold text-slate-400 hover:text-white transition-colors duration-300">Sign In</Link></li>
+                <li><Link to="/signup" className="text-sm font-bold text-slate-400 hover:text-white transition-colors duration-300">Register</Link></li>
                 {footerLinks.support.map((link) => (
                   <li key={link.name}>
-                    <Link to={link.href} className="text-sm font-bold text-white/60 hover:text-white transition-colors">
+                    <Link to={link.href} className="text-sm font-bold text-slate-400 hover:text-white transition-colors duration-300">
                       {link.name}
                     </Link>
                   </li>
@@ -137,7 +137,7 @@ const Footer = () => {
               <ul className="space-y-4">
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
-                    <Link to={link.href} className="text-sm font-bold text-white/60 hover:text-white transition-colors">
+                    <Link to={link.href} className="text-sm font-bold text-slate-400 hover:text-white transition-colors duration-300">
                       {link.name}
                     </Link>
                   </li>
@@ -149,7 +149,7 @@ const Footer = () => {
               <ul className="space-y-4">
                 {footerLinks.legal.map((link) => (
                   <li key={link.name}>
-                    <Link to={link.href} className="text-sm font-bold text-white/60 hover:text-white transition-colors">
+                    <Link to={link.href} className="text-sm font-bold text-slate-400 hover:text-white transition-colors duration-300">
                       {link.name}
                     </Link>
                   </li>
@@ -170,7 +170,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs font-bold text-white/30 uppercase tracking-[0.1em] text-center md:text-left">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.1em] text-center md:text-left">
             © {new Date().getFullYear()} Heems. All rights Reserved.
           </p>
 

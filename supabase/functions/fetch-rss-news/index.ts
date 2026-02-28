@@ -8,10 +8,10 @@ const FEEDS = [
     { url: "https://news.google.com/rss/search?q=uk+social+care+home+care+2026&hl=en-GB&gl=GB&ceid=GB:en", source: "UK Care News", category: "Workforce" },
     { url: "https://news.google.com/rss/search?q=CQC+care+quality+UK&hl=en-GB&gl=GB&ceid=GB:en", source: "CQC News", category: "Regulation" },
     { url: "https://news.google.com/rss/search?q=elderly+care+domiciliary+UK&hl=en-GB&gl=GB&ceid=GB:en", source: "Homecare News", category: "Market Outlook" },
-    { url: "https://news.google.com/rss/search?q=NHS+care+workers+UK+2026&hl=en-GB&gl=GB&ceid=GB:en", source: "NHS Care", category: "Workforce" },
-    { url: "https://news.google.com/rss/search?q=disability+support+workers+UK&hl=en-GB&gl=GB&ceid=GB:en", source: "Disability Care", category: "Innovation" },
-    { url: "https://news.google.com/rss/search?q=mental+health+care+UK+2026&hl=en-GB&gl=GB&ceid=GB:en", source: "Mental Health", category: "Innovation" },
-    { url: "https://feeds.bbci.co.uk/news/education/rss.xml", source: "BBC Education", category: "Workforce" },
+    { url: "https://news.google.com/rss/search?q=NHS+care+workers+UK+2026&hl=en-GB&gl=GB&ceid=GB:en", source: "NHS England", category: "Workforce" },
+    { url: "https://news.google.com/rss/search?q=skills+for+care+UK&hl=en-GB&gl=GB&ceid=GB:en", source: "Skills for Care", category: "Workforce" },
+    { url: "https://news.google.com/rss/search?q=age+uk+care&hl=en-GB&gl=GB&ceid=GB:en", source: "Age UK", category: "Strategy" },
+    { url: "https://news.google.com/rss/search?q=cb+insights+digital+health&hl=en-US&gl=US&ceid=US:en", source: "CB Insights", category: "Market Outlook" },
 ];
 
 function stripHtml(html: string): string {
@@ -122,7 +122,7 @@ async function parseItems(xml: string, source: string, category: string): Promis
 
     for (const pattern of patterns) {
         let match;
-        while ((match = pattern.exec(xml)) !== null && items.length < 8) {
+        while ((match = pattern.exec(xml)) !== null && items.length < 35) {
             const c = match[1];
 
             const title = (
@@ -301,7 +301,7 @@ serve(async (req) => {
             .from("news_articles")
             .select("id")
             .order("published_at", { ascending: false })
-            .limit(60);
+            .limit(200);
 
         if (keepRows && keepRows.length > 0) {
             const keepIds = keepRows.map((r: any) => r.id);
@@ -310,7 +310,7 @@ serve(async (req) => {
                 .delete({ count: 'exact' })
                 .not("id", "in", `(${keepIds.join(",")})`);
             if (count && count > 0) {
-                console.log(`[CLEANUP] Deleted ${count} old articles to maintain 60-article cap`);
+                console.log(`[CLEANUP] Deleted ${count} old articles to maintain 200-article cap`);
             }
         }
 
@@ -319,7 +319,7 @@ serve(async (req) => {
             .from("news_articles")
             .select("*")
             .order("published_at", { ascending: false })
-            .limit(60);
+            .limit(200);
 
         if (readError) throw readError;
 

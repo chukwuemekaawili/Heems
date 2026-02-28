@@ -7,54 +7,54 @@ import { motion, AnimatePresence } from "framer-motion";
 const familySteps = [
     {
         number: "01",
-        icon: Search,
+        image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
         title: "Define Your Needs",
         description: "Tell us about your requirements. Our system starts matching instantly based on care experience, location, and personality.",
     },
     {
         number: "02",
-        icon: UserCheck,
+        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80",
         title: "Select Your Carer",
-        description: "Review elite profiles verified with our rigorous 20-point vetting process. Video interview them before you book to ensure a perfect fit.",
+        description: "Review elite profiles verified with our rigorous 20-point vetting process. Video interview them before you book.",
     },
     {
         number: "03",
-        icon: Calendar,
+        image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&q=80",
         title: "Seamless Booking",
-        description: "Schedule one-off visits or complex recurring care plans. Contracts, scheduling, and secure payments are fully managed within the Heems platform.",
+        description: "Schedule one-off visits or complex recurring care plans. Contracts, scheduling, and secure payments in one place.",
     },
     {
         number: "04",
-        icon: Heart,
+        image: "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&q=80",
         title: "Expert Care Delivery",
-        description: "Receive world-class care at home. Track every visit with real-time daily logs and maintain direct communication with your carer.",
+        description: "Receive world-class care at home. Track every visit with real-time daily logs and direct communication with your carer.",
     },
 ];
 
 const carerSteps = [
     {
         number: "01",
-        icon: Sparkles,
+        image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&q=80",
         title: "Apply & Verify",
-        description: "Create your profile and complete our 20-point vetting process. We verify your DBS, right to work, qualifications, and references.",
+        description: "Create your profile and complete our 20-point vetting process. We verify your DBS, right to work, and references.",
     },
     {
         number: "02",
-        icon: LayoutDashboard,
+        image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80",
         title: "Set Your Terms",
-        description: "You're in control. Set your own hourly rates, define your service area, and maintain your availability calendar exactly how you want it.",
+        description: "You're in control. Set your own hourly rates, define your service area, and maintain your availability calendar.",
     },
     {
         number: "03",
-        icon: UserCheck,
+        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80",
         title: "Connect & Interview",
-        description: "Receive booking requests from local families or organisations. Review their needs, accept requests, and conduct video interviews directly on the platform.",
+        description: "Receive booking requests from local families or organisations. Review needs and conduct video interviews.",
     },
     {
         number: "04",
-        icon: Calendar,
+        image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
         title: "Deliver Care & Earn",
-        description: "Provide exceptional care and log your visits on the go. Guaranteed, secure payouts are processed swiftly after each completed shift.",
+        description: "Provide exceptional care and log your visits on the go. Guaranteed, secure payouts processed swiftly.",
     },
 ];
 
@@ -261,10 +261,10 @@ const HowItWorksSection = () => {
     const currentSteps = activeTab === 'families' ? familySteps : carerSteps;
 
     return (
-        <section className="py-24 lg:py-40 bg-gradient-to-b from-slate-50 to-white border-b border-black/[0.03] relative overflow-hidden" id="how-it-works">
+        <section className="py-24 lg:py-40 bg-white border-b border-black/[0.03] relative overflow-hidden" id="how-it-works">
             {/* Decorative Elements */}
-            <div className="absolute top-20 right-0 w-96 h-96 bg-[#1a9e8c]/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-20 left-0 w-96 h-96 bg-[#111827]/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-[#1a9e8c]/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-20 left-0 w-[600px] h-[600px] bg-[#111827]/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="container mx-auto px-6 lg:px-12 relative z-10">
                 {/* Section Header with Phone Animation */}
@@ -316,53 +316,58 @@ const HowItWorksSection = () => {
                     </div>
                 </div>
 
-                {/* Steps with Modern Card Design */}
+                {/* Steps with Modern Card Design & Photography */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-32 relative">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeTab}
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
+                            exit={{ opacity: 0, y: -30 }}
+                            transition={{ duration: 0.5, staggerChildren: 0.1 }}
                             className="col-span-full grid md:grid-cols-2 lg:grid-cols-4 gap-6"
                         >
                             {currentSteps.map((step, index) => (
-                                <div
+                                <motion.div
                                     key={step.number}
-                                    className="group relative bg-white p-8 xl:p-10 rounded-[2.5rem] border border-black/[0.05] hover:border-[#1a9e8c]/30 hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    transition={{ duration: 0.6, delay: index * 0.15 }}
+                                    className="group relative bg-[#0B1120] rounded-[2.5rem] overflow-hidden flex flex-col aspect-[4/5] sm:aspect-auto sm:min-h-[460px] cursor-pointer shadow-lg hover:shadow-[0_20px_60px_rgba(26,158,140,0.2)] transition-shadow duration-500"
                                 >
-                                    {/* Gradient Background on Hover */}
-                                    <div className="absolute inset-0 bg-gradient-to-br from-[#1a9e8c]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                    {/* Photography Background with Hover Zoom */}
+                                    <div className="absolute inset-0 z-0">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120] via-[#0B1120]/60 to-transparent z-10" />
+                                        <img
+                                            src={step.image}
+                                            alt={step.title}
+                                            className="w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-40 transition-all duration-1000 ease-out"
+                                        />
+                                    </div>
 
-                                    <div className="relative z-10 flex-1 flex flex-col">
-                                        <div className="flex justify-between items-start mb-10">
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black shadow-lg group-hover:scale-110 transition-transform duration-500 ${activeTab === 'families' ? 'bg-gradient-to-br from-[#111827] to-[#1a9e8c] text-white' : 'bg-gradient-to-br from-slate-800 to-black text-white'
-                                                }`}>
-                                                <step.icon className="w-6 h-6" />
-                                            </div>
-                                            <span className={`text-5xl font-black transition-colors ${activeTab === 'families' ? 'text-slate-100 group-hover:text-[#1a9e8c]/20' : 'text-slate-100 group-hover:text-slate-800/20'
-                                                }`}>
+                                    <div className="relative z-20 flex-1 flex flex-col p-8 xl:p-10 text-white justify-end">
+                                        <div className="absolute top-8 left-8 right-8 flex justify-between items-start">
+                                            <span className={`text-6xl font-black ${activeTab === 'families' ? 'text-white/20 group-hover:text-[#1a9e8c]/80' : 'text-white/20 group-hover:text-blue-400/80'} transition-colors duration-500 tracking-tighter`}>
                                                 {step.number}
                                             </span>
+                                            {index < currentSteps.length - 1 && (
+                                                <div className="hidden lg:flex w-12 h-12 rounded-full border border-white/10 items-center justify-center translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 bg-white/5 backdrop-blur-md transition-all duration-500">
+                                                    <ArrowRight className="w-5 h-5 text-white" />
+                                                </div>
+                                            )}
                                         </div>
 
-                                        <h3 className={`text-xl font-black mb-4 tracking-tight transition-colors ${activeTab === 'families' ? 'text-[#111827] group-hover:text-[#1a9e8c]' : 'text-[#111827] group-hover:text-slate-800'
-                                            }`}>
-                                            {step.title}
-                                        </h3>
-                                        <p className="text-sm text-[#4B5563] font-medium leading-relaxed">
-                                            {step.description}
-                                        </p>
-
-                                        {/* Progress Indicator */}
-                                        {index < currentSteps.length - 1 && (
-                                            <div className="absolute -right-3 top-1/2 -translate-y-1/2 hidden lg:block border-none">
-                                                <ArrowRight className={`w-6 h-6 ${activeTab === 'families' ? 'text-[#1a9e8c]/30' : 'text-slate-800/30'}`} />
-                                            </div>
-                                        )}
+                                        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                            <h3 className="text-2xl font-black mb-3 tracking-tight leading-[1.1] group-hover:text-[#2dd4bf] transition-colors">
+                                                {step.title}
+                                            </h3>
+                                            <p className="text-white/70 font-medium leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 line-clamp-4">
+                                                {step.description}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             ))}
                         </motion.div>
                     </AnimatePresence>
@@ -379,7 +384,7 @@ const HowItWorksSection = () => {
                         {faqs.map((faq, index) => (
                             <div
                                 key={index}
-                                className="border border-black/5 rounded-2xl bg-white overflow-hidden"
+                                className="border border-slate-100 rounded-[2rem] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:border-[#1a9e8c]/20 hover:shadow-[0_20px_60px_rgba(26,158,140,0.08)] transition-all duration-500 overflow-hidden"
                             >
                                 <button
                                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
@@ -412,8 +417,9 @@ const HowItWorksSection = () => {
                 </div>
 
                 {/* Enhanced CTA */}
-                <div className="mt-24 p-12 rounded-[3rem] bg-gradient-to-r from-[#111827] to-[#1a9e8c] relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                <div className="mt-24 p-12 lg:p-20 rounded-[3rem] bg-[#0B1120] relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-[#1a9e8c]/20 rounded-full blur-3xl opacity-30 pointer-events-none" />
                     <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-8">
                         <div className="max-w-md text-white">
                             <p className="text-2xl font-black mb-2">Ready to experience the difference?</p>

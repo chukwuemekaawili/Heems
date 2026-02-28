@@ -150,7 +150,7 @@ const ClientSignup = () => {
                 placeholder="Sarah"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
+                className="pl-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all"
                 required
               />
             </div>
@@ -162,7 +162,7 @@ const ClientSignup = () => {
               placeholder="Jenkins"
               value={formData.lastName}
               onChange={handleChange}
-              className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
+              className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4"
               required
             />
           </div>
@@ -179,7 +179,7 @@ const ClientSignup = () => {
               placeholder="sarah@example.com"
               value={formData.email}
               onChange={handleChange}
-              className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
+              className="pl-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all"
               required
             />
           </div>
@@ -196,7 +196,7 @@ const ClientSignup = () => {
               placeholder="+44 7700 900000"
               value={formData.phone}
               onChange={handleChange}
-              className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
+              className="pl-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all"
               required
             />
           </div>
@@ -213,7 +213,7 @@ const ClientSignup = () => {
               placeholder="••••••••"
               value={formData.password}
               onChange={handleChange}
-              className="pl-11 pr-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
+              className="pl-12 pr-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all"
               required
               minLength={8}
             />
@@ -238,7 +238,7 @@ const ClientSignup = () => {
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm"
+              className="pl-12 pr-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all"
               required
               minLength={8}
             />
@@ -260,7 +260,7 @@ const ClientSignup = () => {
         {/* Submit */}
         <Button
           type="submit"
-          className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl shadow-black/5"
+          className="w-full h-16 rounded-2xl bg-[#111827] text-white font-black text-sm uppercase tracking-[0.2em] hover:bg-[#1a9e8c] shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.3)] hover:-translate-y-1 transition-all duration-500 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
           disabled={isLoading || !agreeTerms}
         >
           {isLoading ? "Creating Profile..." : "Create Account"}

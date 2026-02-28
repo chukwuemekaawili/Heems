@@ -46,7 +46,7 @@ export function useRSSFeed() {
                 .from("news_articles")
                 .select("*")
                 .order("published_at", { ascending: false })
-                .limit(60);
+                .limit(200);
 
             if (!cancelled) {
                 if (!dbError && dbRows && dbRows.length > 0) {

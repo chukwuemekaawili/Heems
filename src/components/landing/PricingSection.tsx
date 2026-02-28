@@ -73,16 +73,16 @@ const PricingSection = () => {
         {/* Section Header */}
         <div className="max-w-4xl mb-24 lg:mb-32">
           <div className="flex items-center gap-3 mb-8">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#1a9e8c]" />
-            <span className="text-xs font-black text-[#111827] uppercase tracking-[0.25em]">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 shadow-sm text-[#111827] text-xs font-black uppercase tracking-[0.2em]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#1a9e8c]" />
               B2B Infrastructure
-            </span>
+            </div>
           </div>
-          <h2 className="text-5xl lg:text-8xl font-black text-[#111827] leading-[0.95] tracking-tighter mb-10">
+          <h2 className="text-5xl lg:text-7xl font-black text-[#111827] leading-[1.1] tracking-tight mb-10">
             Enterprise Plans <br />
             <span className="text-[#1a9e8c]">for Organisations.</span>
           </h2>
-          <p className="text-xl text-[#4B5563] font-medium leading-relaxed max-w-xl">
+          <p className="text-xl text-slate-500 font-medium leading-relaxed max-w-xl">
             Scalable workforce management and compliance for modern care providers. All plans include a 14-day premium trial.
           </p>
         </div>
@@ -92,9 +92,9 @@ const PricingSection = () => {
           {plans.map((plan, index) => (
             <div
               key={plan.name}
-              className={`flex flex-col p-10 rounded-[3rem] border transition-all duration-500 ${plan.popular
-                ? "bg-[#111827] border-[#111827] shadow-2xl shadow-black/20"
-                : "bg-white border-black/[0.05] hover:border-[#1a9e8c]/30"
+              className={`flex flex-col p-10 rounded-[2rem] border transition-all duration-500 hover:-translate-y-2 ${plan.popular
+                ? "bg-[#0B1120] border-[#0B1120] shadow-[0_20px_60px_rgba(0,0,0,0.2)] hover:shadow-[0_25px_70px_rgba(26,158,140,0.2)]"
+                : "bg-white border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:border-[#1a9e8c]/20 hover:shadow-[0_20px_60px_rgba(26,158,140,0.1)]"
                 }`}
             >
               <div className="mb-10">
@@ -130,9 +130,9 @@ const PricingSection = () => {
 
               <Button
                 size="lg"
-                className={`h-16 px-8 rounded-2xl font-black text-lg transition-all ${plan.popular
-                  ? "bg-[#1a9e8c] text-white hover:bg-[#15806c] shadow-xl shadow-[#1a9e8c]/20"
-                  : "bg-[#111827] text-white hover:bg-[#1a9e8c]"
+                className={`h-14 px-8 rounded-2xl font-bold text-lg transition-all duration-500 hover:-translate-y-1 ${plan.popular
+                  ? "bg-[#1a9e8c] text-white hover:bg-[#158f7e] shadow-[0_10px_30px_rgba(26,158,140,0.3)] hover:shadow-[0_15px_40px_rgba(26,158,140,0.4)]"
+                  : "bg-slate-100 text-[#111827] hover:bg-slate-200 shadow-sm"
                   }`}
                 asChild
               >

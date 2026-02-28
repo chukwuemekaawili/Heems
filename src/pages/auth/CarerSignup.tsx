@@ -203,11 +203,11 @@ const CarerSignup = () => {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">First Name</Label>
-                <Input name="firstName" placeholder="Jane" value={formData.firstName} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+                <Input name="firstName" placeholder="Jane" value={formData.firstName} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Last Name</Label>
-                <Input name="lastName" placeholder="Smith" value={formData.lastName} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+                <Input name="lastName" placeholder="Smith" value={formData.lastName} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
               </div>
             </div>
 
@@ -215,21 +215,21 @@ const CarerSignup = () => {
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Email Address</Label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <Input name="email" type="email" placeholder="jane@healthcare.com" value={formData.email} onChange={handleChange} className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+                <Input name="email" type="email" placeholder="jane@healthcare.com" value={formData.email} onChange={handleChange} className="pl-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all" required />
               </div>
             </div>
 
             <div className="space-y-1.5">
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Security Password</Label>
-              <Input name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+              <Input name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
             </div>
 
             <div className="space-y-1.5">
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirm Password</Label>
-              <Input name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+              <Input name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
             </div>
 
-            <Button type="button" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl"
+            <Button type="button" className="w-full h-16 rounded-2xl bg-[#111827] text-white font-black text-sm uppercase tracking-[0.2em] hover:bg-[#1a9e8c] shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.3)] hover:-translate-y-1 transition-all duration-500"
               onClick={() => {
                 if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword) {
                   toast({
@@ -262,7 +262,7 @@ const CarerSignup = () => {
             <div className="space-y-1.5">
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Care Experience</Label>
               <Select value={formData.experience} onValueChange={(v) => setFormData({ ...formData, experience: v })}>
-                <SelectTrigger className="h-12 bg-slate-50 border-black/[0.05] rounded-xl">
+                <SelectTrigger className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus:ring-[#1a9e8c]/30 focus:ring-offset-0 focus:border-[#1a9e8c] transition-all px-4">
                   <SelectValue placeholder="Years in Service" />
                 </SelectTrigger>
                 <SelectContent>
@@ -304,7 +304,7 @@ const CarerSignup = () => {
               </Label>
             </div>
 
-            <Button type="submit" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl" disabled={isLoading || !agreeTerms}>
+            <Button type="submit" className="w-full h-16 rounded-2xl bg-[#111827] text-white font-black text-sm uppercase tracking-[0.2em] hover:bg-[#1a9e8c] shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.3)] hover:-translate-y-1 transition-all duration-500 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none" disabled={isLoading || !agreeTerms}>
               {isLoading ? "Creating Account..." : "Create Account & Start Vetting"}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>

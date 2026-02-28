@@ -10,7 +10,7 @@ const CTASection = () => {
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#111827]/10 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        <div className="relative rounded-[4rem] overflow-hidden bg-gradient-to-br from-[#111827] via-[#1a2332] to-[#111827] px-8 py-20 lg:px-20 lg:py-32 border border-white/5">
+        <div className="relative rounded-[3rem] overflow-hidden bg-[#0B1120] px-8 py-20 lg:px-20 lg:py-32 shadow-[0_20px_80px_rgba(0,0,0,0.15)] group">
           {/* Decorative Pattern */}
           <div className="absolute inset-0 opacity-5">
             <div className="absolute top-0 left-0 w-full h-full" style={{
@@ -25,17 +25,17 @@ const CTASection = () => {
 
           <div className="max-w-4xl mx-auto text-center relative z-10">
             {/* Premium Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a9e8c]/10 border border-[#1a9e8c]/20 text-[#1a9e8c] text-xs font-black uppercase tracking-[0.25em] mb-8">
-              <Sparkles className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-white/90 text-xs font-black uppercase tracking-[0.2em] mb-10 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+              <Sparkles className="w-3.5 h-3.5 text-[#1a9e8c]" />
               Join the Elite Care Network
             </div>
 
-            <h2 className="text-4xl lg:text-7xl font-black text-white mb-8 tracking-tighter leading-none">
+            <h2 className="text-5xl lg:text-7xl font-black text-white mb-8 tracking-tight leading-[1.1]">
               Transform your <br />
-              <span className="bg-gradient-to-r from-[#1a9e8c] to-[#15806c] bg-clip-text text-transparent">care experience.</span>
+              <span className="text-[#1a9e8c]">care experience.</span>
             </h2>
 
-            <p className="text-xl text-white/70 font-medium max-w-2xl mx-auto mb-12 leading-relaxed">
+            <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto mb-14 leading-relaxed">
               Join thousands of families, independent professionals, and healthcare organisations who trust Heems for quality-verified care across the UK.
             </p>
 
@@ -55,14 +55,14 @@ const CTASection = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="h-16 px-12 rounded-2xl bg-gradient-to-r from-[#1a9e8c] to-[#15806c] text-white font-black text-lg hover:shadow-2xl hover:shadow-[#1a9e8c]/30 transition-all group" asChild>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mt-4">
+              <Button size="lg" className="h-16 px-12 rounded-2xl bg-[#1a9e8c] hover:bg-[#158f7e] text-white font-bold text-lg shadow-[0_10px_30px_rgba(26,158,140,0.3)] hover:shadow-[0_15px_40px_rgba(26,158,140,0.4)] hover:-translate-y-1 transition-all duration-500 group" asChild>
                 <Link to="/signup">
                   Get Started Now
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="h-16 px-12 rounded-2xl font-black text-lg text-white border-2 border-white/20 hover:bg-white/10 transition-all" asChild>
+              <Button variant="outline" size="lg" className="h-16 px-12 rounded-2xl font-bold text-lg text-white border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-500" asChild>
                 <Link to="/marketplace">
                   Find a Carer
                 </Link>

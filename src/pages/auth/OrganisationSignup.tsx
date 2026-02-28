@@ -171,30 +171,30 @@ const OrganisationSignup = () => {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Admin First Name</Label>
-                <Input name="firstName" placeholder="Michael" value={formData.firstName} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+                <Input name="firstName" placeholder="Michael" value={formData.firstName} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Last Name</Label>
-                <Input name="lastName" placeholder="Chen" value={formData.lastName} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+                <Input name="lastName" placeholder="Chen" value={formData.lastName} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
               </div>
             </div>
 
             <div className="space-y-1.5">
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Work Email (Corporate)</Label>
-              <Input name="email" type="email" placeholder="name@care-agency.com" value={formData.email} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+              <Input name="email" type="email" placeholder="name@care-agency.com" value={formData.email} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
             </div>
 
             <div className="space-y-1.5">
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Access Password</Label>
-              <Input name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+              <Input name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
             </div>
 
             <div className="space-y-1.5">
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirm Access</Label>
-              <Input name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} className="h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+              <Input name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all px-4" required />
             </div>
 
-            <Button type="button" className="w-full h-14 rounded-xl bg-[#111827] text-white font-black hover:bg-[#1a9e8c] shadow-xl" onClick={() => setStep(2)}>
+            <Button type="button" className="w-full h-16 rounded-2xl bg-[#111827] text-white font-black text-sm uppercase tracking-[0.2em] hover:bg-[#1a9e8c] shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.3)] hover:-translate-y-1 transition-all duration-500" onClick={() => setStep(2)}>
               Configure Organisation
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -205,14 +205,14 @@ const OrganisationSignup = () => {
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Organisation Legal Name</Label>
               <div className="relative">
                 <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <Input name="orgName" placeholder="Care Solutions Ltd" value={formData.orgName} onChange={handleChange} className="pl-11 h-12 bg-slate-50 border-black/[0.05] rounded-xl text-sm" required />
+                <Input name="orgName" placeholder="Care Solutions Ltd" value={formData.orgName} onChange={handleChange} className="pl-12 h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus-visible:ring-[#1a9e8c]/30 focus-visible:ring-offset-0 focus-visible:border-[#1a9e8c] transition-all" required />
               </div>
             </div>
 
             <div className="space-y-1.5">
               <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Type of Provider</Label>
               <Select value={formData.orgType} onValueChange={(v) => setFormData({ ...formData, orgType: v })}>
-                <SelectTrigger className="h-12 bg-slate-50 border-black/[0.05] rounded-xl">
+                <SelectTrigger className="h-14 bg-white border-slate-200 shadow-inner rounded-2xl text-sm font-medium focus:ring-[#1a9e8c]/30 focus:ring-offset-0 focus:border-[#1a9e8c] transition-all px-4">
                   <SelectValue placeholder="Select Sector" />
                 </SelectTrigger>
                 <SelectContent>
@@ -250,7 +250,7 @@ const OrganisationSignup = () => {
               </Label>
             </div>
 
-            <Button type="submit" className="w-full h-14 rounded-xl bg-[#1a9e8c] text-white font-black hover:bg-[#15806c] shadow-xl shadow-[#1a9e8c]/20" disabled={isLoading || !agreeTerms}>
+            <Button type="submit" className="w-full h-16 rounded-2xl bg-[#1a9e8c] text-white font-black text-sm uppercase tracking-[0.2em] shadow-[0_8px_20px_rgba(26,158,140,0.2)] hover:shadow-[0_15px_30px_rgba(26,158,140,0.4)] hover:-translate-y-1 hover:bg-[#158f7e] transition-all duration-500 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none" disabled={isLoading || !agreeTerms}>
               {isLoading ? "Provisioning System..." : "Activate Organisation Account"}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>

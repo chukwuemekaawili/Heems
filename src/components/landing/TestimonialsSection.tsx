@@ -66,18 +66,18 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section className="py-20 lg:py-32 bg-muted/30">
+    <section className="py-24 lg:py-32 bg-slate-50 border-t border-slate-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">
+          <span className="inline-block px-4 py-2 rounded-full bg-slate-200 border border-slate-300 shadow-sm text-[#111827] text-xs font-black uppercase tracking-[0.2em] mb-6">
             Testimonials
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6">
+          <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-[#111827] mb-6 tracking-tight leading-[1.1]">
             Trusted by{" "}
-            <span className="text-gradient">Thousands</span>
+            <span className="text-[#1a9e8c]">Thousands.</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-slate-500 font-medium">
             From families to professional carers, hear how Heems is transforming care across the UK.
           </p>
         </div>
@@ -169,10 +169,9 @@ const TestimonialsSection = () => {
         {/* Desktop Grid (unchanged) */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial, index) => (
-            <Card
+            <div
               key={testimonial.author}
-              variant="interactive"
-              className="animate-fade-in-up"
+              className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(26,158,140,0.1)] hover:-translate-y-2 hover:border-[#1a9e8c]/20 transition-all duration-500 animate-fade-in-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <CardContent className="p-6">
@@ -187,26 +186,26 @@ const TestimonialsSection = () => {
                 </div>
 
                 {/* Content */}
-                <p className="text-foreground leading-relaxed mb-6">
+                <p className="text-slate-600 font-medium leading-relaxed mb-8">
                   "{testimonial.content}"
                 </p>
 
                 {/* Author */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-semibold text-sm">
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="w-12 h-12 rounded-full bg-[#1a9e8c]/10 flex items-center justify-center text-[#1a9e8c] font-black text-sm">
                     {testimonial.avatar}
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground text-sm">
+                    <p className="font-black text-[#111827] text-sm">
                       {testimonial.author}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
                       {testimonial.role} • {testimonial.company}
                     </p>
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           ))}
         </div>
 

@@ -8,9 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Search, Filter, Star, ShieldCheck, Clock, MapPin, BadgeCheck, FileCheck, ChevronLeft, ChevronRight, Loader2, PoundSterling } from "lucide-react";
+import { Search, Filter, Star, ShieldCheck, Clock, MapPin, BadgeCheck, FileCheck, ChevronLeft, ChevronRight, Loader2, PoundSterling, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
 
 const AVAILABILITY_OPTIONS = [
     { value: "weekdays", label: "Weekdays" },
@@ -190,25 +191,53 @@ const Marketplace = () => {
                 <meta name="description" content="Discover and book elite independent carers on Heems. Rigorously vetted professionals for your family's needs." />
             </Helmet>
             <Header />
-            <main className="pt-28 lg:pt-36 pb-20">
-                <div className="container mx-auto px-6 lg:px-12">
-                    {/* Header Section */}
-                    <div className="max-w-4xl mb-16">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1a9e8c]/5 border border-[#1a9e8c]/10 text-[#1a9e8c] text-[10px] font-black uppercase tracking-widest mb-6">
-                            Introductory Care Agency Standards
-                        </div>
-                        <h1 className="text-5xl lg:text-7xl font-black text-[#111827] mb-8 tracking-tighter leading-[0.95]">
-                            Discover Elite <br />
-                            <span className="text-[#1a9e8c]">Independent Care.</span>
-                        </h1>
-                        <p className="text-xl text-[#4B5563] font-medium leading-relaxed max-w-2xl">
-                            Heems connects you directly with the UK's most rigorously vetted,
-                            self-employed carers. High-value families deserve high-performance care.
-                        </p>
+            <main>
+                {/* ─── HERO (Cinematic) ─── */}
+                <section className="relative min-h-[75vh] flex items-center pt-32 pb-20 overflow-hidden bg-[#0B1120]">
+                    {/* Background Image & Cinematic Overlays */}
+                    <div className="absolute inset-0 z-0">
+                        <img
+                            src="/modern_home_care_hero.png"
+                            alt="Premium Care Marketplace"
+                            className="w-full h-full object-cover opacity-30"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#0B1120] via-[#0B1120]/80 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120] via-[#0B1120]/20 to-transparent" />
                     </div>
 
+                    {/* Accent orbs */}
+                    <div className="absolute top-1/4 right-[10%] w-[400px] h-[400px] rounded-full bg-[#1a9e8c]/15 blur-[120px] pointer-events-none" />
+                    <div className="absolute bottom-1/4 left-[5%] w-[300px] h-[300px] rounded-full bg-indigo-500/15 blur-[100px] pointer-events-none" />
+
+                    <div className="container mx-auto px-6 lg:px-12 relative z-10 w-full mt-10">
+                        <div className="max-w-3xl">
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8 }}
+                            >
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-widest mb-8 shadow-xl">
+                                    <ShieldCheck className="w-4 h-4 text-[#1a9e8c]" />
+                                    Introductory Care Agency Standards
+                                </div>
+
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white mb-8 tracking-tight leading-[1.05]">
+                                    Discover Elite <br />
+                                    <span className="text-[#1a9e8c]">Independent Care.</span>
+                                </h1>
+
+                                <p className="text-lg lg:text-xl text-white/70 font-medium leading-relaxed mb-10 max-w-2xl">
+                                    Heems connects you directly with the UK's most rigorously vetted,
+                                    self-employed carers. High-value families deserve high-performance care.
+                                </p>
+                            </motion.div>
+                        </div>
+                    </div>
+                </section>
+
+                <div className="container mx-auto px-6 lg:px-12 pb-20 relative z-20 -mt-10">
                     {/* Search & Filter Bar */}
-                    <div className="mb-8 p-6 bg-white rounded-3xl border border-black/[0.05] shadow-2xl shadow-black/5">
+                    <div className="mb-12 p-6 bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.08)] hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] transition-all duration-500">
                         <div className="flex flex-col lg:flex-row gap-4 mb-4">
                             <div className="relative flex-1">
                                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -291,7 +320,7 @@ const Marketplace = () => {
                                 </Button>
                                 <Button
                                     onClick={handleApplyFilters}
-                                    className="h-12 px-8 rounded-xl bg-[#111827] text-white font-black text-sm hover:bg-[#1a9e8c] transition-all gap-2 shadow-lg"
+                                    className="h-12 px-8 rounded-[1rem] bg-[#111827] text-white font-black text-sm hover:bg-[#1a9e8c] shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_25px_rgba(26,158,140,0.3)] hover:-translate-y-0.5 transition-all duration-300 gap-2"
                                 >
                                     <Filter className="w-4 h-4" />
                                     Apply Filters
@@ -331,13 +360,19 @@ const Marketplace = () => {
                         </div>
                     ) : (
                         <>
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                                {carers.map((carer) => (
-                                    <div key={carer.id} className="group relative bg-white rounded-[2.5rem] border border-black/[0.05] hover:border-[#1a9e8c]/30 transition-all duration-700 hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl">
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {carers.map((carer, i) => (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5, delay: i * 0.1 }}
+                                        key={carer.id}
+                                        className="group relative bg-white rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:border-[#1a9e8c]/20 hover:shadow-[0_20px_60px_rgba(26,158,140,0.1)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+                                    >
                                         {/* Badge Overlay */}
                                         <div className="absolute top-6 left-6 z-10 flex flex-wrap gap-2">
                                             {(carer.verified || carer.carer_details?.verification_status === 'verified') && (
-                                                <div className="px-3 py-1 rounded-full bg-[#111827] text-white text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
+                                                <div className="px-3 py-1.5 rounded-full bg-[#111827]/90 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
                                                     <Star className="w-3 h-3 text-[#1a9e8c] fill-[#1a9e8c]" />
                                                     Verified Carer
                                                 </div>
@@ -398,7 +433,7 @@ const Marketplace = () => {
                                                 </div>
                                                 <Button
                                                     asChild
-                                                    className="h-14 rounded-2xl bg-[#111827] text-white font-black text-xs hover:bg-[#1a9e8c] transition-all px-8 border-none shadow-xl shadow-black/5"
+                                                    className="h-12 rounded-xl bg-slate-100 text-[#111827] hover:bg-[#1a9e8c] hover:text-white font-bold text-xs transition-all px-8 border-none shadow-sm hover:shadow-[0_10px_25px_rgba(26,158,140,0.3)] hover:-translate-y-0.5 duration-300"
                                                 >
                                                     <Link to={`/client/book/${carer.id}`}>
                                                         Secure Profile
@@ -406,7 +441,7 @@ const Marketplace = () => {
                                                 </Button>
                                             </div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 ))}
                             </div>
 
@@ -465,8 +500,14 @@ const Marketplace = () => {
                     )}
 
                     {/* Infrastructure Note */}
-                    <div className="mt-24 p-12 rounded-[3.5rem] bg-[#111827] relative overflow-hidden">
-                        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ duration: 0.7 }}
+                        className="mt-24 p-12 rounded-[3rem] bg-[#0B1120] relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] group hover:-translate-y-1 transition-transform duration-500"
+                    >
+                        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
                         <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
                             <div>
                                 <h2 className="text-3xl lg:text-4xl font-black text-white mb-6 tracking-tight">
@@ -492,14 +533,14 @@ const Marketplace = () => {
                                 </div>
                             </div>
                             <div className="flex justify-end">
-                                <Button asChild className="h-16 px-12 rounded-2xl bg-white text-[#111827] font-black hover:bg-[#1a9e8c] hover:text-white transition-all text-sm">
+                                <Button asChild className="h-14 px-10 rounded-2xl bg-white text-[#0B1120] font-bold hover:bg-slate-100 hover:text-[#111827] hover:-translate-y-1 shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_30px_rgba(0,0,0,0.2)] transition-all duration-500 text-sm">
                                     <Link to="/signup/organisation">
-                                        Apply as a Care Organisation
+                                        Apply as an Organisation
                                     </Link>
                                 </Button>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </main>
             <Footer />

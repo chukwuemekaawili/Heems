@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -165,36 +166,57 @@ const Blog = () => {
     return (
         <div className="min-h-screen bg-white">
             <Header />
-            <main className="pt-24">
+            <main>
+                {/* ─── HERO (Cinematic) ─── */}
+                <section className="relative min-h-[75vh] flex items-center pt-32 pb-20 overflow-hidden bg-[#0B1120]">
+                    {/* Background Image & Cinematic Overlays */}
+                    <div className="absolute inset-0 z-0">
+                        <img
+                            src="/blog_hero.png" /* Ensure image exists, fallback will be handled by CSS gradient if missing */
+                            alt="Heems Insights & News"
+                            className="w-full h-full object-cover opacity-30 object-center grayscale-[0.5]"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#0B1120] via-[#0B1120]/90 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120] via-transparent to-transparent" />
+                    </div>
 
-                {/* Hero */}
-                <section className="relative py-24 bg-slate-50 overflow-hidden">
-                    {/* Decorative Background */}
-                    <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[800px] h-[800px] bg-[#1a9e8c]/5 rounded-full blur-[100px]" />
+                    {/* Accent orbs */}
+                    <div className="absolute top-1/4 right-[10%] w-[400px] h-[400px] rounded-full bg-[#1a9e8c]/15 blur-[120px] pointer-events-none" />
+                    <div className="absolute bottom-1/4 left-[5%] w-[300px] h-[300px] rounded-full bg-blue-500/15 blur-[100px] pointer-events-none" />
 
-                    <div className="container relative z-10 mx-auto px-6">
-                        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 max-w-6xl mx-auto">
-                            <div className="max-w-2xl">
-                                <span className="inline-block text-xs font-black text-[#1a9e8c] uppercase tracking-widest mb-6">
+                    <div className="container mx-auto px-6 lg:px-12 relative z-10 w-full mt-10">
+                        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 max-w-7xl mx-auto">
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8 }}
+                                className="max-w-2xl"
+                            >
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-xl text-white text-[10px] font-black uppercase tracking-widest mb-8">
+                                    <Newspaper className="w-3.5 h-3.5 text-[#1a9e8c]" />
                                     Heems Insights
-                                </span>
-                                <h1 className="text-5xl lg:text-7xl font-black text-[#111827] mb-6 leading-[1.1] tracking-tight">
-                                    The voice of <br />
-                                    <span className="text-[#1a9e8c]">
-                                        UK home care.
-                                    </span>
+                                </div>
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+                                    The voice of <br className="hidden md:block" />
+                                    <span className="text-[#1a9e8c]">UK home care.</span>
                                 </h1>
-                                <p className="text-lg text-slate-600 font-medium leading-relaxed max-w-xl">
+                                <p className="text-lg lg:text-xl text-white/70 font-medium leading-relaxed max-w-xl">
                                     Live news, analysis and guides from across the care sector — updated daily from NHS, Age UK, CQC, Skills for Care and more.
                                 </p>
-                            </div>
-                            <div className="w-full lg:max-w-md shrink-0">
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                className="w-full lg:max-w-md shrink-0"
+                            >
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-[#1a9e8c] rounded-2xl blur opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
-                                    <div className="relative bg-white border border-slate-200 shadow-sm rounded-2xl flex items-center p-1">
-                                        <Search className="ml-4 h-5 w-5 text-slate-400" />
+                                    <div className="absolute inset-0 bg-[#1a9e8c] rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+                                    <div className="relative bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl flex items-center p-1">
+                                        <Search className="ml-4 h-5 w-5 text-white/50" />
                                         <Input
-                                            className="h-14 bg-transparent border-0 text-[#111827] placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 text-lg"
+                                            className="h-14 bg-transparent border-0 text-white placeholder:text-white/40 focus-visible:ring-0 focus-visible:ring-offset-0 text-lg font-medium"
                                             placeholder="Search articles..."
                                             value={searchTerm}
                                             onChange={e => setSearchTerm(e.target.value)}
@@ -202,27 +224,27 @@ const Blog = () => {
                                     </div>
                                 </div>
                                 {lastUpdated && (
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-3 flex items-center gap-1.5">
-                                        <RefreshCw className="w-3 h-3" />
+                                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-4 flex items-center gap-1.5 justify-end">
+                                        <RefreshCw className="w-3.5 h-3.5 text-white/40" />
                                         Feed synced {lastUpdated.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                                     </p>
                                 )}
-                            </div>
+                            </motion.div>
                         </div>
                     </div>
                 </section>
 
                 {/* Category pills */}
-                <div className="border-b border-slate-100 bg-white sticky top-[72px] z-30 shadow-sm">
-                    <div className="container mx-auto px-6">
-                        <div className="flex items-center gap-2 py-3 overflow-x-auto scrollbar-hide">
+                <div className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-[72px] z-30 shadow-sm">
+                    <div className="container mx-auto px-6 lg:px-12">
+                        <div className="flex items-center gap-2 py-4 overflow-x-auto scrollbar-hide max-w-7xl mx-auto">
                             {CATEGORIES.map((tag, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setSelectedCategory(tag)}
-                                    className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${selectedCategory === tag
-                                        ? "bg-[#111827] text-white"
-                                        : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                                    className={`shrink-0 px-5 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 ${selectedCategory === tag
+                                        ? "bg-[#111827] text-white shadow-md shadow-black/10 scale-105"
+                                        : "bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200"
                                         }`}
                                 >
                                     {tag}
@@ -233,40 +255,49 @@ const Blog = () => {
                 </div>
 
                 {/* Two-column layout */}
-                <section className="py-12 bg-slate-50">
-                    <div className="max-w-7xl mx-auto px-6">
-                        <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
+                <section className="py-20 lg:py-32 bg-slate-50 relative">
+                    <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+                        <div className="flex flex-col lg:flex-row gap-12 lg:items-start">
 
                             {/* Main feed */}
-                            <div className="flex-1 min-w-0 space-y-8">
-                                <div className="flex items-center justify-between border-b border-black/5 pb-4">
-                                    <h2 className="text-2xl font-black text-[#111827] tracking-tight">
+                            <div className="flex-1 min-w-0 space-y-12">
+                                <div className="flex items-center justify-between border-b border-black/5 pb-6">
+                                    <h2 className="text-3xl font-black text-[#111827] tracking-tight">
                                         {selectedCategory === "All" ? "Latest Coverage" : selectedCategory}
                                     </h2>
-                                    <span className="text-sm font-bold text-slate-400 bg-black/5 px-3 py-1 rounded-full">{filtered.length} articles</span>
+                                    <span className="text-xs font-black uppercase tracking-widest text-[#1a9e8c] bg-[#1a9e8c]/10 px-4 py-1.5 rounded-full">{filtered.length} articles</span>
                                 </div>
 
                                 {filtered.length === 0 ? (
-                                    <div className="bg-white rounded-3xl p-16 text-center border border-slate-100 shadow-sm">
-                                        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                            <BookOpen className="h-8 w-8 text-slate-300" />
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="bg-white rounded-[3rem] p-16 text-center border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)]"
+                                    >
+                                        <div className="w-24 h-24 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center mx-auto mb-8 shadow-inner">
+                                            <BookOpen className="h-10 w-10 text-slate-300" />
                                         </div>
-                                        <h3 className="text-xl font-black text-[#111827] mb-2">No articles found</h3>
-                                        <p className="text-slate-500 font-medium max-w-sm mx-auto">We couldn't find any news matching your current filters.</p>
-                                        <button onClick={() => { setSearchTerm(""); setSelectedCategory("All"); }} className="mt-6 px-6 py-2.5 bg-[#111827] text-white text-sm font-bold rounded-full hover:bg-black transition-colors">
+                                        <h3 className="text-2xl font-black text-[#111827] mb-3">No articles found</h3>
+                                        <p className="text-slate-500 font-medium max-w-sm mx-auto text-lg leading-relaxed">We couldn't find any news matching your current filters.</p>
+                                        <button onClick={() => { setSearchTerm(""); setSelectedCategory("All"); }} className="mt-8 px-8 py-4 bg-[#111827] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:bg-[#1a9e8c] hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                                             Clear all filters
                                         </button>
-                                    </div>
+                                    </motion.div>
                                 ) : (
-                                    <div className="space-y-6">
+                                    <div className="space-y-8">
                                         {/* Featured Article Overlay */}
                                         {featuredArticle && (
-                                            <div className="group relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#111827] via-[#0B1120] to-[#1a9e8c]/40 aspect-[16/10] sm:aspect-[21/9] cursor-pointer shadow-xl">
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.6 }}
+                                                className="group relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#111827] via-[#0B1120] to-[#1a9e8c]/40 aspect-[16/12] sm:aspect-[21/9] cursor-pointer shadow-[0_20px_80px_rgba(0,0,0,0.15)] hover:-translate-y-2 hover:shadow-[0_40px_100px_rgba(26,158,140,0.25)] transition-all duration-700"
+                                            >
                                                 {featuredArticle.image ? (
                                                     <img
                                                         src={featuredArticle.image}
                                                         alt={featuredArticle.title}
-                                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-50 transition-all duration-700"
+                                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-40 transition-all duration-1000 ease-out"
                                                         onError={e => handleImgFallback(e, featuredArticle.category)}
                                                         onLoad={e => handleImgLoad(e, featuredArticle.category)}
                                                     />
@@ -274,60 +305,66 @@ const Blog = () => {
                                                     <img
                                                         src={FALLBACK_IMAGES[featuredArticle.category] || FALLBACK_IMAGES.default}
                                                         alt={featuredArticle.title}
-                                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-50 transition-all duration-700"
+                                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-40 transition-all duration-1000 ease-out"
                                                     />
                                                 )}
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                                                <div className="absolute inset-0 p-8 sm:p-12 flex flex-col justify-end">
-                                                    <div className="flex flex-wrap items-center gap-3 mb-4">
-                                                        <Badge className="bg-[#1a9e8c] text-white border-none text-[10px] font-black uppercase tracking-widest shadow-lg">
+                                                <div className="absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-end">
+                                                    <div className="flex flex-wrap items-center gap-3 mb-6">
+                                                        <Badge className="bg-[#1a9e8c] text-white border-none text-[10px] font-black uppercase tracking-widest shadow-lg px-3 py-1">
                                                             {featuredArticle.source}
                                                         </Badge>
-                                                        <Badge className={`${getCategoryColor(featuredArticle.category).replace('/10', '/90')} text-white border-none text-[10px] font-bold uppercase tracking-widest shadow-lg backdrop-blur-md`}>
+                                                        <Badge className={`${getCategoryColor(featuredArticle.category).replace('/10', '/90')} text-white border-none text-[10px] font-bold uppercase tracking-widest shadow-lg backdrop-blur-md px-3 py-1`}>
                                                             {featuredArticle.category}
                                                         </Badge>
-                                                        <span className="text-xs font-bold text-white/80 flex items-center gap-1.5 ml-2">
+                                                        <span className="text-xs font-bold text-white/80 flex items-center gap-1.5 ml-2 uppercase tracking-widest">
                                                             <Calendar className="h-3.5 w-3.5" />
                                                             {featuredArticle.date}
                                                         </span>
                                                     </div>
 
-                                                    <h3 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-[1.15] mb-4 max-w-3xl group-hover:text-[#2dd4bf] transition-colors">
+                                                    <h3 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] mb-6 max-w-4xl group-hover:text-[#2dd4bf] transition-colors tracking-tight">
                                                         {featuredArticle.title}
                                                     </h3>
 
-                                                    <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-3 mb-6 font-medium">
+                                                    <p className="text-white/70 text-lg sm:text-xl leading-relaxed max-w-3xl line-clamp-2 sm:line-clamp-3 mb-8 font-medium">
                                                         {featuredArticle.snippet.replace(/<\/?[^>]+(>|$)/g, "")}
                                                     </p>
 
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-3">
                                                         {featuredArticle.isInternal ? (
-                                                            <Link to={featuredArticle.link} className="inline-flex items-center justify-center h-12 px-6 rounded-full bg-white text-[#111827] font-black hover:bg-[#2dd4bf] hover:text-white transition-colors gap-2">
-                                                                Read Editorial <ArrowUpRight className="h-4 w-4" />
+                                                            <Link to={featuredArticle.link} className="inline-flex items-center justify-center h-14 px-8 rounded-2xl bg-white text-[#111827] font-black uppercase tracking-widest hover:bg-[#2dd4bf] hover:text-white transition-all shadow-xl hover:shadow-[#2dd4bf]/20 text-xs">
+                                                                Read Editorial <ArrowUpRight className="h-4 w-4 ml-2" />
                                                             </Link>
                                                         ) : (
-                                                            <a href={featuredArticle.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center h-12 px-6 rounded-full bg-white text-[#111827] font-black hover:bg-[#2dd4bf] hover:text-white transition-colors gap-2">
-                                                                Read Source <ExternalLink className="h-4 w-4" />
+                                                            <a href={featuredArticle.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center h-14 px-8 rounded-2xl bg-white text-[#111827] font-black uppercase tracking-widest hover:bg-[#2dd4bf] hover:text-white transition-all shadow-xl hover:shadow-[#2dd4bf]/20 text-xs">
+                                                                Read Source <ExternalLink className="h-4 w-4 ml-2" />
                                                             </a>
                                                         )}
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         )}
 
                                         {/* Standard Feed Grid */}
-                                        <div className="grid grid-cols-1 gap-6">
-                                            {feedArticles.map(item => {
+                                        <div className="grid grid-cols-1 gap-8">
+                                            {feedArticles.map((item, index) => {
                                                 const cardEl = (
-                                                    <div className="group bg-white rounded-3xl border border-slate-100 hover:border-[#1a9e8c]/30 hover:shadow-2xl hover:-translate-y-1 hover:shadow-[#1a9e8c]/10 transition-all duration-300 overflow-hidden flex flex-col sm:flex-row cursor-pointer h-full">
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        whileInView={{ opacity: 1, y: 0 }}
+                                                        viewport={{ once: true, margin: "-50px" }}
+                                                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                                                        className="group bg-white rounded-[2.5rem] border border-slate-100 hover:border-[#1a9e8c]/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(26,158,140,0.1)] hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col sm:flex-row cursor-pointer h-full"
+                                                    >
                                                         {/* Image */}
-                                                        <div className="sm:w-[240px] shrink-0 bg-slate-50 relative min-h-[180px] sm:min-h-full overflow-hidden">
+                                                        <div className="sm:w-[280px] shrink-0 bg-slate-50 relative min-h-[220px] sm:min-h-full overflow-hidden">
                                                             {item.image ? (
                                                                 <img
                                                                     src={item.image}
                                                                     alt={item.title}
-                                                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                                                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
                                                                     onError={e => handleImgFallback(e, item.category)}
                                                                     onLoad={e => handleImgLoad(e, item.category)}
                                                                 />
@@ -335,59 +372,60 @@ const Blog = () => {
                                                                 <img
                                                                     src={FALLBACK_IMAGES[item.category] || FALLBACK_IMAGES.default}
                                                                     alt={item.title}
-                                                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                                                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
                                                                 />
                                                             )}
+                                                            <div className="absolute inset-0 bg-[#0B1120] opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
                                                         </div>
                                                         {/* Text */}
-                                                        <div className="flex-grow p-6 sm:p-8 flex flex-col justify-between">
+                                                        <div className="flex-grow p-8 lg:p-10 flex flex-col justify-between relative">
                                                             <div>
-                                                                <div className="flex items-center gap-3 mb-3">
-                                                                    <Badge className={`${getCategoryColor(item.category)} border-none text-[10px] font-black uppercase tracking-widest`}>
+                                                                <div className="flex items-center gap-3 mb-4">
+                                                                    <Badge className={`${getCategoryColor(item.category)} border-none text-[10px] font-black uppercase tracking-widest px-3 py-1`}>
                                                                         {item.category}
                                                                     </Badge>
                                                                     <div className="flex items-center gap-1.5 text-slate-400">
                                                                         <Calendar className="h-3.5 w-3.5" />
-                                                                        <span className="text-xs font-bold uppercase tracking-widest">{item.date}</span>
+                                                                        <span className="text-[10px] font-bold uppercase tracking-widest">{item.date}</span>
                                                                     </div>
                                                                 </div>
-                                                                <h3 className="text-base font-black text-[#111827] mb-2 group-hover:text-[#1a9e8c] transition-colors leading-snug line-clamp-2">
+                                                                <h3 className="text-xl lg:text-2xl font-black text-[#111827] mb-3 group-hover:text-[#1a9e8c] transition-colors leading-[1.3] tracking-tight">
                                                                     {item.title}
                                                                 </h3>
-                                                                <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 flex-grow">
+                                                                <p className="text-base text-slate-500 leading-relaxed line-clamp-2 lg:line-clamp-3 mb-6 font-medium">
                                                                     {item.snippet.replace(/<\/?[^>]+(>|$)/g, "")}
                                                                 </p>
-                                                                <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between">
-                                                                    <div className="flex items-center gap-2.5">
-                                                                        <PublisherLogo source={item.isInternal ? "Heems Editorial" : item.source} size={22} />
-                                                                        <span className="text-xs font-bold text-slate-600">{item.isInternal ? "Heems Editorial" : item.source}</span>
-                                                                    </div>
-                                                                    <span className="text-xs font-black text-[#1a9e8c] flex items-center gap-1">
-                                                                        {item.isInternal ? <><ArrowUpRight className="h-3 w-3" /> Read</> : <><ExternalLink className="h-3 w-3" /> Source</>}
-                                                                    </span>
+                                                            </div>
+                                                            <div className="mt-auto pt-6 border-t border-black/[0.03] flex items-center justify-between">
+                                                                <div className="flex items-center gap-3">
+                                                                    <PublisherLogo source={item.isInternal ? "Heems Editorial" : item.source} size={28} />
+                                                                    <span className="text-xs font-black uppercase tracking-widest text-[#111827]">{item.isInternal ? "Heems Editorial" : item.source}</span>
                                                                 </div>
+                                                                <span className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-[#1a9e8c] group-hover:bg-[#1a9e8c] group-hover:text-white group-hover:border-[#1a9e8c] transition-all duration-300">
+                                                                    {item.isInternal ? <ArrowUpRight className="h-4 w-4" /> : <ExternalLink className="h-4 w-4" />}
+                                                                </span>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </motion.div>
                                                 );
                                                 return (
                                                     <div key={item.id}>
                                                         {item.isInternal
-                                                            ? <Link to={item.link}>{cardEl}</Link>
-                                                            : <a href={item.link} target="_blank" rel="noopener noreferrer">{cardEl}</a>
+                                                            ? <Link to={item.link} className="block">{cardEl}</Link>
+                                                            : <a href={item.link} target="_blank" rel="noopener noreferrer" className="block">{cardEl}</a>
                                                         }
                                                     </div>
                                                 );
                                             })}
                                         </div>
                                         {hasMore && (
-                                            <div className="flex justify-center pt-4">
+                                            <div className="flex justify-center pt-12">
                                                 <button
                                                     onClick={() => setVisibleCount(prev => prev + 6)}
-                                                    className="group inline-flex items-center gap-2 px-8 py-3.5 bg-[#111827] text-white text-sm font-black rounded-full hover:bg-[#1a9e8c] transition-colors shadow-lg hover:shadow-xl"
+                                                    className="group inline-flex flex-col items-center justify-center gap-1 h-20 px-12 bg-white text-[#111827] rounded-[2rem] border-2 border-slate-200 hover:border-[#1a9e8c] transition-all shadow-sm hover:shadow-[0_20px_40px_rgba(26,158,140,0.1)] hover:-translate-y-1"
                                                 >
-                                                    Load More Articles
-                                                    <span className="text-xs font-bold text-white/50 group-hover:text-white/80">({allFeedArticles.length - visibleCount} remaining)</span>
+                                                    <span className="text-sm font-black uppercase tracking-widest group-hover:text-[#1a9e8c]">Load More Articles</span>
+                                                    <span className="text-[10px] font-bold text-slate-400 group-hover:text-[#1a9e8c]/70">({allFeedArticles.length - visibleCount} remaining)</span>
                                                 </button>
                                             </div>
                                         )}
