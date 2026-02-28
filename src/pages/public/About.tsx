@@ -286,7 +286,7 @@ const About = () => {
                 </section>
 
                 {/* ─── ABOUT & FOUNDER SPLIT ─── */}
-                <section className="py-24 lg:py-32 bg-white relative overflow-hidden">
+                <section id="founder-note" className="py-24 lg:py-32 bg-white relative overflow-hidden">
                     <div className="absolute right-0 top-1/4 w-[460px] h-[460px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
                     <div className="absolute left-0 bottom-0 w-[360px] h-[360px] rounded-full bg-[#1a9e8c]/5 blur-[120px] pointer-events-none" />
 

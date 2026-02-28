@@ -102,6 +102,17 @@ const HeroSection = () => {
                   Become a Carer
                 </span>
               </Button>
+
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="px-8 py-7 text-lg font-bold rounded-2xl border-2 border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-500"
+              >
+                <a href="#founder-note">
+                  Founder Note
+                </a>
+              </Button>
             </div>
 
 
