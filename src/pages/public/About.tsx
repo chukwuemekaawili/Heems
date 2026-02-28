@@ -320,9 +320,9 @@ const About = () => {
                                         </div>
                                         <div className="rounded-[2rem] overflow-hidden bg-white border border-slate-100 shadow-xl">
                                             <img
-                                                src="https://images.unsplash.com/photo-1524504380856-7a0b4ae9532b?auto=format&fit=crop&w=900&q=80"
+                                                src="https://images.unsplash.com/photo-1505685296765-3a2736de412f?auto=format&fit=crop&w=900&q=80"
                                                 alt="Supportive hands symbolizing trust"
-                                                className="w-full h-[150px] object-cover"
+                                                className="w-full h-[150px] object-cover object-center"
                                                 loading="lazy"
                                             />
                                         </div>
