@@ -394,7 +394,6 @@ const About = () => {
                                             <p>Traditional models of home support are essential and valuable. Yet administrative layers and limited visibility can sometimes create distance at the very moment reassurance matters most.</p>
                                             <p>Heems was built to provide clarity within a fragmented landscape. By providing clear information and visibility of independent care professionals, Heems enables families to make informed decisions with confidence.</p>
                                             <p className="font-semibold text-[#111827]">Care is personal — at every stage of life. Decisions about care should be supported by clarity, dignity, and confidence. Heems exists to make that possible.</p>
-                                            <p className="font-black text-[#111827]">— Founder Hems</p>
                                         </div>
 
                                         <div className="mt-8 pt-6 border-t border-slate-100 flex items-center gap-4">
