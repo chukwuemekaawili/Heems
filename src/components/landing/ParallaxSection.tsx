@@ -82,6 +82,10 @@ const ParallaxSection = () => {
                         <div className="w-2 h-2 rounded-full bg-[#1a9e8c]" />
                         <span>Introductory Agency Standards</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#1a9e8c]" />
+                        <span>ICO Certified</span>
+                    </div>
                 </div>
             </div>
         </section>
