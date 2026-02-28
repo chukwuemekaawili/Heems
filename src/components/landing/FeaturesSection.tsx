@@ -27,9 +27,9 @@ const features = [
     description: "Continuous monitoring of DBS status, right-to-work, and real-time reference validation for total peace of mind.",
   },
   {
-    icon: Activity,
-    title: "Health Insights",
-    description: "Monitor vitals and care outcomes with real-time health data visualization for families and healthcare professionals.",
+    icon: Calendar,
+    title: "Book & Manage Care",
+    description: "Easily schedule, adjust, and review care arrangements securely through the platform.",
   },
   {
     icon: MapPin,
