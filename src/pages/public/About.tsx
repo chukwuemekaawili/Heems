@@ -353,6 +353,7 @@ const About = () => {
 
                                         <div className="space-y-4 text-slate-700 font-medium leading-relaxed text-base max-h-[680px] overflow-y-auto pr-1">
                                             <p>Over years working within the wider health and care landscape, one recurring pattern became impossible to ignore. Care needs rarely arrive at convenient moments.</p>
+                                            <p className="font-semibold text-[#111827]">Care needs rarely arrive at convenient moments.</p>
                                             <div>
                                                 <p className="font-semibold text-[#111827] mb-1">They follow:</p>
                                                 <ul className="list-disc pl-5 space-y-1 text-slate-700">
@@ -362,18 +363,34 @@ const About = () => {
                                                     <li>Mental health crises</li>
                                                     <li>Recovery after surgery</li>
                                                     <li>Chronic illness</li>
-                                                    <li>The gradual realisation that extra support is needed at home</li>
+                                                    <li>Sudden hospital discharge</li>
+                                                    <li>Mobility loss</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <p>And sometimes, they emerge more quietly — through increasing difficulty with everyday tasks.</p>
+                                                <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                                                    <li>Preparing meals</li>
+                                                    <li>Managing medication</li>
+                                                    <li>Maintaining personal routines</li>
+                                                    <li>Leaving the house with confidence</li>
                                                 </ul>
                                             </div>
                                             <p>Again and again, families found themselves facing the same question: <span className="font-semibold text-[#111827]">How do we find the right support — clearly, confidently, and without unnecessary confusion?</span></p>
                                             <p>Hospital discharge dates approached. Rehabilitation plans changed. Community referrals were delayed. Phone calls were made between work commitments. Options were unclear. Availability shifted. Every provider offered reassurance — yet the process often felt fragmented and difficult to navigate.</p>
                                             <p>The stress did not come from a lack of dedicated professionals. It came from a lack of clarity.</p>
                                             <p>One moment remains particularly vivid. A young adult recovering from a life-altering injury said quietly: <span className="italic text-[#111827]">“I just want to feel normal again — even if it’s just at home.”</span></p>
-                                            <p>That sentiment transcends age. Whether it is a person requiring extra support, a parent rebuilding strength after illness, a partner managing a long-term condition, or an older relative wishing to remain independent — the underlying need is the same: to feel safe, to feel seen, to feel at home.</p>
+                                            <p>That sentiment transcends age. Whether it is a person requiring extra support, a parent rebuilding strength after illness, a partner managing a long-term condition, or an older relative wishing to remain independent — the underlying need is the same:</p>
+                                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                                                <li>To feel safe.</li>
+                                                <li>To feel seen.</li>
+                                                <li>To feel at home.</li>
+                                            </ul>
                                             <p>Families are not simply arranging services. They are protecting someone they love — while navigating systems that can feel opaque, rushed, and impersonal.</p>
                                             <p>Traditional models of home support are essential and valuable. Yet administrative layers and limited visibility can sometimes create distance at the very moment reassurance matters most.</p>
                                             <p>Heems was built to provide clarity within a fragmented landscape. By providing clear information and visibility of independent care professionals, Heems enables families to make informed decisions with confidence.</p>
                                             <p className="font-semibold text-[#111827]">Care is personal — at every stage of life. Decisions about care should be supported by clarity, dignity, and confidence. Heems exists to make that possible.</p>
+                                            <p className="text-sm text-slate-500 font-semibold">— Founder, Heems</p>
                                         </div>
 
                                         <div className="mt-8 pt-6 border-t border-slate-100 flex items-center gap-4">
@@ -382,7 +399,6 @@ const About = () => {
                                             </div>
                                             <div>
                                                 <p className="font-black text-[#111827] text-lg">Founder Heems</p>
-                                                <p className="text-sm text-slate-500 font-medium">Championing transparency and dignity in care</p>
                                             </div>
                                         </div>
                                     </div>
