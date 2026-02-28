@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 
 const footerLinks = {
   product: [
+    { name: "Find a Carer", href: "/marketplace" },
+    { name: "Types of Care", href: "/types-of-care" },
     { name: "How it Works", href: "/how-it-works" },
     { name: "Pricing", href: "/#pricing" },
     { name: "For Carers", href: "/#for-carers" },
