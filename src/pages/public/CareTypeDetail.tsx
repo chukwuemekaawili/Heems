@@ -40,7 +40,7 @@ const CareTypeDetail = () => {
                     </div>
 
                     <div className="container mx-auto px-6 lg:px-12 relative z-10">
-                        <div className="max-w-3xl">
+                        <div className="max-w-3xl pt-16 lg:pt-24">
                             <Link to="/types-of-care" className="inline-flex items-center text-white/70 hover:text-white mb-8 transition-colors font-bold text-sm uppercase tracking-widest">
                                 <ArrowLeft className="w-4 h-4 mr-2" />
                                 Back to All Services

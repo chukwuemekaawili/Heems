@@ -40,7 +40,7 @@ export const careTypeData: Record<string, CareType> = {
         title: "Visiting Care",
         icon: User,
         image: "/visiting_care.png",
-        heroImage: "/visiting_care_hero.png",
+        heroImage: "/modern_home_care_hero.png",
         description: "Flexible support from one hour per visit, tailored to your schedule and personal needs.",
         summary: "Visiting care (also referred to as visiting support) involves a carer attending the client’s home for pre-arranged visits to provide practical assistance and social companionship.",
         content: `Visiting care (also referred to as visiting support) involves a carer attending the client’s home for pre-arranged visits to provide practical assistance and social companionship. Visits can range from short check-ins to longer sessions and may be arranged on a regular basis (such as daily or weekly) or as occasional, one-off support, depending on individual circumstances.\n\nThe purpose of visiting care is to help individuals maintain independence, dignity, and quality of life within their own home environment. Support focuses on everyday activities and reassurance, without introducing medical treatment, nursing tasks, or regulated care activities.\n\nVisiting care is often used as a preventative and supportive solution, helping individuals manage day-to-day routines safely while remaining connected to their community and familiar surroundings.`,
@@ -89,14 +89,14 @@ export const careTypeData: Record<string, CareType> = {
         isHowToArrangeNumbered: true,
         howToArrangeOutro: "All care arrangements exist solely between the client and the carer.",
         color: "bg-blue-100 text-blue-700",
-        accentColor: "#1d4ed8",
-        gallery: ["/visiting_care.png", "/visiting_care_hero.png", "/carer_black_female_1.png", "/carer_client_home.png"]
+        accentColor: "#d97706",
+        gallery: ["/respite_care.png", "/carer_casual_male_1.png", "/carer_black_female_1.png", "/carer_client_home.png"]
     },
     "overnight": {
         title: "Overnight Care",
         icon: Moon,
         image: "/overnight_care.png",
-        heroImage: "/overnight_care_hero.png",
+        heroImage: "/compassionate_care_hero.png",
         description: "Peace of mind through the night, whether for waking support or a reassuring presence.",
         summary: "Overnight care involves a carer staying in the client’s home during nighttime hours to provide reassurance, presence, and support as needed.",
         content: `Overnight care involves a carer staying in the client’s home during nighttime hours to provide reassurance, presence, and support as needed. The carer’s role is to help promote safety, comfort, and peace of mind throughout the night, particularly for individuals who may feel anxious, disoriented, or vulnerable after dark.\n\nSupport may include being on hand to respond to night-time needs such as assistance with toileting, offering reassurance if the client wakes feeling unsettled, helping with mobility around the home, or providing a calm, supportive presence to reduce the risk of falls or confusion. Overnight care can also offer reassurance to family members, knowing someone is available should support be required during the night.\n\nOvernight care may be arranged in two common formats:\n\n• Sleeping nights – the carer is provided with a suitable place to rest but remains available to respond if support is needed during the night.\n• Waking nights – the carer remains awake throughout the night to offer continuous supervision and support.\n\nThe appropriate option is agreed directly between the client and the carer based on individual needs and expectations.`,
@@ -143,13 +143,13 @@ export const careTypeData: Record<string, CareType> = {
         isHowToArrangeNumbered: true,
         color: "bg-indigo-100 text-indigo-700",
         accentColor: "#4338ca",
-        gallery: ["/overnight_care.png", "/overnight_care_hero.png", "/carer_black_male_1.png", "/about-care.png"]
+        gallery: ["/overnight_care.png", "/compassionate_care_hero.png", "/carer_black_male_1.png", "/about-care.png"]
     },
     "live-in": {
         title: "Live-In Care",
         icon: Home,
         image: "/live_in_care.png",
-        heroImage: "/live_in_care_hero.png",
+        heroImage: "/professional_carers_team.png",
         description: "Permanent 24/7 support from a dedicated professional who lives with you in your home.",
         summary: "Live-in care involves a carer staying in the client’s home for an agreed period—typically several days or weeks at a time—to provide ongoing, personal support, practical assistance, and companionship.",
         content: `Live-in care involves a carer staying in the client’s home for an agreed period—typically several days or weeks at a time—to provide ongoing, personal support, practical assistance, and companionship.\n\nThis arrangement allows individuals to continue living in their own home while receiving consistent, familiar support throughout the day and night. Live-in care arranged through Heems focuses on everyday assistance and supervision and does not include any regulated care activities.\n\nLive-in arrangements are agreed directly between the client and the carer and are tailored to individual routines, preferences, and household circumstances.`,
@@ -198,13 +198,13 @@ export const careTypeData: Record<string, CareType> = {
         isHowToArrangeNumbered: true,
         color: "bg-emerald-100 text-emerald-700",
         accentColor: "#047857",
-        gallery: ["/live_in_care.png", "/live_in_care_hero.png", "/modern_home_care_hero.png", "/carer_black_male_1.png"]
+        gallery: ["/live_in_care.png", "/professional_carers_team.png", "/modern_home_care_hero.png", "/carer_black_male_1.png"]
     },
     "palliative": {
         title: "Palliative Support",
         icon: Heart,
         image: "/palliative_care.png",
-        heroImage: "/palliative_care_hero.png",
+        heroImage: "/about-team.png",
         description: "Compassionate end-of-life care prioritizing dignity, comfort, and family support.",
         summary: "Palliative support focuses on comfort, dignity, emotional reassurance, and everyday support for individuals living with life-limiting or serious health conditions.",
         content: `Palliative support focuses on comfort, dignity, emotional reassurance, and everyday support for individuals living with life-limiting or serious health conditions.The aim is to support quality of life by providing compassionate presence, everyday help, and emotional support during what can be a physically and emotionally challenging time.\n\nSupport may include companionship, reassurance, assistance with daily routines, helping maintain comfort within the home, and offering calm, respectful support aligned with the individual’s wishes and preferences.\n\nThis type of support can also provide reassurance to families, helping to reduce stress and allowing loved ones to focus on meaningful time together, knowing that practical and emotional support is available in the home.`,
@@ -235,13 +235,13 @@ export const careTypeData: Record<string, CareType> = {
         howToArrangeText: "Families can arrange non-clinical palliative support through Heems to complement existing medical or hospice care. Independent carers on the platform may provide companionship, emotional reassurance, practical assistance, and help with day-to-day routines, helping individuals remain comfortable in their own home.\n\nAll medical treatment, clinical decisions, and specialist care remain the responsibility of qualified healthcare professionals. Families coordinate directly with their chosen carer to agree expectations, boundaries, schedules, and the type of support required.",
         color: "bg-rose-100 text-rose-700",
         accentColor: "#be123c",
-        gallery: ["/palliative_care.png", "/palliative_care_hero.png", "/carer_casual_female_2.png", "/carer_client_home.png"]
+        gallery: ["/palliative_care.png", "/about-team.png", "/carer_casual_female_2.png", "/carer_client_home.png"]
     },
     "dementia": {
         title: "Dementia Support",
         icon: Brain,
         image: "/about-care.png",
-        heroImage: "/dementia_care_hero.png",
+        heroImage: "/carer_female_1.png",
         description: "Expert care focused on routine, safety, and maintaining the highest quality of life.",
         summary: "Dementia support focuses on creating a stable, familiar, and reassuring environment for individuals living with memory loss or cognitive decline.",
         content: `Dementia support focuses on creating a stable, familiar, and reassuring environment for individuals living with memory loss or cognitive decline. The emphasis is on maintaining routine, reducing anxiety, and supporting everyday activities in a way that feels predictable, respectful, and person-centred.\n\nSupport arranged through Heems is practical and emotional in nature, helping individuals navigate daily life while preserving independence wherever possible. This may include gentle prompting, companionship, assistance with familiar routines, and support with everyday activities that promote comfort and confidence.\n\nAll dementia support facilitated through Heems is strictly non-clinical. It does not include diagnosis, treatment, medication administration, behavioural therapy, or any form of medical intervention. Instead, it is intended to complement existing healthcare, social services, or specialist dementia support, working alongside professionals rather than replacing them.\n\nThe overall aim is to help individuals remain in familiar surroundings for as long as possible, while offering families reassurance that support is being provided in a calm, dignified, and consistent way.`,
@@ -282,13 +282,13 @@ export const careTypeData: Record<string, CareType> = {
         howToArrangeOutro: "All arrangements are agreed directly between families and carers, allowing flexibility as circumstances evolve. Heems provides the tools to manage bookings and payments but does not assess needs or supervise care delivery.",
         color: "bg-purple-100 text-purple-700",
         accentColor: "#7e22ce",
-        gallery: ["/about-care.png", "/dementia_care_hero.png", "/carer_casual_female_1.png", "/carer_black_female_1.png"]
+        gallery: ["/about-care.png", "/carer_female_1.png", "/carer_casual_female_1.png", "/carer_black_female_1.png"]
     },
     "respite": {
         title: "Respite Care",
         icon: Coffee,
         image: "/respite_care.png",
-        heroImage: "/respite_care_hero.png",
+        heroImage: "/carer_casual_male_1.png",
         description: "Short-term relief for family carers, ensuring your loved one is in safe, professional hands.",
         summary: "Respite care provides short-term, flexible support designed to give family members or informal carers a break from their ongoing caring responsibilities.",
         content: `Respite care provides short-term, flexible support designed to give family members or informal carers a break from their ongoing caring responsibilities. It allows primary carers time to rest, attend personal or professional commitments, or focus on their own wellbeing, knowing that their loved one is supported at home.\n\nRespite care can be arranged in advance or at short notice and may range from a few hours to several days, depending on individual needs. Support is non-clinical and focused on companionship, reassurance, and everyday assistance, helping maintain continuity and routine while regular carers take time away.`,
