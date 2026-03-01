@@ -18,13 +18,13 @@ import {
 const features = [
   {
     icon: Brain,
-    title: "AI Smart Matching",
-    description: "Our neural matching engine predicts the best carer-client compatibility based on personality, skills, and specialized needs.",
+    title: "Precision Matching System",
+    description: "Our precision matching system connects families with carers suited to their specific care requirements, personality preferences, location and practical needs.",
   },
   {
     icon: ShieldCheck,
     title: "Vetting 2.0",
-    description: "Continuous monitoring of DBS status, right-to-work, and real-time reference validation for total peace of mind.",
+    description: "In addition to structured onboarding checks, carers must maintain valid DBS certification, right-to-work eligibility, and professional standards to remain active on the platform.",
   },
   {
     icon: Calendar,
@@ -142,7 +142,9 @@ const FeaturesSection = () => {
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Messaging</p>
               </div>
             </div>
-            <p className="text-sm text-[#4B5563] font-medium">Secure, HIPAA-compliant communication platform.</p>
+            <p className="text-sm text-[#4B5563] font-medium">
+              Secure, encrypted messaging in line with UK data protection standards.
+            </p>
           </div>
 
           <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] hover:-translate-y-2 transition-all duration-500">

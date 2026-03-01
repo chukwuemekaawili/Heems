@@ -57,8 +57,7 @@ const HeroSection = () => {
                 </span>
               </h1>
               <p className="text-lg sm:text-xl text-slate-400 font-medium leading-relaxed max-w-xl">
-                Connect with verified, elite-standard carers in minutes.
-                The UK's most trusted introductory care marketplace.
+                A trusted UK introductory care marketplace.
               </p>
             </div>
 
