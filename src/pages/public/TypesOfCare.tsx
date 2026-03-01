@@ -125,7 +125,7 @@ const careSections = [
             "Continuity for the person receiving care",
             "Peace of mind during your break",
         ],
-        costRange: "£15 – £25 / hour",
+        costRange: "£15 – £35 / hour",
         images: ["/respite_care.png", "/about-team.png"],
         accentFrom: "from-amber-500/10",
         accentTo: "to-orange-500/5",
