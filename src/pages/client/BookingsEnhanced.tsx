@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { formatCurrency, calculateFees, getCurrentPricingPhase } from '@/lib/fees';
 import { format } from 'date-fns';
+import { RefundRequestDialog } from '@/components/messaging/RefundRequestDialog';
 import { PaymentCheckout } from '@/components/payments/PaymentCheckout';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { BookingSkeleton } from '@/components/shared/BookingSkeleton';
@@ -62,6 +63,7 @@ export default function ClientBookingsEnhanced() {
     const [editTime, setEditTime] = useState('');
     const [editDuration, setEditDuration] = useState(2);
     const [currentPhase, setCurrentPhase] = useState<PricingPhase>('1');
+    const [refundBookingId, setRefundBookingId] = useState<string | null>(null);
     const { toast } = useToast();
     const navigate = useNavigate();
 
@@ -137,11 +139,11 @@ export default function ClientBookingsEnhanced() {
         }
     };
 
-    const cancelBooking = async (bookingId: string) => {
+    const cancelBooking = async (bookingId: string, reason?: string) => {
         try {
             setLoading(true);
             const { data, error } = await supabase.functions.invoke('cancel-booking', {
-                body: { bookingId }
+                body: { bookingId, reason }
             });
 
             if (error) throw error;
@@ -379,9 +381,22 @@ export default function ClientBookingsEnhanced() {
                                 </div>
                             ) : (
                                 filteredBookings.map(booking => {
+                                    const now = new Date();
+                                    const startTime = new Date(booking.start_time);
+                                    const endTime = new Date(booking.end_time);
+                                    const hoursSinceEnd = (now.getTime() - endTime.getTime()) / (1000 * 60 * 60);
+
                                     const duration = calculateDuration(booking.start_time, booking.end_time);
                                     const canCancel = booking.status === 'pending' || booking.status === 'confirmed';
                                     const canPay = booking.status === 'confirmed' && booking.payment_status !== 'paid';
+                                    const isPaid = booking.payment_status === 'paid';
+
+                                    // 48-Hour Escrow Refund Logic:
+                                    // Pre-shift: Hidden if cancelled within 48h before start
+                                    // Post-shift: Available up to EXACTLY 48 hours after shift ends
+                                    const isPostShiftWithinEscrow = hoursSinceEnd >= 0 && hoursSinceEnd <= 48;
+                                    const canRequestRefund = booking.status === 'completed' && isPaid && isPostShiftWithinEscrow;
+
                                     const carerStripeConnected = !!booking.carer.carer_details?.stripe_account_id;
 
                                     return (
@@ -478,6 +493,17 @@ export default function ClientBookingsEnhanced() {
                                                             </Button>
                                                         </>
                                                     )}
+
+                                                    {canRequestRefund && (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => setRefundBookingId(booking.id)}
+                                                            className="text-amber-600 border-amber-200 hover:bg-amber-50"
+                                                        >
+                                                            Request Refund
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             </CardContent>
                                         </Card>
@@ -539,6 +565,16 @@ export default function ClientBookingsEnhanced() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <RefundRequestDialog
+                isOpen={!!refundBookingId}
+                onClose={() => setRefundBookingId(null)}
+                onSubmit={async (reason) => {
+                    if (refundBookingId) {
+                        await cancelBooking(refundBookingId, reason);
+                    }
+                }}
+            />
         </div>
     );
 }

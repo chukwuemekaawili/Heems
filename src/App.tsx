@@ -108,6 +108,7 @@ const ClientPayments = lazy(() => import("./pages/client/Payments"));
 const ClientProfile = lazy(() => import("./pages/client/Profile"));
 const ClientSettings = lazy(() => import("./pages/client/Settings"));
 const PostJob = lazy(() => import("./pages/client/PostJob"));
+const ClientJobs = lazy(() => import("./pages/client/Jobs"));
 
 // Public Pages (Lazy Loaded)
 const LegalPage = lazy(() => import("./pages/public/Legal"));
@@ -123,6 +124,7 @@ const DocumentsNew = lazy(() => import("./pages/carer/DocumentsNew"));
 const CarerProfile = lazy(() => import("./pages/carer/Profile"));
 const HeemsAcademy = lazy(() => import("./pages/carer/HeemsAcademy"));
 const CarerSettings = lazy(() => import("./pages/carer/Settings"));
+const CarerJobs = lazy(() => import("./pages/carer/Jobs"));
 
 // Organisation Pages
 const OrganisationDashboard = lazy(() => import("./pages/organisation/Dashboard"));
@@ -234,6 +236,7 @@ const App = () => (
                 <Route path="/client/bookings" element={<ClientBookings />} />
                 <Route path="/client/bookings/:bookingId/review" element={<LeaveReview />} />
                 <Route path="/client/post-job" element={<PostJob />} />
+                <Route path="/client/jobs" element={<ClientJobs />} />
                 <Route path="/client/book/:carerId" element={<CreateBooking />} />
                 <Route path="/client/care-plans" element={<CarePlans />} />
                 <Route path="/client/messages" element={<MessagesPage role="client" />} />
@@ -263,6 +266,7 @@ const App = () => (
                 <Route path="/carer/profile-enhanced" element={<CarerProfile />} />
                 <Route path="/carer/messages" element={<MessagesPage role="carer" />} />
                 <Route path="/carer/settings" element={<CarerProfile />} />
+                <Route path="/carer/jobs" element={<CarerJobs />} />
               </Route>
 
               {/* Organisation Routes */}

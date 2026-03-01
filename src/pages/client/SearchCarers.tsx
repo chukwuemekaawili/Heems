@@ -113,9 +113,11 @@ export default function SearchCarers() {
             hourly_rate,
             verification_status,
             hourly_rate,
-            verification_status,
             availability_status,
             video_url
+          ),
+          reviews (
+            rating
           )
         `)
         .eq('role', 'carer');
@@ -136,14 +138,22 @@ export default function SearchCarers() {
 
       if (error) throw error;
 
-      // Transform and mock missing data for UI excellence
-      const transformedData = (data as any[] || []).map(carer => ({
-        ...carer,
-        rating: 4.5 + Math.random() * 0.5,
-        reviews: Math.floor(Math.random() * 200),
-        distance: `${(Math.random() * 10).toFixed(1)} miles`,
-        hoursWorked: Math.floor(Math.random() * 111) + 40 // 40–150 baseline hours
-      }));
+      // Transform and compute averages
+      const transformedData = (data as any[] || []).map(carer => {
+        const carerReviews = carer.reviews || [];
+        const reviewCount = carerReviews.length;
+        const averageRating = reviewCount > 0
+          ? carerReviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewCount
+          : 0;
+
+        return {
+          ...carer,
+          rating: averageRating > 0 ? averageRating.toFixed(1) : "New",
+          reviews: reviewCount,
+          distance: `${(Math.random() * 10).toFixed(1)} miles`,
+          hoursWorked: Math.floor(Math.random() * 111) + 40 // 40–150 baseline hours
+        };
+      });
 
       setCarers(transformedData);
     } catch (error: any) {
@@ -418,7 +428,7 @@ export default function SearchCarers() {
                         Message
                       </Button>
                       <Button className="flex-1 h-9 rounded-lg font-bold text-xs shadow-sm bg-primary" onClick={() => navigate(`/client/book/${carer.id}`)}>
-                        Book Now
+                        Make an Offer
                       </Button>
                     </div>
                   </div>

@@ -123,20 +123,16 @@ const AdminDisputes = () => {
             const dispute = disputes.find(d => d.id === disputeId);
             if (!dispute) return;
 
-            // Update the underlying booking to reflect resolution
-            const { error } = await supabase
-                .from('bookings')
-                .update({
-                    status: 'completed',
-                    notes: `Dispute resolved in favor of ${resolution}`,
-                })
-                .eq('id', dispute.booking_id);
+            setLoading(true);
+            const { data, error } = await supabase.functions.invoke('resolve-dispute', {
+                body: { disputeId, resolution }
+            });
 
             if (error) throw error;
 
             toast({
                 title: "Dispute Resolved",
-                description: `Dispute resolved in favor of ${resolution}. Booking updated.`,
+                description: `Dispute resolved in favor of ${resolution} and Stripe refunds processed if applicable.`,
             });
 
             fetchDisputes();

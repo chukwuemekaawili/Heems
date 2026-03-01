@@ -142,10 +142,7 @@ serve(async (req) => {
             const carerEarnings = amount - applicationFeeAmount;
 
             sessionParams.payment_intent_data = {
-                // Remove immediate transfer to support delayed payouts (Separate Charges & Transfers)
-                // application_fee_amount: applicationFeeAmount, 
-                // transfer_data: { destination: stripeAccountId },
-
+                receipt_email: userEmail,
                 metadata: {
                     booking_id: bookingId,
                     carer_id: carerId,
@@ -153,6 +150,11 @@ serve(async (req) => {
                     payout_amount: carerEarnings, // Amount to transfer later (in pence)
                     payout_destination: stripeAccountId, // Carer's connected account ID
                 },
+            };
+
+            sessionParams.metadata = {
+                booking_id: bookingId,
+                client_id: clientId
             };
         } else if (mode === "setup") {
             sessionParams.setup_intent_data = {

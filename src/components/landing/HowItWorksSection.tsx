@@ -20,8 +20,8 @@ const familySteps = [
     {
         number: "03",
         image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&q=80",
-        title: "Seamless Booking",
-        description: "Schedule one-off visits or complex recurring care plans. Contracts, scheduling, and secure payments in one place.",
+        title: "Negotiate & Book Securely",
+        description: "Discuss your needs directly in our secure chat, agree on a custom price, and lock in the booking. Your payment is held safely in escrow until 48 hours after the shift is completed.",
     },
     {
         number: "04",
@@ -47,14 +47,14 @@ const carerSteps = [
     {
         number: "03",
         image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80",
-        title: "Connect & Interview",
-        description: "Receive booking requests from local families or organisations. Review needs and conduct video interviews.",
+        title: "Negotiate Custom Offers",
+        description: "Chat with families to understand their unique needs, then send a custom offer directly in-app. Agree on hours and rates that work for both of you.",
     },
     {
         number: "04",
         image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
-        title: "Deliver Care & Earn",
-        description: "Provide exceptional care and log your visits on the go. Guaranteed, secure payouts processed swiftly.",
+        title: "Deliver Care & Get Paid",
+        description: "Provide exceptional care with peace of mind. Client funds are held securely in escrow before the shift begins, and are automatically released to your Stripe account 48 hours after completion.",
     },
 ];
 
@@ -246,7 +246,7 @@ const faqs = [
     },
     {
         question: "How do payments work?",
-        answer: "All payments are handled securely through the Heems platform via Stripe. For families, you are charged automatically after a care session is completed. For carers, funds are securely held and deposited directly into your linked bank account."
+        answer: "All payments are handled securely through the Heems platform via Stripe. For families, funds are placed into a secure escrow hold when you book, and are only released to the carer 48 hours after the care session is successfully completed. Carers have peace of mind knowing the funds are guaranteed before the shift begins."
     },
     {
         question: "Is Heems an agency?",

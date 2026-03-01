@@ -8,6 +8,8 @@ interface ProposalMetadata {
     frequency: 'one-off' | 'weekly' | 'daily';
     status: 'pending' | 'accepted' | 'rejected' | 'expired';
     serviceType?: string;
+    hours?: number;
+    description?: string;
 }
 
 interface ProposalCardProps {
@@ -37,8 +39,8 @@ export function ProposalCard({
 
     return (
         <div className={`w-64 p-4 rounded-xl border-2 ${isAccepted ? 'border-emerald-500 bg-emerald-50/50' :
-                isRejected ? 'border-red-200 bg-red-50/50' :
-                    'border-primary/20 bg-white/50'
+            isRejected ? 'border-red-200 bg-red-50/50' :
+                'border-primary/20 bg-white/50'
             } backdrop-blur-sm relative overflow-hidden`}>
 
             {/* Header */}
@@ -76,6 +78,23 @@ export function ProposalCard({
                 )}
             </div>
 
+            {/* Service Details */}
+            {(metadata.hours || metadata.description) && (
+                <div className="mb-4 space-y-1 bg-white/40 rounded-lg p-2 text-xs">
+                    {metadata.hours && (
+                        <div className="flex justify-between">
+                            <span className="text-muted-foreground">Est. Hours:</span>
+                            <span className="font-semibold">{metadata.hours} hrs</span>
+                        </div>
+                    )}
+                    {metadata.description && (
+                        <p className="text-muted-foreground italic mt-1 line-clamp-2" title={metadata.description}>
+                            "{metadata.description}"
+                        </p>
+                    )}
+                </div>
+            )}
+
             {/* Actions */}
             <div className="space-y-2">
                 {isPending && !isOwn && (
@@ -107,13 +126,18 @@ export function ProposalCard({
                 )}
 
                 {isAccepted && (
-                    <Button
-                        size="sm"
-                        className="w-full font-bold shadow-md shadow-primary/10"
-                        onClick={() => onBook(messageId, metadata)}
-                    >
-                        Book Now <ArrowRight className="w-3 h-3 ml-1.5" />
-                    </Button>
+                    <div className="space-y-2">
+                        <Button
+                            size="sm"
+                            className="w-full font-bold shadow-md shadow-primary/10"
+                            onClick={() => onBook(messageId, metadata)}
+                        >
+                            Book Now <ArrowRight className="w-3 h-3 ml-1.5" />
+                        </Button>
+                        <p className="text-[10px] text-center text-emerald-700/80 font-medium leading-tight">
+                            Funds held securely in escrow until care is provided.
+                        </p>
+                    </div>
                 )}
             </div>
         </div>

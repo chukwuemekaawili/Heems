@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Search, Filter, Star, ShieldCheck, Clock, MapPin, BadgeCheck, FileCheck, ChevronLeft, ChevronRight, Loader2, PoundSterling, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
+import { AuthGateDialog } from "@/components/shared/AuthGateDialog";
 
 const AVAILABILITY_OPTIONS = [
     { value: "weekdays", label: "Weekdays" },
@@ -64,6 +65,21 @@ const Marketplace = () => {
     const [totalCount, setTotalCount] = useState(0);
     const [filtersApplied, setFiltersApplied] = useState(false);
 
+    const [authGateOpen, setAuthGateOpen] = useState(false);
+    const [authGateAction, setAuthGateAction] = useState("");
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setIsAuthenticated(!!session);
+        });
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setIsAuthenticated(!!session);
+        });
+        return () => subscription.unsubscribe();
+    }, []);
+
     useEffect(() => {
         fetchCarers();
     }, [currentPage, filtersApplied]);
@@ -88,7 +104,8 @@ const Marketplace = () => {
                         experience_years,
                         postcode,
                         availability
-                    )
+                    ),
+                    reviews(rating)
                 `, { count: 'exact' })
                 .eq('role', 'carer');
 
@@ -107,11 +124,21 @@ const Marketplace = () => {
             if (error) throw error;
 
             // Map the data to fix the array issue with carer_details
-            let formattedData = (data || []).map((carer: any) => ({
-                ...carer,
-                carer_details: Array.isArray(carer.carer_details) ? carer.carer_details[0] : carer.carer_details,
-                hoursWorked: Math.floor(Math.random() * 111) + 40 // 40–150 baseline hours
-            }));
+            let formattedData = (data || []).map((carer: any) => {
+                const carerReviews = carer.reviews || [];
+                const reviewCount = carerReviews.length;
+                const averageRating = reviewCount > 0
+                    ? carerReviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewCount
+                    : 0;
+
+                return {
+                    ...carer,
+                    carer_details: Array.isArray(carer.carer_details) ? carer.carer_details[0] : carer.carer_details,
+                    rating: averageRating > 0 ? averageRating.toFixed(1) : "New",
+                    reviewsCount: reviewCount,
+                    hoursWorked: Math.floor(Math.random() * 111) + 40 // 40–150 baseline hours
+                };
+            });
 
             // Client-side filtering for search, specialization, postcode, rate, and availability
             if (searchQuery) {
@@ -184,6 +211,15 @@ const Marketplace = () => {
             setCurrentPage(page);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+    };
+
+    const handleAction = (actionName: string, path: string) => {
+        if (!isAuthenticated) {
+            setAuthGateAction(actionName);
+            setAuthGateOpen(true);
+            return;
+        }
+        navigate(path);
     };
 
     return (
@@ -402,7 +438,8 @@ const Marketplace = () => {
                                                     <div className="bg-white/20 backdrop-blur-md rounded-2xl p-2.5 border border-white/20">
                                                         <div className="flex items-center gap-1">
                                                             <Star className="w-3.5 h-3.5 text-[#1a9e8c] fill-[#1a9e8c]" />
-                                                            <span className="text-sm font-black text-white">4.9</span>
+                                                            <span className="text-sm font-black text-white">{carer.rating}</span>
+                                                            {carer.reviewsCount > 0 && <span className="text-[10px] text-white/70 ml-1">({carer.reviewsCount})</span>}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -437,14 +474,21 @@ const Marketplace = () => {
                                                         <span className="text-sm font-bold text-slate-300">/hr</span>
                                                     </p>
                                                 </div>
-                                                <Button
-                                                    asChild
-                                                    className="h-12 rounded-xl bg-slate-100 text-[#111827] hover:bg-[#1a9e8c] hover:text-white font-bold text-xs transition-all px-8 border-none shadow-sm hover:shadow-[0_10px_25px_rgba(26,158,140,0.3)] hover:-translate-y-0.5 duration-300"
-                                                >
-                                                    <Link to={`/client/book/${carer.id}`}>
-                                                        Secure Profile
-                                                    </Link>
-                                                </Button>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() => handleAction("message Carers", `/client/messages?userId=${carer.id}`)}
+                                                        className="h-10 rounded-xl font-bold text-xs"
+                                                    >
+                                                        Message
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleAction("make an offer to Carers", `/client/book/${carer.id}`)}
+                                                        className="h-10 rounded-xl bg-[#111827] text-white hover:bg-[#1a9e8c] font-bold text-xs transition-all border-none shadow-sm hover:shadow-[0_10px_25px_rgba(26,158,140,0.3)] hover:-translate-y-0.5 duration-300"
+                                                    >
+                                                        Make an Offer
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -548,6 +592,11 @@ const Marketplace = () => {
                         </div>
                     </motion.div>
                 </div>
+                <AuthGateDialog
+                    open={authGateOpen}
+                    onOpenChange={setAuthGateOpen}
+                    actionName={authGateAction}
+                />
             </main>
             <Footer />
         </div>

@@ -40,6 +40,7 @@ interface MessageThreadProps {
     otherUserName: string;
     otherUserAvatar?: string | null;
     otherUserRole?: string;
+    currentUserRole?: string;
 }
 
 export function MessageThread({
@@ -47,6 +48,7 @@ export function MessageThread({
     otherUserName,
     otherUserAvatar,
     otherUserRole,
+    currentUserRole,
 }: MessageThreadProps) {
     const navigate = useNavigate();
     const [messageText, setMessageText] = useState('');
@@ -90,11 +92,11 @@ export function MessageThread({
         }
     };
 
-    const handleSendOffer = async (offerData: { rate: number; frequency: string; serviceType: string }) => {
+    const handleSendOffer = async (offerData: { rate: number; frequency: string; serviceType: string; hours?: number; description?: string }) => {
         try {
             await sendMessage(
                 otherUserId,
-                '',
+                offerData.description ? `Custom Offer: ${offerData.description}` : '',
                 undefined,
                 'proposal',
                 {
@@ -102,6 +104,27 @@ export function MessageThread({
                     status: 'pending'
                 }
             );
+
+            // Send Email Notification
+            const { data: profile } = await supabase.from('profiles').select('email').eq('id', otherUserId).single();
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (profile?.email && user) {
+                await supabase.functions.invoke('send-transactional-email', {
+                    body: {
+                        type: 'offer_received',
+                        email: profile.email,
+                        name: otherUserName,
+                        data: {
+                            carerName: user.user_metadata?.full_name || 'A Carer',
+                            carerId: user.id,
+                            rate: offerData.rate.toFixed(2),
+                            hours: offerData.hours,
+                            description: offerData.description
+                        }
+                    }
+                });
+            }
         } catch (error) {
             console.error(error);
         }
@@ -113,6 +136,24 @@ export function MessageThread({
             const message = messages.find(m => m.id === messageId);
             if (message) {
                 await updateMessageStatus(messageId, { ...message.metadata, status: 'accepted' });
+
+                // Send Email Notification
+                const { data: profile } = await supabase.from('profiles').select('email').eq('id', otherUserId).single();
+                const { data: { user } } = await supabase.auth.getUser();
+
+                if (profile?.email && user) {
+                    await supabase.functions.invoke('send-transactional-email', {
+                        body: {
+                            type: 'offer_accepted',
+                            email: profile.email,
+                            name: otherUserName,
+                            data: {
+                                clientName: user.user_metadata?.full_name || 'A Client',
+                                clientId: user.id
+                            }
+                        }
+                    });
+                }
             }
         } finally {
             setIsUpdatingStatus(false);
@@ -125,6 +166,24 @@ export function MessageThread({
             const message = messages.find(m => m.id === messageId);
             if (message) {
                 await updateMessageStatus(messageId, { ...message.metadata, status: 'rejected' });
+
+                // Send Email Notification
+                const { data: profile } = await supabase.from('profiles').select('email').eq('id', otherUserId).single();
+                const { data: { user } } = await supabase.auth.getUser();
+
+                if (profile?.email && user) {
+                    await supabase.functions.invoke('send-transactional-email', {
+                        body: {
+                            type: 'offer_declined',
+                            email: profile.email,
+                            name: otherUserName,
+                            data: {
+                                clientName: user.user_metadata?.full_name || 'A Client',
+                                clientId: user.id
+                            }
+                        }
+                    });
+                }
             }
         } finally {
             setIsUpdatingStatus(false);
@@ -359,16 +418,18 @@ export function MessageThread({
                     >
                         {isUploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Paperclip className="h-5 w-5" />}
                     </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-slate-400 hover:text-primary hover:bg-primary/5"
-                        onClick={() => setIsOfferDialogOpen(true)}
-                        disabled={isUploading}
-                        title="Create Offer"
-                    >
-                        <PoundSterling className="h-5 w-5" />
-                    </Button>
+                    {currentUserRole === 'carer' && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-slate-400 hover:text-primary hover:bg-primary/5"
+                            onClick={() => setIsOfferDialogOpen(true)}
+                            disabled={isUploading}
+                            title="Create Offer"
+                        >
+                            <PoundSterling className="h-5 w-5" />
+                        </Button>
+                    )}
                     <Input
                         placeholder="Type your message..."
                         value={messageText}

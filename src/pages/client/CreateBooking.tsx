@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { PaymentCheckout } from "@/components/payments/PaymentCheckout";
 import { calculateFees, formatCurrency, MINIMUM_HOURLY_RATE, validateMinimumRate } from "@/lib/fees";
 import type { FeeCalculation, PricingPhase } from "@/types/database";
 
@@ -40,6 +41,7 @@ export default function CreateBooking() {
     const [loading, setLoading] = useState(true);
     const [currentPhase, setCurrentPhase] = useState<PricingPhase>('1');
     const [feeBreakdown, setFeeBreakdown] = useState<FeeCalculation | null>(null);
+    const [createdBookingId, setCreatedBookingId] = useState<string | null>(null);
 
     // Proposal Data
     const proposalRate = searchParams.get('rate') ? parseFloat(searchParams.get('rate')!) : null;
@@ -93,7 +95,8 @@ export default function CreateBooking() {
             overnight_sleeping_rate,
             overnight_waking_rate,
             verification_status,
-            onboarded_at
+            onboarded_at,
+            stripe_account_id
           )
         `)
                 .eq('id', carerId)
@@ -216,7 +219,7 @@ export default function CreateBooking() {
                     rate_per_hour: rate,
                     client_fee: feeBreakdown.clientFee,
                     carer_fee: feeBreakdown.carerFee,
-                    status: 'pending',
+                    status: proposalId ? 'confirmed' : 'pending',
                     recurrence_type: isRecurring ? recurrenceType : null,
                     recurrence_end_date: isRecurring && recurrenceEndDate ? recurrenceEndDate.toISOString() : null
                 });
@@ -246,6 +249,7 @@ export default function CreateBooking() {
             if (!insertedBookings || insertedBookings.length === 0) throw new Error("No bookings were created");
 
             const booking = insertedBookings[0];
+            setCreatedBookingId(booking.id);
 
             // If it was a proposal, mark it as booked and preserve other metadata
             if (proposalId) {
@@ -665,23 +669,36 @@ export default function CreateBooking() {
                     )}
 
                     {step === 3 && (
-                        <Card className="rounded-2xl border-black/5 shadow-md overflow-hidden text-center p-10 space-y-6 bg-white">
-                            <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto animate-float">
-                                <CheckCircle2 className="w-10 h-10" />
+                        proposalId && carer?.carer_details?.stripe_account_id ? (
+                            <div className="animate-in slide-in-from-bottom-5">
+                                <PaymentCheckout
+                                    bookingId={createdBookingId!}
+                                    carerId={carerId!}
+                                    carerName={carer.full_name}
+                                    carerStripeAccountId={carer.carer_details.stripe_account_id}
+                                    feeBreakdown={feeBreakdown!}
+                                    onCancel={() => navigate("/client/bookings")}
+                                />
                             </div>
-                            <div className="space-y-1.5">
-                                <h2 className="text-2xl font-bold tracking-tight">Booking Requested!</h2>
-                                <p className="text-muted-foreground text-sm">We've sent your request to {carer.full_name}.</p>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <Button variant="outline" className="h-11 rounded-xl font-bold text-xs" onClick={() => navigate("/client/bookings")}>
-                                    View Bookings
-                                </Button>
-                                <Button className="h-11 rounded-xl font-bold text-xs" onClick={() => navigate("/client/search")}>
-                                    Find Another
-                                </Button>
-                            </div>
-                        </Card>
+                        ) : (
+                            <Card className="rounded-2xl border-black/5 shadow-md overflow-hidden text-center p-10 space-y-6 bg-white">
+                                <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto animate-float">
+                                    <CheckCircle2 className="w-10 h-10" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <h2 className="text-2xl font-bold tracking-tight">Booking Requested!</h2>
+                                    <p className="text-muted-foreground text-sm">We've sent your request to {carer.full_name}.</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Button variant="outline" className="h-11 rounded-xl font-bold text-xs" onClick={() => navigate("/client/bookings")}>
+                                        View Bookings
+                                    </Button>
+                                    <Button className="h-11 rounded-xl font-bold text-xs" onClick={() => navigate("/client/search")}>
+                                        Find Another
+                                    </Button>
+                                </div>
+                            </Card>
+                        )
                     )}
                 </div>
 

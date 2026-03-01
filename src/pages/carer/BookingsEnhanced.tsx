@@ -142,6 +142,32 @@ export default function CarerBookingsEnhanced() {
         }
     };
 
+    const declineBooking = async (bookingId: string) => {
+        try {
+            setLoading(true);
+            const { error } = await supabase.functions.invoke('cancel-booking', {
+                body: { bookingId, reason: 'Carer declined the booking request.' }
+            });
+
+            if (error) throw error;
+
+            toast({
+                title: 'Booking Declined',
+                description: 'You have declined this booking request.',
+            });
+
+            fetchBookings();
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: error.message || 'Failed to decline booking',
+                variant: 'destructive',
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const completeBooking = async (bookingId: string) => {
         try {
             const booking = bookings.find(b => b.id === bookingId);
@@ -414,14 +440,25 @@ export default function CarerBookingsEnhanced() {
 
                                                 <div className="flex items-center gap-2">
                                                     {booking.status === 'pending' && (
-                                                        <Button
-                                                            size="sm"
-                                                            onClick={() => acceptBooking(booking.id)}
-                                                            className="bg-[#1a9e8c]"
-                                                        >
-                                                            <CheckCircle className="h-4 w-4 mr-1" />
-                                                            Accept
-                                                        </Button>
+                                                        <>
+                                                            <Button
+                                                                size="sm"
+                                                                onClick={() => acceptBooking(booking.id)}
+                                                                className="bg-[#1a9e8c]"
+                                                            >
+                                                                <CheckCircle className="h-4 w-4 mr-1" />
+                                                                Accept
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => declineBooking(booking.id)}
+                                                                className="text-red-600 hover:text-red-700"
+                                                            >
+                                                                <XCircle className="h-4 w-4 mr-1" />
+                                                                Decline
+                                                            </Button>
+                                                        </>
                                                     )}
                                                     {booking.status === 'confirmed' && (
                                                         <Button

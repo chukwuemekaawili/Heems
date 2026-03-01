@@ -67,6 +67,7 @@ const getDefaultNavItems = (role: string): NavItem[] => {
       return [
         { name: "Dashboard", href: "/client/dashboard", icon: LayoutDashboard },
         { name: "Post a Job", href: "/client/post-job", icon: Briefcase },
+        { name: "My Jobs", href: "/client/jobs", icon: Briefcase },
         { name: "Find a Carer", href: "/client/search", icon: Search },
         { name: "My Bookings", href: "/client/bookings", icon: Calendar },
         { name: "Routines", href: "/client/care-plans", icon: ClipboardList },
@@ -77,6 +78,7 @@ const getDefaultNavItems = (role: string): NavItem[] => {
     case "carer":
       return [
         { name: "Dashboard", href: "/carer/dashboard", icon: LayoutDashboard },
+        { name: "Job Board", href: "/carer/jobs", icon: Briefcase },
         { name: "Availability", href: "/carer/availability", icon: Calendar },
         { name: "Bookings", href: "/carer/bookings", icon: Clock },
         { name: "Earnings", href: "/carer/earnings", icon: PoundSterling },

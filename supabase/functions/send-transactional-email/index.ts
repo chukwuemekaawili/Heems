@@ -205,8 +205,6 @@ const handler = async (req: Request): Promise<Response> => {
                 `;
                 break;
 
-                break;
-
             case "booking_cancelled":
                 subject = "Booking Cancelled - " + data?.date;
                 title = "Booking Cancelled";
@@ -247,7 +245,48 @@ const handler = async (req: Request): Promise<Response> => {
                 break;
 
             /* -------------------------
-               D. PAYMENTS & MESSAGES
+               D. OFFERS & NEGOTIATION
+            ------------------------- */
+            case "offer_received":
+                subject = "New Custom Offer from " + data?.carerName;
+                title = "New Offer Received";
+                content = `
+                    <p>Hello ${name},</p>
+                    <p><strong>${data?.carerName}</strong> has sent you a custom offer for care services.</p>
+                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                        <p><strong>Rate:</strong> £${data?.rate}</p>
+                        ${data?.hours ? `<p><strong>Estimated Hours:</strong> ${data?.hours} hrs</p>` : ''}
+                        ${data?.description ? `<p><strong>Details:</strong> "${data?.description}"</p>` : ''}
+                    </div>
+                    <p>Log in to your messages to accept or reply to this offer.</p>
+                    <p><a href="https://heartful-care-connect.vercel.app/client/messages?user=${data?.carerId}" class="btn">View Offer</a></p>
+                `;
+                break;
+
+            case "offer_accepted":
+                subject = "Offer Accepted by " + data?.clientName;
+                title = "Your Offer was Accepted";
+                content = `
+                    <p>Hello ${name},</p>
+                    <p>Great news! <strong>${data?.clientName}</strong> has accepted your custom offer.</p>
+                    <p>They are now completing the booking and payment process. You will receive a final confirmation once the booking is fully secured.</p>
+                    <p><a href="https://heartful-care-connect.vercel.app/carer/messages?user=${data?.clientId}" class="btn">View Messages</a></p>
+                `;
+                break;
+
+            case "offer_declined":
+                subject = "Offer Declined by " + data?.clientName;
+                title = "Offer Declined";
+                content = `
+                    <p>Hello ${name},</p>
+                    <p><strong>${data?.clientName}</strong> has declined your recent custom offer.</p>
+                    <p>Log in to your messages to see if they provided a reason or to send a revised offer.</p>
+                    <p><a href="https://heartful-care-connect.vercel.app/carer/messages?user=${data?.clientId}" class="btn">View Messages</a></p>
+                `;
+                break;
+
+            /* -------------------------
+               E. PAYMENTS & MESSAGES
             ------------------------- */
             case "new_message":
                 subject = "New Message from " + data?.senderName;

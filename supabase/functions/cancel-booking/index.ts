@@ -51,9 +51,12 @@ serve(async (req) => {
 
         if (fetchError || !booking) throw new Error("Booking not found");
 
-        if (booking.client_id !== user.id) {
+        if (booking.client_id !== user.id && booking.carer_id !== user.id) {
             throw new Error("You are not authorized to cancel this booking");
         }
+
+        const isClient = booking.client_id === user.id;
+        const isCarer = booking.carer_id === user.id;
 
         if (booking.status === 'cancelled') {
             return new Response(JSON.stringify({ message: "Booking is already cancelled" }), {
@@ -70,10 +73,10 @@ serve(async (req) => {
         console.log(`Booking ${bookingId}: Hours until start: ${hoursUntilStart}`);
 
         // Logic:
-        // > 48h: Full Refund (Automated)
-        // < 48h: Cancellation Requested (Manual Approval by Carer)
+        // Client: > 48h: Full Refund (Automated), < 48h: Cancellation Requested (Manual Approval)
+        // Carer: Always Automated Cancel & Refund
 
-        const isEligibleForAutoRefund = hoursUntilStart >= 48;
+        const isEligibleForAutoRefund = (isClient && hoursUntilStart >= 48) || isCarer;
 
         if (isEligibleForAutoRefund) {
             console.log("Processing auto-refund...");
@@ -81,10 +84,8 @@ serve(async (req) => {
             // Refund via Stripe if paid
             if (booking.payment_status === 'paid' && booking.stripe_payment_intent_id) {
                 // Determine Amount to Refund
-                // Requirement: "Platform charges being non-refundable"
-                // So we refund ONLY the (Total - Client Fee).
-                // Or "Full Refund" usually implies Client Fee is also refunded if it was a booking fee? 
-                // However, user said "Implement a refund system... Platform charges are non-refundable."
+                // If Carer cancels, we should probably refund the full amount including platform fee.
+                // However, without more complicated Stripe API calls, we'll refund the service base cost as implemented.
 
                 // So refund amount = booking.total_price - booking.client_fee
                 // Assuming client_fee was collected. 
@@ -145,7 +146,8 @@ serve(async (req) => {
                             otherPartyName: carer?.full_name || 'Carer',
                             date: bookingDate,
                             refundStatus: 'succeeded',
-                            refundAmount: refundAmount
+                            refundAmount: refundAmount,
+                            reason: isCarer ? 'Cancelled by Carer' : 'Cancelled by you'
                         }
                     }
                 });

@@ -9,7 +9,7 @@ export const scheduleReviewRequest = async (bookingId: string, clientId: string,
                 client_id: clientId,
                 carer_id: carerId,
                 status: 'pending',
-                scheduled_for: new Date(Date.now() + 1000 * 60 * 60).toISOString(), // 1 hour from now
+                scheduled_for: new Date(Date.now() + 49 * 1000 * 60 * 60).toISOString(), // 49 hours from now
             })
             .select()
             .single();

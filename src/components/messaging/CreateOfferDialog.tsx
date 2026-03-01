@@ -10,7 +10,7 @@ import { Loader2, PoundSterling } from "lucide-react";
 interface CreateOfferDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (data: { rate: number; frequency: string; serviceType: string }) => Promise<void>;
+    onSubmit: (data: { rate: number; frequency: string; serviceType: string; hours?: number; description?: string }) => Promise<void>;
     defaultRate?: number;
 }
 
@@ -18,6 +18,8 @@ export function CreateOfferDialog({ isOpen, onClose, onSubmit, defaultRate = 25 
     const [rate, setRate] = useState<string>(defaultRate.toString());
     const [frequency, setFrequency] = useState("one-off");
     const [serviceType, setServiceType] = useState("hourly"); // hourly, live-in, overnight
+    const [hours, setHours] = useState<string>("2");
+    const [description, setDescription] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async () => {
@@ -26,7 +28,9 @@ export function CreateOfferDialog({ isOpen, onClose, onSubmit, defaultRate = 25 
             await onSubmit({
                 rate: parseFloat(rate),
                 frequency: serviceType === 'hourly' ? 'one-off' : frequency,
-                serviceType
+                serviceType,
+                hours: parseFloat(hours),
+                description
             });
             onClose();
         } catch (error) {
@@ -96,6 +100,32 @@ export function CreateOfferDialog({ isOpen, onClose, onSubmit, defaultRate = 25 
                             </Select>
                         </div>
                     )}
+
+                    {/* Hours */}
+                    {serviceType === 'hourly' && (
+                        <div className="space-y-2 animate-in fade-in">
+                            <Label className="text-xs font-bold uppercase text-muted-foreground">Estimated Hours per Visit</Label>
+                            <Input
+                                type="number"
+                                min="1"
+                                step="1"
+                                value={hours}
+                                onChange={(e) => setHours(e.target.value)}
+                                className="h-11"
+                            />
+                        </div>
+                    )}
+
+                    {/* Service Description */}
+                    <div className="space-y-2">
+                        <Label className="text-xs font-bold uppercase text-muted-foreground">Service Description & Notes</Label>
+                        <Input
+                            placeholder="e.g. Needs help with mobility and meal prep..."
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            className="h-11"
+                        />
+                    </div>
                 </div>
 
                 <DialogFooter>

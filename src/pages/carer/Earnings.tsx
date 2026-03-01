@@ -194,16 +194,18 @@ export default function CarerEarnings() {
         return bookingDate >= monthStart && bookingDate <= monthEnd;
       });
 
-      const monthlyEarnings = thisMonthBookings.reduce((sum, b) => sum + (b.total_price || 0), 0);
+      const getNetEarnings = (b: any) => (b.total_price || 0) - (b.client_fee || 0) - (b.carer_fee || 0);
+
+      const monthlyEarnings = thisMonthBookings.reduce((sum, b) => sum + getNetEarnings(b), 0);
       const monthlyHours = thisMonthBookings.reduce((sum, b) => sum + (b.duration_hours || 0), 0);
 
       // Calculate available balance (paid but not yet transferred to carer)
       const paidBookings = completedBookings.filter(b => b.payment_status === 'paid' && b.payout_status !== 'paid');
-      const pendingPayout = paidBookings.reduce((sum, b) => sum + (b.total_price || 0), 0);
+      const pendingPayout = paidBookings.reduce((sum, b) => sum + getNetEarnings(b), 0);
 
       // Total available (all completed bookings that have been paid)
       const paidCompleted = completedBookings.filter(b => b.payment_status === 'paid');
-      const availableBalance = paidCompleted.reduce((sum, b) => sum + (b.total_price || 0), 0);
+      const availableBalance = paidCompleted.reduce((sum, b) => sum + getNetEarnings(b), 0);
 
       const avgHourlyRate = monthlyHours > 0 ? monthlyEarnings / monthlyHours : 0;
 
@@ -235,7 +237,7 @@ export default function CarerEarnings() {
         b.client?.full_name || 'N/A',
         b.service_type || 'Care Service',
         b.duration_hours,
-        b.total_price,
+        (b.total_price || 0) - (b.client_fee || 0) - (b.carer_fee || 0),
         b.status,
         b.payment_status || 'pending'
       ].join(','))
@@ -436,36 +438,39 @@ export default function CarerEarnings() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {completedBookings.map((booking) => (
-                      <div
-                        key={booking.id}
-                        className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <PoundSterling className="h-5 w-5 text-primary" />
+                    {completedBookings.map((booking) => {
+                      const netEarned = (booking.total_price || 0) - (booking.client_fee || 0) - (booking.carer_fee || 0);
+                      return (
+                        <div
+                          key={booking.id}
+                          className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                              <PoundSterling className="h-5 w-5 text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {booking.service_type || 'Care Service'} • {booking.duration_hours}h
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium">{booking.client?.full_name || 'Client'}</p>
+                          <div className="text-right">
+                            <p className="font-medium">£{netEarned.toFixed(2)}</p>
                             <p className="text-sm text-muted-foreground">
-                              {booking.service_type || 'Care Service'} • {booking.duration_hours}h
+                              {booking.start_time ? format(new Date(booking.start_time), 'dd MMM yyyy') : 'N/A'}
                             </p>
                           </div>
+                          <Badge
+                            variant={booking.payment_status === 'paid' ? "default" : "secondary"}
+                            className={booking.payment_status === 'paid' ? "bg-emerald-500" : ""}
+                          >
+                            {booking.payment_status === 'paid' ? 'Paid' : 'Pending'}
+                          </Badge>
                         </div>
-                        <div className="text-right">
-                          <p className="font-medium">£{booking.total_price?.toFixed(2)}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {booking.start_time ? format(new Date(booking.start_time), 'dd MMM yyyy') : 'N/A'}
-                          </p>
-                        </div>
-                        <Badge
-                          variant={booking.payment_status === 'paid' ? "default" : "secondary"}
-                          className={booking.payment_status === 'paid' ? "bg-emerald-500" : ""}
-                        >
-                          {booking.payment_status === 'paid' ? 'Paid' : 'Pending'}
-                        </Badge>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>

@@ -108,6 +108,7 @@ export default function MessagesPage({ role }: MessagesPageProps) {
                                 otherUserName={selectedConversation.other_user?.full_name || 'Unknown'}
                                 otherUserAvatar={selectedConversation.other_user?.avatar_url}
                                 otherUserRole={selectedConversation.other_user?.role}
+                                currentUserRole={role}
                             />
                         </div>
                     ) : (

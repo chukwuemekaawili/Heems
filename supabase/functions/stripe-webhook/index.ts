@@ -46,6 +46,7 @@ serve(async (req) => {
                             status: "confirmed",
                             stripe_payment_intent_id: session.payment_intent,
                             payment_status: "paid",
+                            payout_status: "pending",
                             updated_at: new Date().toISOString(),
                         }),
                     });
@@ -70,6 +71,7 @@ serve(async (req) => {
                         },
                         body: JSON.stringify({
                             payment_status: "paid",
+                            payout_status: "pending",
                             stripe_payment_intent_id: paymentIntent.id,
                             updated_at: new Date().toISOString(),
                         }),
