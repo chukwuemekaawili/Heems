@@ -158,6 +158,129 @@ const About = () => {
                     </div>
                 </section>
 
+                {/* ─── ABOUT & FOUNDER SPLIT ─── */}
+                <section id="founder-note" className="py-24 lg:py-32 bg-white relative overflow-hidden">
+                    <div className="absolute right-0 top-1/4 w-[460px] h-[460px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
+                    <div className="absolute left-0 bottom-0 w-[360px] h-[360px] rounded-full bg-[#1a9e8c]/5 blur-[120px] pointer-events-none" />
+
+                    <div className="container mx-auto px-6 lg:px-12 relative z-10">
+                        <div className="grid lg:grid-cols-12 gap-12 items-start">
+                            {/* Visual + supporting content around the story box */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -40 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true, margin: "-80px" }}
+                                transition={{ duration: 0.7 }}
+                                className="lg:col-span-7 space-y-8"
+                            >
+                                <div className="rounded-[2.5rem] overflow-hidden bg-white border border-slate-100 shadow-2xl">
+                                    <img
+                                        src="/about-care.png"
+                                        alt="Care professional supporting a client"
+                                        className="w-full h-full min-h-[380px] object-cover"
+                                        loading="lazy"
+                                    />
+                                </div>
+
+                                <div className="grid md:grid-cols-3 gap-4">
+                                    {[
+                                        {
+                                            title: "Transparent journeys",
+                                            body: "Clear pricing, clear profiles, and clear availability so families always know what to expect."
+                                        },
+                                        {
+                                            title: "Independent professionals",
+                                            body: "Every carer sets their terms while staying DBS-checked, reference-verified, and identity confirmed."
+                                        },
+                                        {
+                                            title: "Human guidance",
+                                            body: "Care coordinators and smart matching tools keep bookings simple during stressful moments."
+                                        }
+                                    ].map((item) => (
+                                        <div key={item.title} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
+                                            <h3 className="text-lg font-black text-[#111827] mb-2">{item.title}</h3>
+                                            <p className="text-sm text-slate-600 font-medium leading-relaxed">{item.body}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+
+                            {/* Founder / About text box on the side */}
+                            <motion.div
+                                initial={{ opacity: 0, x: 40 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true, margin: "-80px" }}
+                                transition={{ duration: 0.7, delay: 0.15 }}
+                                className="lg:col-span-5"
+                            >
+                                <div className="sticky top-8">
+                                    <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-10 lg:p-12 border border-slate-100 shadow-[0_18px_50px_rgba(0,0,0,0.06)]">
+                                        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-widest mb-4">
+                                            <Heart className="w-3.5 h-3.5 text-[#1a9e8c]" />
+                                            About Us
+                                        </span>
+                                        <h2 className="text-3xl lg:text-4xl font-black text-[#111827] mb-2 leading-tight">
+                                            A Note from the Founder
+                                        </h2>
+                                        <p className="text-sm text-slate-500 font-semibold mb-4">Heems was created with one clear belief: arranging care for someone you love should feel human, transparent, and dignified — not urgent, confusing, or overwhelming.</p>
+
+                                        <div className="space-y-4 text-slate-700 font-medium leading-relaxed text-base max-h-[680px] overflow-y-auto pr-1">
+                                            <p>Over years working within the wider health and care landscape, one recurring pattern became impossible to ignore. Care needs rarely arrive at convenient moments.</p>
+                                            <p className="font-semibold text-[#111827]">Care needs rarely arrive at convenient moments.</p>
+                                            <div>
+                                                <p className="font-semibold text-[#111827] mb-1">They follow:</p>
+                                                <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                                                    <li>Accidents</li>
+                                                    <li>Unexpected diagnoses</li>
+                                                    <li>Complex disabilities</li>
+                                                    <li>Mental health crises</li>
+                                                    <li>Recovery after surgery</li>
+                                                    <li>Chronic illness</li>
+                                                    <li>Sudden hospital discharge</li>
+                                                    <li>Mobility loss</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <p>And sometimes, they emerge more quietly — through increasing difficulty with everyday tasks.</p>
+                                                <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                                                    <li>Preparing meals</li>
+                                                    <li>Managing medication</li>
+                                                    <li>Maintaining personal routines</li>
+                                                    <li>Leaving the house with confidence</li>
+                                                </ul>
+                                            </div>
+                                            <p>Again and again, families found themselves facing the same question: <span className="font-semibold text-[#111827]">How do we find the right support — clearly, confidently, and without unnecessary confusion?</span></p>
+                                            <p>Hospital discharge dates approached. Rehabilitation plans changed. Community referrals were delayed. Phone calls were made between work commitments. Options were unclear. Availability shifted. Every provider offered reassurance — yet the process often felt fragmented and difficult to navigate.</p>
+                                            <p>The stress did not come from a lack of dedicated professionals. It came from a lack of clarity.</p>
+                                            <p>One moment remains particularly vivid. A young adult recovering from a life-altering injury said quietly: <span className="italic text-[#111827]">“I just want to feel normal again — even if it’s just at home.”</span></p>
+                                            <p>That sentiment transcends age. Whether it is a person requiring extra support, a parent rebuilding strength after illness, a partner managing a long-term condition, or an older relative wishing to remain independent — the underlying need is the same:</p>
+                                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                                                <li>To feel safe.</li>
+                                                <li>To feel seen.</li>
+                                                <li>To feel at home.</li>
+                                            </ul>
+                                            <p>Families are not simply arranging services. They are protecting someone they love — while navigating systems that can feel opaque, rushed, and impersonal.</p>
+                                            <p>Traditional models of home support are essential and valuable. Yet administrative layers and limited visibility can sometimes create distance at the very moment reassurance matters most.</p>
+                                            <p>Heems was built to provide clarity within a fragmented landscape. By providing clear information and visibility of independent care professionals, Heems enables families to make informed decisions with confidence.</p>
+                                            <p className="font-semibold text-[#111827]">Care is personal — at every stage of life. Decisions about care should be supported by clarity, dignity, and confidence. Heems exists to make that possible.</p>
+                                            <p className="text-sm text-slate-500 font-semibold">— Founder, Heems</p>
+                                        </div>
+
+                                        <div className="mt-8 pt-6 border-t border-slate-100 flex items-center gap-4">
+                                            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#1a9e8c] to-[#111827] flex items-center justify-center text-white shadow-lg">
+                                                <Heart className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <p className="font-black text-[#111827] text-lg">Founder Heems</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
+                </section>
+
                 {/* ─── CORE VALUES (Staggered Grid) ─── */}
                 <section className="py-24 lg:py-32 relative overflow-hidden">
                     <div className="absolute top-0 right-1/4 w-[400px] h-[400px] rounded-full bg-[#1a9e8c]/5 blur-[100px] pointer-events-none" />
@@ -280,129 +403,6 @@ const About = () => {
                                         Join Our Mission <ArrowRight className="w-4 h-4 ml-2" />
                                     </Link>
                                 </Button>
-                            </motion.div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* ─── ABOUT & FOUNDER SPLIT ─── */}
-                <section id="founder-note" className="py-24 lg:py-32 bg-white relative overflow-hidden">
-                    <div className="absolute right-0 top-1/4 w-[460px] h-[460px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
-                    <div className="absolute left-0 bottom-0 w-[360px] h-[360px] rounded-full bg-[#1a9e8c]/5 blur-[120px] pointer-events-none" />
-
-                    <div className="container mx-auto px-6 lg:px-12 relative z-10">
-                        <div className="grid lg:grid-cols-12 gap-12 items-start">
-                            {/* Visual + supporting content around the story box */}
-                            <motion.div
-                                initial={{ opacity: 0, x: -40 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true, margin: "-80px" }}
-                                transition={{ duration: 0.7 }}
-                                className="lg:col-span-7 space-y-8"
-                            >
-                                <div className="rounded-[2.5rem] overflow-hidden bg-white border border-slate-100 shadow-2xl">
-                                    <img
-                                        src="/about-care.png"
-                                        alt="Care professional supporting a client"
-                                        className="w-full h-full min-h-[380px] object-cover"
-                                        loading="lazy"
-                                    />
-                                </div>
-
-                                <div className="grid md:grid-cols-3 gap-4">
-                                    {[
-                                        {
-                                            title: "Transparent journeys",
-                                            body: "Clear pricing, clear profiles, and clear availability so families always know what to expect."
-                                        },
-                                        {
-                                            title: "Independent professionals",
-                                            body: "Every carer sets their terms while staying DBS-checked, reference-verified, and identity confirmed."
-                                        },
-                                        {
-                                            title: "Human guidance",
-                                            body: "Care coordinators and smart matching tools keep bookings simple during stressful moments."
-                                        }
-                                    ].map((item) => (
-                                        <div key={item.title} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
-                                            <h3 className="text-lg font-black text-[#111827] mb-2">{item.title}</h3>
-                                            <p className="text-sm text-slate-600 font-medium leading-relaxed">{item.body}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </motion.div>
-
-                            {/* Founder / About text box on the side */}
-                            <motion.div
-                                initial={{ opacity: 0, x: 40 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true, margin: "-80px" }}
-                                transition={{ duration: 0.7, delay: 0.15 }}
-                                className="lg:col-span-5"
-                            >
-                                <div className="sticky top-8">
-                                    <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-10 lg:p-12 border border-slate-100 shadow-[0_18px_50px_rgba(0,0,0,0.06)]">
-                                        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-widest mb-4">
-                                            <Heart className="w-3.5 h-3.5 text-[#1a9e8c]" />
-                                            About Us
-                                        </span>
-                                        <h2 className="text-3xl lg:text-4xl font-black text-[#111827] mb-2 leading-tight">
-                                            A Note from the Founder
-                                        </h2>
-                                        <p className="text-sm text-slate-500 font-semibold mb-4">Heems was created with one clear belief: arranging care for someone you love should feel human, transparent, and dignified — not urgent, confusing, or overwhelming.</p>
-
-                                        <div className="space-y-4 text-slate-700 font-medium leading-relaxed text-base max-h-[680px] overflow-y-auto pr-1">
-                                            <p>Over years working within the wider health and care landscape, one recurring pattern became impossible to ignore. Care needs rarely arrive at convenient moments.</p>
-                                            <p className="font-semibold text-[#111827]">Care needs rarely arrive at convenient moments.</p>
-                                            <div>
-                                                <p className="font-semibold text-[#111827] mb-1">They follow:</p>
-                                                <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                                                    <li>Accidents</li>
-                                                    <li>Unexpected diagnoses</li>
-                                                    <li>Complex disabilities</li>
-                                                    <li>Mental health crises</li>
-                                                    <li>Recovery after surgery</li>
-                                                    <li>Chronic illness</li>
-                                                    <li>Sudden hospital discharge</li>
-                                                    <li>Mobility loss</li>
-                                                </ul>
-                                            </div>
-                                            <div>
-                                                <p>And sometimes, they emerge more quietly — through increasing difficulty with everyday tasks.</p>
-                                                <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                                                    <li>Preparing meals</li>
-                                                    <li>Managing medication</li>
-                                                    <li>Maintaining personal routines</li>
-                                                    <li>Leaving the house with confidence</li>
-                                                </ul>
-                                            </div>
-                                            <p>Again and again, families found themselves facing the same question: <span className="font-semibold text-[#111827]">How do we find the right support — clearly, confidently, and without unnecessary confusion?</span></p>
-                                            <p>Hospital discharge dates approached. Rehabilitation plans changed. Community referrals were delayed. Phone calls were made between work commitments. Options were unclear. Availability shifted. Every provider offered reassurance — yet the process often felt fragmented and difficult to navigate.</p>
-                                            <p>The stress did not come from a lack of dedicated professionals. It came from a lack of clarity.</p>
-                                            <p>One moment remains particularly vivid. A young adult recovering from a life-altering injury said quietly: <span className="italic text-[#111827]">“I just want to feel normal again — even if it’s just at home.”</span></p>
-                                            <p>That sentiment transcends age. Whether it is a person requiring extra support, a parent rebuilding strength after illness, a partner managing a long-term condition, or an older relative wishing to remain independent — the underlying need is the same:</p>
-                                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                                                <li>To feel safe.</li>
-                                                <li>To feel seen.</li>
-                                                <li>To feel at home.</li>
-                                            </ul>
-                                            <p>Families are not simply arranging services. They are protecting someone they love — while navigating systems that can feel opaque, rushed, and impersonal.</p>
-                                            <p>Traditional models of home support are essential and valuable. Yet administrative layers and limited visibility can sometimes create distance at the very moment reassurance matters most.</p>
-                                            <p>Heems was built to provide clarity within a fragmented landscape. By providing clear information and visibility of independent care professionals, Heems enables families to make informed decisions with confidence.</p>
-                                            <p className="font-semibold text-[#111827]">Care is personal — at every stage of life. Decisions about care should be supported by clarity, dignity, and confidence. Heems exists to make that possible.</p>
-                                            <p className="text-sm text-slate-500 font-semibold">— Founder, Heems</p>
-                                        </div>
-
-                                        <div className="mt-8 pt-6 border-t border-slate-100 flex items-center gap-4">
-                                            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#1a9e8c] to-[#111827] flex items-center justify-center text-white shadow-lg">
-                                                <Heart className="w-6 h-6" />
-                                            </div>
-                                            <div>
-                                                <p className="font-black text-[#111827] text-lg">Founder Heems</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </motion.div>
                         </div>
                     </div>
