@@ -266,7 +266,7 @@ const CarerSignup = () => {
                   <SelectValue placeholder="Years in Service" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="0-1">6 Months - 1 Year</SelectItem>
+                  <SelectItem value="1">1+ Years</SelectItem>
                   <SelectItem value="1-3">1-3 Years</SelectItem>
                   <SelectItem value="3-5">3-5 Years</SelectItem>
                   <SelectItem value="5-10">5-10 Years</SelectItem>

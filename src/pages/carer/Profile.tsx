@@ -679,8 +679,7 @@ export default function CarerProfile() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="0.5">6 Months - 1 Year</SelectItem>
-                        <SelectItem value="1">1 year</SelectItem>
+                        <SelectItem value="1">1+ Years</SelectItem>
                         <SelectItem value="2">2 years</SelectItem>
                         <SelectItem value="3">3 years</SelectItem>
                         <SelectItem value="5">5 years</SelectItem>

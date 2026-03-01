@@ -135,7 +135,7 @@ const ForCarers = () => {
                             <h2 className="text-4xl lg:text-6xl font-black text-[#111827] mb-10 tracking-tight">Ready to <br /><span className="text-[#1a9e8c]">transition?</span></h2>
                             <div className="space-y-5 mb-12">
                                 {[
-                                    "Minimum 6 months care experience",
+                                    "Minimum 1 year care experience",
                                     "Right-to-work in the United Kingdom",
                                     "Enhanced DBS (or willing to obtain)",
                                     "Two professional care references",

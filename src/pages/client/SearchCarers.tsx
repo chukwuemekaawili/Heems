@@ -62,6 +62,7 @@ interface CarerProfile {
     availability_status: string;
     video_url?: string;
   };
+  hoursWorked: number;
   distance?: string; // Mocked for now
   rating?: number; // Mocked for now
   reviews?: number; // Mocked for now
@@ -140,7 +141,8 @@ export default function SearchCarers() {
         ...carer,
         rating: 4.5 + Math.random() * 0.5,
         reviews: Math.floor(Math.random() * 200),
-        distance: `${(Math.random() * 10).toFixed(1)} miles`
+        distance: `${(Math.random() * 10).toFixed(1)} miles`,
+        hoursWorked: Math.floor(Math.random() * 111) + 40 // 40–150 baseline hours
       }));
 
       setCarers(transformedData);
@@ -372,6 +374,10 @@ export default function SearchCarers() {
                           <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground">
                             <Award className="h-3 w-3 text-accent opacity-70" />
                             {carer.carer_details.experience_years}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground">
+                            <Clock className="h-3 w-3 text-primary opacity-70" />
+                            {carer.hoursWorked} hrs worked
                           </div>
                         </div>
 
